@@ -206,24 +206,26 @@ const emptyStateMessage = computed(() => {
         class="mb-3 hover:shadow-md transition-shadow"
       >
         <CardContent class="px-4">
-          <div class="flex items-start gap-3">
-            <div class="pt-0.5">
-              <Skeleton class="h-5 w-5 rounded-full" />
-            </div>
-            <div class="w-full">
-              <div class="flex items-center justify-between gap-2 mb-2">
-                <div class="flex items-center w-full gap-2">
-                  <Skeleton class="h-6 w-full max-w-40" />
-                  <Skeleton class="h-5 min-w-16" />
+          <div class="flex items-start gap-2">
+            <Skeleton class="h-6 w-6 rounded-full" />
+            <div class="flex-1 overflow-hidden">
+              <div class="mb-1 flex min-h-6 items-center gap-2">
+                <Skeleton class="h-5 w-full max-w-40" />
+                <Skeleton class="h-5 min-w-16" />
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <Skeleton class="h-4 w-16" />
+                  <Skeleton class="h-4 w-4 rounded-full" />
+                  <Skeleton class="h-4 w-24" />
                 </div>
-                <Skeleton class="min-h-8 min-w-8 rounded-full" />
-              </div>
-              <div class="flex items-center gap-2">
-                <Skeleton class="h-4 w-16" />
-                <Skeleton class="h-4 w-4 rounded-full" />
-                <Skeleton class="h-4 w-24" />
+                <div class="flex -space-x-2">
+                  <Skeleton class="h-6 w-6 rounded-full" />
+                  <Skeleton class="h-6 w-6 rounded-full" />
+                </div>
               </div>
             </div>
+            <Skeleton class="h-6 w-6 rounded-md" />
           </div>
         </CardContent>
       </Card>

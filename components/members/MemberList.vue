@@ -171,13 +171,13 @@ const handleOwnershipTransferred = () => {
           <div class="flex items-center gap-3">
             <Skeleton class="hidden sm:flex h-10 w-10 rounded-full" />
             <div class="space-y-2">
-              <Skeleton class="h-5 w-32" />
-              <Skeleton class="h-4 w-24" />
+              <Skeleton class="sm:h-4 h-3.5 w-32" />
+              <Skeleton class="sm:h-3.5 h-3 w-24" />
             </div>
           </div>
           <div class="flex items-center justify-between sm:justify-end gap-2">
             <Skeleton class="flex sm:hidden h-9 w-9 rounded-full" />
-            <Skeleton class="h-6 w-8" />
+            <Skeleton class="h-6 w-6" />
           </div>
         </div>
       </div>

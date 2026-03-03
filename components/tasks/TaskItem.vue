@@ -292,7 +292,7 @@ const formatDueDate = (date: Date) => {
 
         <DropdownMenu v-if="hasAnyAction">
           <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="sm" class="h-8 w-8 p-0" @click.stop>
+            <Button variant="ghost" size="sm" class="h-6 w-6 p-0" @click.stop>
               <span class="sr-only">Open menu</span>
               <MoreHorizontal class="h-4 w-4" />
             </Button>

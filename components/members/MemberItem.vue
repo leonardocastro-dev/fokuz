@@ -293,7 +293,7 @@ const handlePermissionsUpdated = () => {
 
         <DropdownMenu v-if="showDropdown">
           <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
+            <Button variant="ghost" size="sm" class="h-6 w-6 p-0">
               <span class="sr-only">Open menu</span>
               <MoreHorizontal class="h-4 w-4" />
             </Button>
