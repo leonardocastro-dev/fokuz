@@ -3,7 +3,9 @@ import {
   verifyAuth,
   getMemberData,
   hasAnyPermission,
-  canAccessProject
+  canAccessProject,
+  isOwnerOrAdmin,
+  isProjectAdmin
 } from '@/server/utils/permissions'
 import { PERMISSIONS, PROJECT_PERMISSION_SET } from '@/constants/permissions'
 
@@ -12,12 +14,24 @@ export default defineEventHandler(async (event) => {
   const projectId = getRouterParam(event, 'projectId')
   const memberId = getRouterParam(event, 'memberId')
 
-  const { workspaceId, permissions: taskPermissions } = await readBody(event)
+  const {
+    workspaceId,
+    permissions: taskPermissions,
+    role: newRole
+  } = await readBody(event)
 
   if (!workspaceId || !projectId || !memberId) {
     throw createError({
       statusCode: 400,
       message: 'Workspace ID, Project ID, and Member ID are required'
+    })
+  }
+
+  // Validate role if provided
+  if (newRole !== undefined && newRole !== 'admin' && newRole !== 'member') {
+    throw createError({
+      statusCode: 400,
+      message: 'Invalid role. Must be "admin" or "member"'
     })
   }
 
@@ -31,18 +45,42 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verify user has permission to assign members to projects
+  // Verify caller permissions
   const member = await getMemberData(workspaceId, uid)
+  const callerIsWsOwnerOrAdmin = isOwnerOrAdmin(member?.role)
 
-  if (
-    !hasAnyPermission(member?.role, member?.permissions ?? null, [
-      PERMISSIONS.ASSIGN_PROJECT
-    ])
-  ) {
+  // Check if caller is project admin
+  let callerIsProjectAdmin = false
+  if (!callerIsWsOwnerOrAdmin) {
+    const callerAssignmentRef = db.doc(
+      `workspaces/${workspaceId}/projects/${projectId}/members/${uid}`
+    )
+    const callerAssignmentSnap = await callerAssignmentRef.get()
+    callerIsProjectAdmin =
+      callerAssignmentSnap.exists &&
+      isProjectAdmin(callerAssignmentSnap.data()?.role)
+  }
+
+  // Only workspace owner/admin can set role to 'admin'
+  if (newRole === 'admin' && !callerIsWsOwnerOrAdmin) {
     throw createError({
       statusCode: 403,
-      message: 'You do not have permission to manage project assignments'
+      message: 'Only workspace owners and admins can assign project admin role'
     })
+  }
+
+  // Workspace owner/admin or project admin can manage assignments
+  if (!callerIsWsOwnerOrAdmin && !callerIsProjectAdmin) {
+    if (
+      !hasAnyPermission(member?.role, member?.permissions ?? null, [
+        PERMISSIONS.ASSIGN_PROJECT
+      ])
+    ) {
+      throw createError({
+        statusCode: 403,
+        message: 'You do not have permission to manage project assignments'
+      })
+    }
   }
 
   // Prevent self-assignment to avoid privilege escalation
@@ -84,17 +122,25 @@ export default defineEventHandler(async (event) => {
   const assignmentSnap = await assignmentRef.get()
 
   if (assignmentSnap.exists) {
-    // Update existing assignment with new permissions
-    await assignmentRef.update({
-      permissions: taskPermissions || null
-    })
+    const updateData: Record<string, unknown> = {}
+    if (taskPermissions !== undefined) {
+      updateData.permissions = taskPermissions || null
+    }
+    if (newRole !== undefined) {
+      updateData.role = newRole
+      // Admin does not need granular permissions
+      if (newRole === 'admin') {
+        updateData.permissions = null
+      }
+    }
+    await assignmentRef.update(updateData)
   } else {
-    // Create new assignment with permissions
     const assignment: ProjectAssignment = {
-      role: 'editor',
+      role: newRole || 'member',
       assignedAt: new Date().toISOString(),
       assignedBy: uid,
-      permissions: taskPermissions || undefined
+      permissions:
+        newRole === 'admin' ? undefined : (taskPermissions || undefined)
     }
     await assignmentRef.set(assignment)
   }

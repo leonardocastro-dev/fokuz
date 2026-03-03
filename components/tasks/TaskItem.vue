@@ -62,51 +62,43 @@ const handleEditFromInfo = () => {
   }, 300)
 }
 
-// Use project-specific permissions if provided, otherwise fall back to taskStore
-const canEdit = computed(() => {
+// Check project permissions first, then workspace role/permissions, then taskStore fallback
+const checkPermission = (permissions: string[]) => {
   if (props.projectPermissions) {
-    return hasAnyPermission(null, props.projectPermissions, [
-      PERMISSIONS.MANAGE_TASKS,
-      PERMISSIONS.EDIT_TASKS
-    ])
+    if (hasAnyPermission(null, props.projectPermissions, permissions)) return true
   }
   if (props.workspaceRole || props.workspacePermissions) {
-    return hasAnyPermission(
-      props.workspaceRole,
-      props.workspacePermissions ?? null,
-      [PERMISSIONS.MANAGE_TASKS, PERMISSIONS.EDIT_TASKS]
+    if (
+      hasAnyPermission(
+        props.workspaceRole,
+        props.workspacePermissions ?? null,
+        permissions
+      )
     )
+      return true
   }
-  return taskStore.canEditTasks
+  return null
+}
+
+const canEdit = computed(() => {
+  const result = checkPermission([
+    PERMISSIONS.MANAGE_TASKS,
+    PERMISSIONS.EDIT_TASKS
+  ])
+  return result ?? taskStore.canEditTasks
 })
 
 const canDelete = computed(() => {
-  if (props.projectPermissions) {
-    return hasAnyPermission(null, props.projectPermissions, [
-      PERMISSIONS.MANAGE_TASKS,
-      PERMISSIONS.DELETE_TASKS
-    ])
-  }
-  if (props.workspaceRole || props.workspacePermissions) {
-    return hasAnyPermission(
-      props.workspaceRole,
-      props.workspacePermissions ?? null,
-      [PERMISSIONS.MANAGE_TASKS, PERMISSIONS.DELETE_TASKS]
-    )
-  }
-  return taskStore.canDeleteTasks
+  const result = checkPermission([
+    PERMISSIONS.MANAGE_TASKS,
+    PERMISSIONS.DELETE_TASKS
+  ])
+  return result ?? taskStore.canDeleteTasks
 })
 
 const canToggleStatus = computed(() => {
-  if (props.projectPermissions) {
-    return hasAnyPermission(null, props.projectPermissions, [
-      PERMISSIONS.TOGGLE_STATUS
-    ])
-  }
-  if (props.workspaceRole) {
-    return isOwnerOrAdmin(props.workspaceRole)
-  }
-  return taskStore.canToggleTaskStatus
+  const result = checkPermission([PERMISSIONS.TOGGLE_STATUS])
+  return result ?? taskStore.canToggleTaskStatus
 })
 
 const hasAnyAction = computed(() => canEdit.value || canDelete.value)
@@ -223,13 +215,7 @@ const formatDueDate = (date: Date) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button
-            v-else
-            variant="ghost"
-            size="icon"
-            class="h-6 w-6 p-0"
-            @click.stop
-          >
+          <div v-else class="flex h-6 w-6 items-center justify-center">
             <span
               v-if="task.status === 'completed'"
               class="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500"
@@ -241,7 +227,7 @@ const formatDueDate = (date: Date) => {
               :class="getStatusIconClass(task.status)"
             />
             <CircleDashed v-else :class="getStatusIconClass(task.status)" />
-          </Button>
+          </div>
         </div>
 
         <div class="flex-1 overflow-hidden">

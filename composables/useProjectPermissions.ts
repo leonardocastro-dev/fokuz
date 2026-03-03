@@ -34,7 +34,21 @@ export const useProjectPermissions = () => {
         )
         const snap = await getDoc(assignmentRef)
 
-        const projectPerms = snap.exists() ? snap.data()?.permissions || {} : {}
+        let projectPerms: Record<string, boolean> = {}
+        if (snap.exists()) {
+          const data = snap.data()
+          if (data?.role === 'admin') {
+            projectPerms = {
+              'manage-tasks': true,
+              'create-tasks': true,
+              'edit-tasks': true,
+              'delete-tasks': true,
+              'toggle-status': true
+            }
+          } else {
+            projectPerms = data?.permissions || {}
+          }
+        }
 
         // Merge filtered workspace + project permissions
         projectPermissionsMap.value[projectId] = {

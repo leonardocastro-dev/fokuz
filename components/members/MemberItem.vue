@@ -10,7 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Crown, Shield, Lock, Trash2 } from 'lucide-vue-next'
+import {
+  MoreHorizontal,
+  Crown,
+  LockIcon,
+  ShieldPlus,
+  ShieldMinus,
+  Lock,
+  Trash2
+} from 'lucide-vue-next'
 import { useAuth } from '@/composables/useAuth'
 import { ROLES, PERMISSIONS } from '@/constants/permissions'
 import { toast } from 'vue-sonner'
@@ -279,7 +287,7 @@ const handlePermissionsUpdated = () => {
           Owner
         </Badge>
         <Badge v-else-if="isAdmin" variant="outline" class="gap-1">
-          <Shield class="h-3 w-3" />
+          <LockIcon class="h-3 w-3" />
           Admin
         </Badge>
 
@@ -295,7 +303,7 @@ const handlePermissionsUpdated = () => {
               v-if="canManagePermissions"
               @click="isPermissionsOpen = true"
             >
-              <Shield class="h-4 w-4" />
+              <LockIcon class="h-4 w-4" />
               Permissions
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -316,7 +324,7 @@ const handlePermissionsUpdated = () => {
               :disabled="isUpdatingAdminRole"
               @click="updateAdminRole(true)"
             >
-              <Shield class="h-4 w-4" />
+              <ShieldPlus class="h-4 w-4" />
               {{ isUpdatingAdminRole ? 'Updating...' : 'Promote to Admin' }}
             </DropdownMenuItem>
 
@@ -325,7 +333,7 @@ const handlePermissionsUpdated = () => {
               :disabled="isUpdatingAdminRole"
               @click="updateAdminRole(false)"
             >
-              <Shield class="h-4 w-4" />
+              <ShieldMinus class="h-4 w-4" />
               {{ isUpdatingAdminRole ? 'Updating...' : 'Demote Admin' }}
             </DropdownMenuItem>
 

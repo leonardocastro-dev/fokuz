@@ -15,12 +15,20 @@ import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import {
   NestedCheckboxes,
   type NestedItem
 } from '@/components/ui/nested-checkboxes'
 import { toast } from 'vue-sonner'
 import { useAuth } from '@/composables/useAuth'
 import { useMembers } from '@/composables/useMembers'
+import { isOwnerOrAdmin } from '@/constants/permissions'
 
 const props = defineProps<{
   projectId: string
@@ -44,11 +52,21 @@ const {
   hasAccessProjectsPermission
 } = useMembers()
 
+const projectStore = useProjectStore()
+
 const isSaving = ref(false)
 const isLoading = ref(false)
 const selectedMemberIds = ref<string[]>([])
 const initialMemberIds = ref<string[]>([])
 const expandedMemberId = ref<string | null>(null)
+
+// Per-member role tracking
+const memberRoles = ref<Record<string, ProjectRole>>({})
+const initialMemberRoles = ref<Record<string, ProjectRole>>({})
+
+const canAssignAdminRole = computed(() => {
+  return isOwnerOrAdmin(projectStore.memberRole)
+})
 
 const toggleExpand = (memberId: string) => {
   expandedMemberId.value = expandedMemberId.value === memberId ? null : memberId
@@ -172,6 +190,12 @@ const initializeMemberTaskPermissions = (memberId: string) => {
   return state
 }
 
+const initializeMemberRole = (memberId: string): ProjectRole => {
+  const assignmentData =
+    projectAssignmentsDataMap.value[props.projectId]?.[memberId]
+  return assignmentData?.role === 'admin' ? 'admin' : 'member'
+}
+
 watch(open, async (isOpen) => {
   if (isOpen) {
     await loadData()
@@ -186,6 +210,7 @@ const loadData = async () => {
 
     const assigned = projectAssignmentsMap.value[props.projectId] || []
     const taskPerms: Record<string, Record<string, boolean>> = {}
+    const roles: Record<string, ProjectRole> = {}
 
     // Include access-projects members even without an existing assignment
     const accessProjectsIds = membersForProjects.value
@@ -195,12 +220,15 @@ const loadData = async () => {
 
     for (const memberId of allSelectedIds) {
       taskPerms[memberId] = initializeMemberTaskPermissions(memberId)
+      roles[memberId] = initializeMemberRole(memberId)
     }
 
     selectedMemberIds.value = [...allSelectedIds]
     initialMemberIds.value = [...allSelectedIds]
     memberTaskPermissions.value = JSON.parse(JSON.stringify(taskPerms))
     initialMemberTaskPermissions.value = JSON.parse(JSON.stringify(taskPerms))
+    memberRoles.value = { ...roles }
+    initialMemberRoles.value = { ...roles }
   } catch (error) {
     console.error('Error loading data:', error)
     toast.error('Failed to load project members', {
@@ -221,11 +249,14 @@ const toggleMember = (memberId: string) => {
     selectedMemberIds.value.splice(index, 1)
     const { [memberId]: _, ...rest } = memberTaskPermissions.value
     memberTaskPermissions.value = rest
+    const { [memberId]: _role, ...restRoles } = memberRoles.value
+    memberRoles.value = restRoles
     if (expandedMemberId.value === memberId) {
       expandedMemberId.value = null
     }
   } else {
     selectedMemberIds.value.push(memberId)
+    memberRoles.value[memberId] = 'member'
     // Initialize empty task permissions for this member
     const state: Record<string, boolean> = {}
     const initFromItems = (items: NestedItem[]) => {
@@ -242,11 +273,23 @@ const toggleMember = (memberId: string) => {
   }
 }
 
+const updateMemberRole = (memberId: string, role: string) => {
+  memberRoles.value[memberId] = role as ProjectRole
+}
+
 const updateMemberPermissions = (
   memberId: string,
   newState: Record<string, boolean>
 ) => {
   memberTaskPermissions.value[memberId] = { ...newState }
+}
+
+const isMemberSelected = (memberId: string) => {
+  return (
+    hasAccessProjectsPermission(
+      membersForProjects.value.find((m) => m.uid === memberId)!
+    ) || selectedMemberIds.value.includes(memberId)
+  )
 }
 
 const hasChanges = computed(() => {
@@ -258,6 +301,13 @@ const hasChanges = computed(() => {
     !selectedMemberIds.value.every((id) => initialMemberIds.value.includes(id))
   ) {
     return true
+  }
+
+  // Check role changes per member
+  for (const memberId of selectedMemberIds.value) {
+    if (memberRoles.value[memberId] !== initialMemberRoles.value[memberId]) {
+      return true
+    }
   }
 
   // Check task permission changes per member
@@ -315,14 +365,21 @@ const save = async () => {
       }
     })
 
-    // Step 2: Update permissions for each member that has changes
+    // Step 2: Update roles and permissions for each member that has changes
     const permissionPromises: Promise<any>[] = []
     for (const memberId of selectedMemberIds.value) {
-      const current = memberTaskPermissions.value[memberId] || {}
-      const initial = initialMemberTaskPermissions.value[memberId] || {}
+      const currentPerms = memberTaskPermissions.value[memberId] || {}
+      const initialPerms = initialMemberTaskPermissions.value[memberId] || {}
+      const currentRole = memberRoles.value[memberId]
+      const initialRole = initialMemberRoles.value[memberId]
 
-      if (hasPermissionChanges(current, initial)) {
-        const perms = getOptimizedPermissions(current)
+      const permsChanged = hasPermissionChanges(currentPerms, initialPerms)
+      const roleChanged = currentRole !== initialRole
+
+      if (permsChanged || roleChanged) {
+        const isAdmin = currentRole === 'admin'
+        const perms = isAdmin ? null : getOptimizedPermissions(currentPerms)
+
         permissionPromises.push(
           $fetch<{ success: boolean }>(
             `/api/projects/${props.projectId}/assignments/${memberId}`,
@@ -331,7 +388,12 @@ const save = async () => {
               headers: { Authorization: `Bearer ${token}` },
               body: {
                 workspaceId: props.workspaceId,
-                permissions: Object.keys(perms).length > 0 ? perms : null
+                permissions: isAdmin
+                  ? null
+                  : Object.keys(perms || {}).length > 0
+                    ? perms
+                    : null,
+                role: currentRole
               }
             }
           )
@@ -374,7 +436,7 @@ const save = async () => {
       <DialogHeader class="pt-6 px-6 flex-shrink-0">
         <DialogTitle>Project Members</DialogTitle>
         <DialogDescription>
-          Manage members and their task permissions
+          Manage members, roles and their task permissions
         </DialogDescription>
       </DialogHeader>
 
@@ -454,10 +516,7 @@ const save = async () => {
                   All projects
                 </span>
                 <button
-                  v-if="
-                    hasAccessProjectsPermission(member) ||
-                    selectedMemberIds.includes(member.uid)
-                  "
+                  v-if="isMemberSelected(member.uid)"
                   class="p-1 rounded-md hover:bg-muted transition-colors"
                   @click.stop="toggleExpand(member.uid)"
                 >
@@ -470,29 +529,60 @@ const save = async () => {
                 </button>
               </div>
 
-              <!-- Task Permissions (shown when expanded) -->
+              <!-- Expanded section (role selector + permissions) -->
               <div
                 class="grid transition-all duration-300 ease-in-out"
                 :class="
-                  expandedMemberId === member.uid &&
-                  (hasAccessProjectsPermission(member) ||
-                    selectedMemberIds.includes(member.uid))
+                  expandedMemberId === member.uid && isMemberSelected(member.uid)
                     ? 'grid-rows-[1fr] opacity-100 mt-3'
                     : 'grid-rows-[0fr] opacity-0'
                 "
               >
                 <div class="overflow-hidden pl-7 border-l-2 border-muted ml-2">
-                  <Label class="text-xs text-muted-foreground mb-2 block">
-                    Task Permissions
-                  </Label>
-                  <NestedCheckboxes
-                    :model-value="memberTaskPermissions[member.uid] || {}"
-                    :items="taskPermissionItems"
-                    :disabled="isSaving"
-                    @update:model-value="
-                      (v) => updateMemberPermissions(member.uid, v)
-                    "
-                  />
+                  <!-- Role selector -->
+                  <div class="flex items-center gap-2 mb-3">
+                    <Label class="text-xs text-muted-foreground shrink-0">
+                      Role
+                    </Label>
+                    <Select
+                      :model-value="memberRoles[member.uid] || 'member'"
+                      :disabled="isSaving || !canAssignAdminRole"
+                      @update:model-value="
+                        (v) => updateMemberRole(member.uid, v)
+                      "
+                    >
+                      <SelectTrigger class="h-8 w-32 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="member">Member</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <!-- Admin note -->
+                  <p
+                    v-if="memberRoles[member.uid] === 'admin'"
+                    class="text-xs text-muted-foreground italic"
+                  >
+                    Admins have all project permissions
+                  </p>
+
+                  <!-- Task Permissions (only for members) -->
+                  <template v-else>
+                    <Label class="text-xs text-muted-foreground mb-2 block">
+                      Task Permissions
+                    </Label>
+                    <NestedCheckboxes
+                      :model-value="memberTaskPermissions[member.uid] || {}"
+                      :items="taskPermissionItems"
+                      :disabled="isSaving"
+                      @update:model-value="
+                        (v) => updateMemberPermissions(member.uid, v)
+                      "
+                    />
+                  </template>
                 </div>
               </div>
             </div>

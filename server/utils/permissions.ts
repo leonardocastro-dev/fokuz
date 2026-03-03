@@ -8,11 +8,13 @@ import {
   PERMISSIONS,
   WORKSPACE_PERMISSIONS,
   PROJECT_PERMISSIONS,
+  PROJECT_ROLES,
   impliesWorkspace,
   impliesProject,
   isOwner,
   isAdmin,
   isOwnerOrAdmin,
+  isProjectAdmin,
   hasPermission,
   hasAnyPermission,
   hasWorkspacePermission,
@@ -25,6 +27,7 @@ export {
   isOwner,
   isAdmin,
   isOwnerOrAdmin,
+  isProjectAdmin,
   hasPermission,
   hasAnyPermission,
   hasWorkspacePermission,
@@ -33,6 +36,7 @@ export {
   PERMISSIONS,
   WORKSPACE_PERMISSIONS,
   PROJECT_PERMISSIONS,
+  PROJECT_ROLES,
   impliesWorkspace,
   impliesProject,
   WORKSPACE_PERMISSION_SET,
@@ -172,7 +176,20 @@ export async function requireProjectPermission(
     `workspaces/${workspaceId}/projects/${projectId}/members/${userId}`
   )
   const snap = await assignmentRef.get()
-  const projectPerms = snap.exists ? snap.data()?.permissions || {} : {}
+
+  if (!snap.exists) {
+    throw createError({
+      statusCode: 403,
+      message: 'You do not have permission to perform this action'
+    })
+  }
+
+  const assignmentData = snap.data()
+
+  // Project admin has all project permissions
+  if (isProjectAdmin(assignmentData?.role)) return member
+
+  const projectPerms = assignmentData?.permissions || {}
 
   for (const perm of requiredPermissions) {
     if (hasProjectPermission(null, projectPerms, perm)) return member
@@ -226,7 +243,7 @@ export async function assignUserToProject(
   workspaceId: string,
   projectId: string,
   userId: string,
-  role: ProjectRole = 'editor',
+  role: ProjectRole = 'member',
   assignedBy?: string
 ): Promise<void> {
   const assignmentRef = db.doc(
@@ -283,7 +300,7 @@ export async function updateProjectMembers(
         `workspaces/${workspaceId}/projects/${projectId}/members/${memberId}`
       )
       const assignment: ProjectAssignment = {
-        role: 'editor',
+        role: 'member',
         assignedAt: new Date().toISOString(),
         assignedBy
       }
@@ -306,7 +323,8 @@ export async function updateMemberProjectAssignment(
   projectId: string,
   memberId: string,
   permissions: ProjectAssignmentPermissions,
-  assignedBy?: string
+  assignedBy?: string,
+  role?: ProjectRole
 ): Promise<void> {
   const assignmentRef = db.doc(
     `workspaces/${workspaceId}/projects/${projectId}/members/${memberId}`
@@ -314,12 +332,14 @@ export async function updateMemberProjectAssignment(
   const assignmentSnap = await assignmentRef.get()
 
   if (assignmentSnap.exists) {
-    // Update existing assignment with new permissions
-    await assignmentRef.update({ permissions })
+    const updateData: Record<string, unknown> = { permissions }
+    if (role !== undefined) {
+      updateData.role = role
+    }
+    await assignmentRef.update(updateData)
   } else {
-    // Create new assignment with permissions
     const assignment: ProjectAssignment = {
-      role: 'editor',
+      role: role || 'member',
       assignedAt: new Date().toISOString(),
       assignedBy,
       permissions
@@ -348,7 +368,12 @@ export async function canToggleTaskStatus(
 
   if (!assignmentSnap.exists) return false
 
-  const assignmentPermissions = assignmentSnap.data()?.permissions || {}
+  const assignmentData = assignmentSnap.data()
+
+  // Project admin can always toggle
+  if (isProjectAdmin(assignmentData?.role)) return true
+
+  const assignmentPermissions = assignmentData?.permissions || {}
   return assignmentPermissions[PERMISSIONS.TOGGLE_STATUS] === true
 }
 

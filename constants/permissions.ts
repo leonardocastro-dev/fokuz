@@ -51,6 +51,19 @@ export type WorkspacePermission =
 export type ProjectPermission =
   (typeof PROJECT_PERMISSIONS)[keyof typeof PROJECT_PERMISSIONS]
 
+export const PROJECT_ROLES = {
+  ADMIN: 'admin',
+  MEMBER: 'member'
+} as const
+
+export type ProjectRoleType = (typeof PROJECT_ROLES)[keyof typeof PROJECT_ROLES]
+
+export const isProjectAdmin = (
+  projectRole: string | null | undefined
+): boolean => {
+  return projectRole === PROJECT_ROLES.ADMIN
+}
+
 // Scoped implies maps
 export const impliesWorkspace: Record<string, string[]> = {
   [PERMISSIONS.MANAGE_PROJECTS]: [
@@ -107,13 +120,14 @@ export const isOwnerOrAdmin = (
 export const hasPermission = (
   role: Role | string | null | undefined,
   permissions: Record<string, boolean> | null,
-  permission: string
+  permission: string,
+  projectRole?: string | null
 ): boolean => {
   if (isWorkspaceScopedPermission(permission)) {
     return hasWorkspacePermission(role, permissions, permission)
   }
   if (isProjectScopedPermission(permission)) {
-    return hasProjectPermission(role, permissions, permission)
+    return hasProjectPermission(role, permissions, permission, projectRole)
   }
   if (isOwnerOrAdmin(role)) return true
   if (!permissions) return false
@@ -124,10 +138,13 @@ export const hasPermission = (
 export const hasAnyPermission = (
   role: Role | string | null | undefined,
   permissions: Record<string, boolean> | null,
-  permissionList: string[]
+  permissionList: string[],
+  projectRole?: string | null
 ): boolean => {
   if (isOwnerOrAdmin(role)) return true
-  return permissionList.some((p) => hasPermission(role, permissions, p))
+  return permissionList.some((p) =>
+    hasPermission(role, permissions, p, projectRole)
+  )
 }
 
 // Scope-aware permission checks
@@ -149,9 +166,11 @@ export const hasWorkspacePermission = (
 export const hasProjectPermission = (
   role: Role | string | null | undefined,
   projectPermissions: Record<string, boolean> | null,
-  permission: string
+  permission: string,
+  projectRole?: string | null
 ): boolean => {
   if (isOwnerOrAdmin(role)) return true
+  if (isProjectAdmin(projectRole)) return true
   if (!projectPermissions) return false
   if (projectPermissions[permission] === true) return true
   for (const [parent, children] of Object.entries(impliesProject)) {

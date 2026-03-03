@@ -1,4 +1,4 @@
-declare type ProjectRole = 'owner' | 'editor' | 'viewer'
+declare type ProjectRole = 'admin' | 'member'
 declare type TaskRole = 'assignee'
 
 declare interface ProjectAssignmentPermissions {

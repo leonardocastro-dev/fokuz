@@ -391,9 +391,21 @@ export const useTaskStore = defineStore('tasks', {
         userId
       )
       const userAssignmentSnap = await getDoc(userAssignmentRef)
-      const taskPermissions = userAssignmentSnap.exists()
-        ? userAssignmentSnap.data().permissions || {}
-        : {}
+      let taskPermissions: Record<string, boolean> = {}
+      if (userAssignmentSnap.exists()) {
+        const assignmentData = userAssignmentSnap.data()
+        if (assignmentData.role === 'admin') {
+          taskPermissions = {
+            'manage-tasks': true,
+            'create-tasks': true,
+            'edit-tasks': true,
+            'delete-tasks': true,
+            'toggle-status': true
+          }
+        } else {
+          taskPermissions = assignmentData.permissions || {}
+        }
+      }
       this.permissionsByProject[projectId] = {
         ...filteredWorkspacePerms,
         ...taskPermissions

@@ -18,6 +18,7 @@ const {
   members,
   loadWorkspaceMembers,
   projectAssignmentsMap,
+  projectAssignmentsDataMap,
   loadAllProjectAssignments
 } = useMembers()
 
@@ -27,7 +28,14 @@ const isMembersModalOpen = ref(false)
 const taskStore = useTaskStore()
 const projectStore = useProjectStore()
 
-const canManageMembers = computed(() => projectStore.canAssignProjectMembers)
+const canManageMembers = computed(() => {
+  if (projectStore.canAssignProjectMembers) return true
+  // Project admins can also manage members
+  if (!user.value) return false
+  const assignment =
+    projectAssignmentsDataMap.value[projectId]?.[user.value.uid]
+  return assignment?.role === 'admin'
+})
 
 const assignedMembers = computed(() => {
   const assignedIds = projectAssignmentsMap.value[projectId] || []
@@ -124,7 +132,7 @@ watch(
           <div class="mt-4 flex items-center gap-3">
             <div
               v-if="assignedMembers.length > 0"
-              class="flex -space-x-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:ring-2"
+              class="flex -space-x-2 *:data-[slot=avatar]:ring-gray-50 *:data-[slot=avatar]:ring-2"
             >
               <Avatar
                 v-for="member in displayedMembers"
