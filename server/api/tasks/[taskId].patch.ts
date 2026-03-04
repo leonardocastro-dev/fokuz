@@ -108,6 +108,12 @@ export default defineEventHandler(async (event) => {
         message: 'Task title cannot be empty'
       })
     }
+    if (title.trim().length > 100) {
+      throw createError({
+        statusCode: 400,
+        message: 'Task title must not exceed 100 characters'
+      })
+    }
     updates.title = title.trim()
   }
 

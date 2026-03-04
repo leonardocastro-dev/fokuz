@@ -42,6 +42,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Task title is required' })
   }
 
+  if (title.trim().length > 100) {
+    throw createError({
+      statusCode: 400,
+      message: 'Task title must not exceed 100 characters'
+    })
+  }
+
   if (typeof projectId !== 'string' || projectId.trim().length === 0) {
     throw createError({
       statusCode: 400,

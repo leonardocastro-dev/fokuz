@@ -201,7 +201,7 @@ const handleClose = () => {
   >
     <SheetContent
       side="right"
-      class="sm:max-w-[480px] w-full p-0 flex flex-col overflow-hidden"
+      class="md:max-w-[480px] w-full p-0 flex flex-col overflow-hidden"
     >
       <template v-if="hasAnyAction" #header-actions>
         <DropdownMenu>
@@ -253,7 +253,7 @@ const handleClose = () => {
 
       <!-- Title -->
       <SheetHeader>
-        <SheetTitle class="text-2xl font-medium leading-tight">
+        <SheetTitle class="md:text-2xl text-lg font-medium leading-tight break-words">
           {{ task.title }}
         </SheetTitle>
         <SheetDescription class="sr-only">
@@ -262,7 +262,7 @@ const handleClose = () => {
       </SheetHeader>
 
       <!-- Metadata rows -->
-      <div class="p-5 grid grid-cols-[auto_1fr] gap-x-24 gap-y-4 items-center">
+      <div class="p-5 grid grid-cols-[auto_1fr] gap-x-24 gap-y-4 items-center overflow-hidden">
         <!-- Created -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <Calendar class="h-4 w-4 text-muted-foreground/70" />

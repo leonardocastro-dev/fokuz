@@ -119,10 +119,14 @@ watch(
   { immediate: true }
 )
 
+const TITLE_MAX_LENGTH = 100
+
 const handleSubmit = () => {
   if (isSubmitDisabled.value) {
     if (!title.value.trim()) {
       titleError.value = 'Title is required'
+    } else if (title.value.trim().length > TITLE_MAX_LENGTH) {
+      titleError.value = `Title must not exceed ${TITLE_MAX_LENGTH} characters`
     }
     if (!hasValidProjectSelection.value) {
       projectError.value = 'Project is required'
@@ -206,6 +210,7 @@ const hasValidProjectSelection = computed(() => {
 
 const isSubmitDisabled = computed(() => {
   if (!title.value.trim()) return true
+  if (title.value.trim().length > TITLE_MAX_LENGTH) return true
   return !hasValidProjectSelection.value
 })
 
@@ -243,6 +248,7 @@ const handleClose = () => {
             id="title"
             v-model="title"
             placeholder="Task title"
+            :maxlength="TITLE_MAX_LENGTH"
             :class="titleError ? 'border-red-700' : ''"
             @update:model-value="
               (val) => {
@@ -250,7 +256,14 @@ const handleClose = () => {
               }
             "
           />
-          <p v-if="titleError" class="text-sm text-red-700">{{ titleError }}</p>
+          <div class="flex justify-between items-center">
+            <p v-if="titleError" class="text-sm text-red-700">
+              {{ titleError }}
+            </p>
+            <span class="text-xs text-muted-foreground ml-auto">
+              {{ title.length }}/{{ TITLE_MAX_LENGTH }}
+            </span>
+          </div>
         </div>
 
         <div class="space-y-2">

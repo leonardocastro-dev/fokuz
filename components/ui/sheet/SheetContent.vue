@@ -40,7 +40,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
         cn(
           'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
           side === 'right' &&
-            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right right-4 top-4 bottom-4 h-[calc(100vh-2rem)] w-3/4 rounded-2xl sm:max-w-sm',
+            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-0 h-full w-full md:inset-auto md:right-4 md:top-4 md:bottom-4 md:h-[calc(100vh-2rem)] md:w-3/4 md:rounded-2xl md:max-w-sm',
           side === 'left' &&
             'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
           side === 'top' &&
