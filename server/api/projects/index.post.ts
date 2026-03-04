@@ -22,6 +22,27 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Project title is required' })
   }
 
+  if (title.trim().length < 3) {
+    throw createError({
+      statusCode: 400,
+      message: 'Title must be at least 3 characters'
+    })
+  }
+
+  if (title.trim().length > 100) {
+    throw createError({
+      statusCode: 400,
+      message: 'Title must be less than 100 characters'
+    })
+  }
+
+  if (description && typeof description === 'string' && description.length > 500) {
+    throw createError({
+      statusCode: 400,
+      message: 'Description must be less than 500 characters'
+    })
+  }
+
   // Verify user is a workspace member
   const member = await getMemberData(workspaceId, uid)
 

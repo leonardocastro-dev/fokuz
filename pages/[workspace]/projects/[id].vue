@@ -125,12 +125,12 @@ watch(
 
         <div v-else-if="currentProject">
           <h1
-            class="text-2xl font-bold text-primary mb-2 flex items-center gap-2"
+            class="text-2xl font-bold text-primary mb-2 flex items-center gap-2 break-all min-w-0"
           >
             <span v-if="currentProject.emoji">{{ currentProject.emoji }}</span>
             {{ currentProject.title }}
           </h1>
-          <p v-if="currentProject.description" class="text-muted-foreground">
+          <p v-if="currentProject.description" class="text-muted-foreground break-all">
             {{ currentProject.description }}
           </p>
 

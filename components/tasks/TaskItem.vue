@@ -231,7 +231,7 @@ const formatDueDate = (date: Date) => {
         </div>
 
         <div class="flex-1 overflow-hidden">
-          <div class="mb-1 flex min-h-6 min-w-0 items-center gap-2">
+          <div class="mb-2 flex min-h-6 min-w-0 items-center gap-2">
             <span
               :class="`font-medium text-sm truncate ${isCompleted ? 'line-through text-muted-foreground opacity-70' : ''}`"
             >
@@ -242,50 +242,50 @@ const formatDueDate = (date: Date) => {
             </Badge>
           </div>
 
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2 text-xs text-muted-foreground">
-              <template v-if="projectName">
-                <span class="text-xs text-muted-foreground">
-                  {{ projectName }}
-                </span>
-                <span>•</span>
-              </template>
+          <div class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+            <div v-if="projectName" class="min-w-0 sm:flex-1">
+              <span class="block min-w-0 truncate text-xs text-muted-foreground">
+                {{ projectName }}
+              </span>
+            </div>
+
+            <div class="flex min-w-0 items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-none sm:justify-end">
               <span
                 v-if="task.dueDate"
-                class="flex items-center gap-1"
+                class="flex min-w-0 shrink-0 items-center gap-1"
                 :class="isOverdue ? 'text-red-500' : ''"
               >
                 <Clock class="h-3.5 w-3.5" />
                 {{ isOverdue ? 'Overdue' : 'Due' }}
                 {{ formatDueDate(new Date(task.dueDate)) }}
               </span>
-              <span v-else>No due date</span>
-            </div>
+              <span v-else class="shrink-0">No due date</span>
 
-            <div
-              v-if="taskMembersWithData.length > 0"
-              class="flex -space-x-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:ring-2"
-            >
-              <Avatar
-                v-for="member in displayedMembers"
-                :key="member.uid"
-                :uid="member.uid"
-                class="h-6 w-6"
+              <div
+                v-if="taskMembersWithData.length > 0"
+                class="flex shrink-0 -space-x-2 *:data-[slot=avatar]:ring-background *:data-[slot=avatar]:ring-2"
               >
-                <AvatarImage
-                  v-if="member.avatarUrl"
-                  :src="member.avatarUrl"
-                  :alt="member.username || ''"
-                />
-                <AvatarFallback class="text-xs">
-                  {{ member.username?.charAt(0).toUpperCase() || '?' }}
-                </AvatarFallback>
-              </Avatar>
-              <Avatar v-if="extraMembersCount > 0" class="h-8 w-8">
-                <AvatarFallback class="text-xs bg-muted">
-                  +{{ extraMembersCount }}
-                </AvatarFallback>
-              </Avatar>
+                <Avatar
+                  v-for="member in displayedMembers"
+                  :key="member.uid"
+                  :uid="member.uid"
+                  class="h-6 w-6"
+                >
+                  <AvatarImage
+                    v-if="member.avatarUrl"
+                    :src="member.avatarUrl"
+                    :alt="member.username || ''"
+                  />
+                  <AvatarFallback class="text-xs">
+                    {{ member.username?.charAt(0).toUpperCase() || '?' }}
+                  </AvatarFallback>
+                </Avatar>
+                <Avatar v-if="extraMembersCount > 0" class="h-8 w-8">
+                  <AvatarFallback class="text-xs bg-muted">
+                    +{{ extraMembersCount }}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
             </div>
           </div>
         </div>

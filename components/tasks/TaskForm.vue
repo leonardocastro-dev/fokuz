@@ -243,7 +243,7 @@ const handleClose = () => {
       </SheetHeader>
       <form class="space-y-4 px-5 pt-4" @submit.prevent="handleSubmit">
         <div class="space-y-2">
-          <Label for="title" class="font-medium"> Title </Label>
+          <Label for="title" class="font-medium">Title *</Label>
           <Input
             id="title"
             v-model="title"
@@ -279,7 +279,7 @@ const handleClose = () => {
         </div>
 
         <div class="space-y-2">
-          <Label for="priority" class="font-medium">Priority</Label>
+          <Label for="priority" class="font-medium">Priority *</Label>
           <RadioGroup
             id="priority"
             v-model="priority"
@@ -334,7 +334,7 @@ const handleClose = () => {
         </div>
 
         <div v-if="!editTask && !projectId" class="space-y-2">
-          <Label for="project" class="font-medium">Project</Label>
+          <Label for="project" class="font-medium">Project *</Label>
           <Select
             v-model="selectedProjectId"
             @update:model-value="

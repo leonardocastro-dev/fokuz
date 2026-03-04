@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   Dialog,
   DialogContent,
@@ -16,11 +16,6 @@ import data from 'emoji-mart-vue-fast/data/all.json'
 import 'emoji-mart-vue-fast/css/emoji-mart.css'
 import { Picker, EmojiIndex } from 'emoji-mart-vue-fast/src'
 import { useWorkspace } from '@/composables/useWorkspace'
-import {
-  validateProjectForm,
-  hasValidationErrors,
-  type ProjectValidationErrors
-} from '@/utils/validation'
 import { showErrorToast } from '@/utils/toast'
 
 const emojiIndex = new EmojiIndex(data)
@@ -43,8 +38,13 @@ const title = ref(props.editProject?.title || '')
 const description = ref(props.editProject?.description || '')
 const emoji = ref(props.editProject?.emoji || '')
 const showEmojiPicker = ref(false)
+const TITLE_MAX_LENGTH = 100
+const TITLE_MIN_LENGTH = 3
+const DESCRIPTION_MAX_LENGTH = 500
+
 const currentTag = ref('')
-const validationErrors = ref<ProjectValidationErrors>({})
+const titleError = ref('')
+const descriptionError = ref('')
 const isSaving = ref(false)
 
 watch(
@@ -69,19 +69,35 @@ const clearEmoji = () => {
   showEmojiPicker.value = false
 }
 
-const handleSubmit = async () => {
-  // Validate
-  const errors = validateProjectForm({
-    title: title.value,
-    description: description.value
-  })
+const isSubmitDisabled = computed(() => {
+  const trimmed = title.value.trim()
+  if (!trimmed || trimmed.length < TITLE_MIN_LENGTH) return true
+  if (trimmed.length > TITLE_MAX_LENGTH) return true
+  if (description.value.length > DESCRIPTION_MAX_LENGTH) return true
+  return false
+})
 
-  if (hasValidationErrors(errors)) {
-    validationErrors.value = errors
+const handleSubmit = async () => {
+  const trimmed = title.value.trim()
+  if (!trimmed) {
+    titleError.value = 'Title is required'
+    return
+  }
+  if (trimmed.length < TITLE_MIN_LENGTH) {
+    titleError.value = `Title must be at least ${TITLE_MIN_LENGTH} characters`
+    return
+  }
+  if (trimmed.length > TITLE_MAX_LENGTH) {
+    titleError.value = `Title must be less than ${TITLE_MAX_LENGTH} characters`
+    return
+  }
+  if (description.value.length > DESCRIPTION_MAX_LENGTH) {
+    descriptionError.value = `Description must be less than ${DESCRIPTION_MAX_LENGTH} characters`
     return
   }
 
-  validationErrors.value = {}
+  titleError.value = ''
+  descriptionError.value = ''
   isSaving.value = true
 
   try {
@@ -130,7 +146,8 @@ const resetForm = () => {
   emoji.value = ''
   showEmojiPicker.value = false
   currentTag.value = ''
-  validationErrors.value = {}
+  titleError.value = ''
+  descriptionError.value = ''
 }
 
 const handleClose = () => {
@@ -209,27 +226,50 @@ const handleClose = () => {
             id="title"
             v-model="title"
             placeholder="Project title"
-            :class="validationErrors.title ? 'border-red-700' : ''"
+            :maxlength="TITLE_MAX_LENGTH"
+            :class="titleError ? 'border-red-700' : ''"
             :disabled="isSaving"
+            @update:model-value="
+              (val) => {
+                if (String(val).trim()) titleError = ''
+              }
+            "
           />
-          <p v-if="validationErrors.title" class="text-xs text-red-700">
-            {{ validationErrors.title }}
-          </p>
+          <div class="flex justify-between items-center">
+            <p v-if="titleError" class="text-xs text-red-700">
+              {{ titleError }}
+            </p>
+            <span class="text-xs text-muted-foreground ml-auto">
+              {{ title.length }}/{{ TITLE_MAX_LENGTH }}
+            </span>
+          </div>
         </div>
 
         <div class="space-y-2">
-          <Label for="description">Description</Label>
+          <Label for="description">Description (optional)</Label>
           <Textarea
             id="description"
             v-model="description"
             placeholder="Add a description..."
             rows="4"
-            :class="validationErrors.description ? 'border-red-700' : ''"
+            :maxlength="DESCRIPTION_MAX_LENGTH"
+            :class="descriptionError ? 'border-red-700' : ''"
             :disabled="isSaving"
+            @update:model-value="
+              () => {
+                if (description.length <= DESCRIPTION_MAX_LENGTH)
+                  descriptionError = ''
+              }
+            "
           />
-          <p v-if="validationErrors.description" class="text-xs text-red-700">
-            {{ validationErrors.description }}
-          </p>
+          <div class="flex justify-between items-center">
+            <p v-if="descriptionError" class="text-xs text-red-700">
+              {{ descriptionError }}
+            </p>
+            <span class="text-xs text-muted-foreground ml-auto">
+              {{ description.length }}/{{ DESCRIPTION_MAX_LENGTH }}
+            </span>
+          </div>
         </div>
 
         <DialogFooter>
@@ -241,7 +281,7 @@ const handleClose = () => {
           >
             Cancel
           </Button>
-          <Button type="submit" :disabled="isSaving">
+          <Button type="submit" :disabled="isSaving || isSubmitDisabled">
             {{
               isSaving
                 ? 'Saving...'
