@@ -18,7 +18,7 @@ const filteredTasks = computed(() => {
 </script>
 
 <template>
-  <div v-if="taskStore.isLoading" class="space-y-2">
+  <div v-if="!taskStore.isLoading" class="space-y-2">
     <Card
       v-for="i in 6"
       :key="`skeleton-${i}`"
@@ -34,7 +34,7 @@ const filteredTasks = computed(() => {
             </div>
             <div class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
               <div class="min-w-0 sm:flex-1">
-                <Skeleton class="h-4 w-28 max-w-full" />
+                <Skeleton class="h-4 w-32 max-w-full" />
               </div>
               <div class="flex items-center justify-between gap-2 sm:justify-end">
                 <Skeleton class="h-4 w-24 shrink-0" />
