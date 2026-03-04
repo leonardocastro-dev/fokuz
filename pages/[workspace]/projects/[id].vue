@@ -60,7 +60,7 @@ const projectId = route.params.id as string
 const workspaceId = route.params.workspace as string
 
 const currentProject = computed(() => {
-  return projectStore.projects.find((p) => p.id === projectId)
+  return projectStore.visibleProjects.find((p) => p.id === projectId)
 })
 
 const handleMembersUpdated = async () => {
@@ -70,6 +70,12 @@ const handleMembersUpdated = async () => {
 onMounted(async () => {
   taskStore.setScopeFilter('assigneds', user.value?.uid)
   await projectStore.loadProjectsForWorkspace(workspaceId, user.value?.uid)
+
+  // Check if user has access to this project
+  if (!projectStore.visibleProjects.find((p) => p.id === projectId)) {
+    return
+  }
+
   if (user.value?.uid) {
     await loadWorkspaceMembers(workspaceId)
     await loadAllProjectAssignments(workspaceId, [projectId])
@@ -180,7 +186,7 @@ watch(
       </header>
     </div>
 
-    <div class="-mx-6 border-b border-border mb-6" />
+    <div v-if="currentProject || projectStore.isLoading" class="-mx-6 border-b border-border mb-6" />
 
     <div
       v-if="currentProject || projectStore.isLoading"

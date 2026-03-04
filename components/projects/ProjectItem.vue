@@ -84,11 +84,11 @@ const completionPercentage = computed(() =>
           class="w-11 h-11 rounded-full flex items-center justify-center bg-muted"
         >
           <span v-if="project.emoji" class="text-xl">{{ project.emoji }}</span>
-          <span v-else class="text-lg font-semibold text-muted-foreground">{{
+          <span v-else class="text-lg bg-input font-semibold text-muted-foreground">{{
             project.title?.charAt(0).toUpperCase()
           }}</span>
         </div>
-        <h3 class="text-lg font-semibold line-clamp-2">
+        <h3 class="text-lg font-semibold line-clamp-2 truncate">
           {{ project.title }}
         </h3>
         <p

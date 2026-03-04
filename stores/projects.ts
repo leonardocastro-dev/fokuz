@@ -2,7 +2,12 @@ import { defineStore } from 'pinia'
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore'
 import { useAuth } from '@/composables/useAuth'
 import { showSuccessToast, showErrorToast } from '@/utils/toast'
-import { PERMISSIONS, hasAnyPermission } from '@/constants/permissions'
+import {
+  PERMISSIONS,
+  hasAnyPermission,
+  hasPermission,
+  isOwnerOrAdmin
+} from '@/constants/permissions'
 
 export const useProjectStore = defineStore('projects', {
   state: () => ({
@@ -12,13 +17,30 @@ export const useProjectStore = defineStore('projects', {
     memberRole: null as string | null,
     memberPermissions: null as Record<string, boolean> | null,
     isGuestMode: false,
-    loadedWorkspaceId: null as string | null
+    loadedWorkspaceId: null as string | null,
+    assignedProjectIds: null as string[] | null
   }),
 
   getters: {
     totalProjects: (state) => state.projects.length,
-    sortedProjects: (state) => {
-      return [...state.projects].sort(
+    hasFullProjectAccess: (state) => {
+      if (state.isGuestMode) return true
+      if (isOwnerOrAdmin(state.memberRole)) return true
+      return hasPermission(
+        state.memberRole,
+        state.memberPermissions,
+        PERMISSIONS.ACCESS_PROJECTS
+      )
+    },
+    visibleProjects(): Project[] {
+      if (this.hasFullProjectAccess) return this.projects
+      if (!this.assignedProjectIds) return []
+      return this.projects.filter((p) =>
+        this.assignedProjectIds!.includes(p.id)
+      )
+    },
+    sortedProjects(): Project[] {
+      return [...this.visibleProjects].sort(
         (a, b) =>
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       )
@@ -139,17 +161,42 @@ export const useProjectStore = defineStore('projects', {
           const snapshot = await getDocs(projectsRef)
 
           if (!snapshot.empty) {
-            // Server handles filtering - return all projects the user can see
-            // For client-side, we load all and let server API handle access control
             this.projects = snapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data()
             })) as Project[]
+
+            // Load project assignments for non-admin users
+            if (!this.hasFullProjectAccess) {
+              const assignedIds: string[] = []
+              await Promise.all(
+                this.projects.map(async (project) => {
+                  const memberRef = doc(
+                    $firestore,
+                    'workspaces',
+                    workspaceId,
+                    'projects',
+                    project.id,
+                    'members',
+                    userId
+                  )
+                  const snap = await getDoc(memberRef)
+                  if (snap.exists()) {
+                    assignedIds.push(project.id)
+                  }
+                })
+              )
+              this.assignedProjectIds = assignedIds
+            } else {
+              this.assignedProjectIds = null
+            }
           } else {
             this.projects = []
+            this.assignedProjectIds = null
           }
         } else {
           this.projects = []
+          this.assignedProjectIds = null
         }
 
         this.loadedWorkspaceId = workspaceId

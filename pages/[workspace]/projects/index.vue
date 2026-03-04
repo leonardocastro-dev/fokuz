@@ -7,7 +7,6 @@ import ProjectForm from '@/components/projects/ProjectForm.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useWorkspace } from '@/composables/useWorkspace'
 import { useMembers } from '@/composables/useMembers'
-import { PERMISSIONS, hasPermission } from '@/constants/permissions'
 
 const { user } = useAuth()
 const { workspaceId } = useWorkspace()
@@ -24,34 +23,7 @@ const editingProject = ref<Project | undefined>()
 const isReloading = ref(false)
 const isInitialLoading = ref(true)
 
-// Filter projects based on access-projects permission
-const visibleProjects = computed(() => {
-  const allProjects = projectStore.projects
-
-  // Guest mode: show all local projects
-  if (projectStore.isGuestMode) return allProjects
-
-  const userPermissions = projectStore.memberPermissions
-
-  // If user has access-projects permission, show all projects
-  if (
-    hasPermission(
-      projectStore.memberRole,
-      userPermissions,
-      PERMISSIONS.ACCESS_PROJECTS
-    )
-  ) {
-    return allProjects
-  }
-
-  // Otherwise, only show projects where user is assigned
-  if (!user.value?.uid) return []
-
-  return allProjects.filter((project) => {
-    const assignedMembers = projectAssignmentsMap.value[project.id] || []
-    return assignedMembers.includes(user.value!.uid)
-  })
-})
+const visibleProjects = computed(() => projectStore.visibleProjects)
 
 const loadAssignments = async () => {
   if (workspaceId.value && projectStore.projects.length > 0) {
