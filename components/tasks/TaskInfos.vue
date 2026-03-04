@@ -201,7 +201,7 @@ const handleClose = () => {
   >
     <SheetContent
       side="right"
-      class="md:max-w-[480px] w-full p-0 flex flex-col overflow-hidden"
+      class="md:max-w-[560px] w-full p-0 flex flex-col overflow-hidden"
     >
       <template v-if="hasAnyAction" #header-actions>
         <DropdownMenu>
@@ -262,7 +262,7 @@ const handleClose = () => {
       </SheetHeader>
 
       <!-- Metadata rows -->
-      <div class="p-5 grid grid-cols-[auto_1fr] gap-x-24 gap-y-4 items-center overflow-hidden">
+      <div class="p-5 grid grid-cols-1 gap-y-3 md:grid-cols-[auto_1fr] md:gap-x-8 md:gap-y-4 md:items-center overflow-hidden">
         <!-- Created -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <Calendar class="h-4 w-4 text-muted-foreground/70" />
@@ -394,12 +394,13 @@ const handleClose = () => {
               <Button
                 variant="outline"
                 size="sm"
+                class="max-w-full"
                 :class="{
                   'hover:bg-muted/80 cursor-pointer': hasMultipleMembers,
                   'cursor-default': !hasMultipleMembers
                 }"
               >
-                <Avatar :uid="firstMember.uid" class="h-5 w-5">
+                <Avatar :uid="firstMember.uid" class="h-5 w-5 shrink-0">
                   <AvatarImage
                     v-if="firstMember.avatarUrl"
                     :src="firstMember.avatarUrl"
@@ -409,7 +410,7 @@ const handleClose = () => {
                     {{ firstMember.username?.charAt(0).toUpperCase() || '?' }}
                   </AvatarFallback>
                 </Avatar>
-                <span class="text-sm">{{
+                <span class="text-sm truncate">{{
                   firstMember.username || firstMember.email
                 }}</span>
                 <template v-if="hasMultipleMembers">
