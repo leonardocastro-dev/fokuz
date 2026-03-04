@@ -209,19 +209,20 @@ const emptyStateMessage = computed(() => {
           <div class="flex items-start gap-2">
             <Skeleton class="h-6 w-6 rounded-full" />
             <div class="flex-1 overflow-hidden">
-              <div class="mb-1 flex min-h-6 items-center gap-2">
+              <div class="mb-2 flex min-h-6 min-w-0 items-center gap-2">
                 <Skeleton class="h-5 w-full max-w-40" />
                 <Skeleton class="h-5 min-w-16" />
               </div>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <Skeleton class="h-4 w-16" />
-                  <Skeleton class="h-4 w-4 rounded-full" />
-                  <Skeleton class="h-4 w-24" />
+              <div class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                <div class="min-w-0 sm:flex-1">
+                  <Skeleton class="h-4 w-28 max-w-full" />
                 </div>
-                <div class="flex -space-x-2">
-                  <Skeleton class="h-6 w-6 rounded-full" />
-                  <Skeleton class="h-6 w-6 rounded-full" />
+                <div class="flex items-center justify-between gap-2 sm:justify-end">
+                  <Skeleton class="h-4 w-24 shrink-0" />
+                  <div class="flex -space-x-2">
+                    <Skeleton class="h-6 w-6 rounded-full" />
+                    <Skeleton class="h-6 w-6 rounded-full" />
+                  </div>
                 </div>
               </div>
             </div>
