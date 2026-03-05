@@ -18,7 +18,7 @@ const filteredTasks = computed(() => {
 </script>
 
 <template>
-  <div v-if="!taskStore.isLoading" class="space-y-2">
+  <div v-if="taskStore.isLoading" class="space-y-2">
     <Card
       v-for="i in 6"
       :key="`skeleton-${i}`"

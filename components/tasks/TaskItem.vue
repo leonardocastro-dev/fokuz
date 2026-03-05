@@ -233,7 +233,7 @@ const formatDueDate = (date: Date) => {
         <div class="flex-1 overflow-hidden">
           <div class="mb-2 flex min-h-6 min-w-0 items-center gap-2">
             <span
-              :class="`font-medium text-sm truncate ${isCompleted ? 'line-through text-muted-foreground opacity-70' : ''}`"
+              :class="`max-w-[570px] font-medium text-sm truncate ${isCompleted ? 'line-through text-muted-foreground opacity-70' : ''}`"
             >
               {{ task.title }}
             </span>
@@ -243,23 +243,32 @@ const formatDueDate = (date: Date) => {
           </div>
 
           <div class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-            <div v-if="projectName" class="min-w-0 sm:flex-1">
-              <span class="block min-w-0 truncate text-xs text-muted-foreground">
+            <div v-if="projectName" class="min-w-0 sm:hidden">
+              <span class="block max-w-[370px] truncate text-xs text-muted-foreground">
                 {{ projectName }}
               </span>
             </div>
 
-            <div class="flex min-w-0 items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-none sm:justify-end">
-              <span
-                v-if="task.dueDate"
-                class="flex min-w-0 shrink-0 items-center gap-1"
-                :class="isOverdue ? 'text-red-500' : ''"
-              >
-                <Clock class="h-3.5 w-3.5" />
-                {{ isOverdue ? 'Overdue' : 'Due' }}
-                {{ formatDueDate(new Date(task.dueDate)) }}
-              </span>
-              <span v-else class="shrink-0">No due date</span>
+            <div class="flex min-w-0 items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-1 sm:justify-between">
+              <div class="flex min-w-0 items-center gap-2">
+                <span
+                  v-if="projectName"
+                  class="hidden max-w-[370px] truncate text-xs text-muted-foreground sm:block"
+                >
+                  {{ projectName }}
+                </span>
+                <span v-if="projectName" class="hidden shrink-0 sm:block">•</span>
+                <span
+                  v-if="task.dueDate"
+                  class="flex shrink-0 items-center gap-1"
+                  :class="isOverdue ? 'text-red-500' : ''"
+                >
+                  <Clock class="h-3.5 w-3.5" />
+                  {{ isOverdue ? 'Overdue' : 'Due' }}
+                  {{ formatDueDate(new Date(task.dueDate)) }}
+                </span>
+                <span v-else class="shrink-0">No due date</span>
+              </div>
 
               <div
                 v-if="taskMembersWithData.length > 0"
