@@ -21,7 +21,9 @@ const {
 const isAddingProject = ref(false)
 const editingProject = ref<Project | undefined>()
 const isReloading = ref(false)
-const isInitialLoading = ref(true)
+const isInitialLoading = ref(
+  projectStore.loadedWorkspaceId !== workspaceId.value
+)
 
 const visibleProjects = computed(() => projectStore.visibleProjects)
 

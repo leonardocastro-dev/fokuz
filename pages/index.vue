@@ -17,7 +17,7 @@ useScrollReveal()
 <template>
   <div class="flex min-h-screen flex-col">
     <Header />
-    <main class="flex-1">
+    <main class="flex-1 pt-16 md:pt-0">
       <Hero />
       <SocialProof />
       <ProductMockup />

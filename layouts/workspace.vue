@@ -201,7 +201,7 @@ watch(() => route.fullPath, closeMobileMenu)
     >
       <div class="p-6 pb-4">
         <NuxtLink to="/workspaces">
-          <img src="/logo-light.svg" alt="Fokuz" class="h-8" />
+          <img src="/logo-light.svg" alt="Fokuz" class="h-10" />
         </NuxtLink>
         <div v-if="workspace?.name" class="mt-4 px-1">
           <p
