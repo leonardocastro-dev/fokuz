@@ -40,6 +40,7 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/composables/useAuth'
 import { useMembers } from '@/composables/useMembers'
 
@@ -359,30 +360,43 @@ const activeFilterCount = computed(() => {
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
-      <button
-        v-for="item in statusItems"
-        :key="item.value"
-        class="flex items-center gap-3 cursor-pointer rounded-lg border px-4 py-3 text-left transition-colors"
-        :class="
-          taskStore.statusFilter === item.value
-            ? 'border-primary bg-primary/5'
-            : 'border-border bg-background hover:bg-muted/50'
-        "
-        @click="taskStore.setStatusFilter(item.value)"
-      >
-        <div
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-          :class="item.iconBg"
+      <template v-if="taskStore.isLoading">
+        <Skeleton
+          v-for="i in 4"
+          :key="i"
+          class="h-[62px] w-full rounded-lg"
+        />
+      </template>
+      <template v-else>
+        <button
+          v-for="item in statusItems"
+          :key="item.value"
+          class="flex items-center gap-3 cursor-pointer rounded-lg border px-4 py-3 text-left transition-colors"
+          :class="
+            taskStore.statusFilter === item.value
+              ? 'border-primary bg-primary/5'
+              : 'border-border bg-background hover:bg-muted/50'
+          "
+          @click="taskStore.setStatusFilter(item.value)"
         >
-          <component :is="item.icon" class="h-5 w-5" :class="item.iconColor" />
-        </div>
-        <div class="min-w-0">
-          <p class="text-sm font-medium leading-tight">{{ item.label }}</p>
-          <p class="text-xs text-muted-foreground">
-            {{ item.count }} {{ item.count === 1 ? 'tarefa' : 'tarefas' }}
-          </p>
-        </div>
-      </button>
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+            :class="item.iconBg"
+          >
+            <component
+              :is="item.icon"
+              class="h-5 w-5"
+              :class="item.iconColor"
+            />
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-medium leading-tight">{{ item.label }}</p>
+            <p class="text-xs text-muted-foreground">
+              {{ item.count }} {{ item.count === 1 ? 'tarefa' : 'tarefas' }}
+            </p>
+          </div>
+        </button>
+      </template>
     </div>
   </div>
 </template>

@@ -113,7 +113,7 @@ const completionPercentage = computed(() =>
         </div>
 
         <div
-          class="flex items-center justify-between w-full gap-4 text-xs text-muted-foreground"
+          class="flex min-h-8 items-center justify-between w-full gap-4 text-xs text-muted-foreground"
         >
           <div
             v-if="projectMembersWithData.length > 0"

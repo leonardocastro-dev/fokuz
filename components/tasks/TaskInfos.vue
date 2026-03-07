@@ -209,7 +209,7 @@ const handleClose = () => {
             <button
               class="opacity-70 transition-opacity hover:opacity-100 outline-none"
             >
-              <MoreHorizontal class="size-5 cursor-pointer" />
+              <MoreHorizontal class="md:size-5 size-6 cursor-pointer" />
               <span class="sr-only">Actions</span>
             </button>
           </DropdownMenuTrigger>

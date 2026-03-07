@@ -59,7 +59,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
         <DialogClose
           class="outline-none data-[state=open]:bg-secondary rounded-xs opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none"
         >
-          <X class="size-5 cursor-pointer" />
+          <X class="md:size-5 size-6 cursor-pointer" />
           <span class="sr-only">Close</span>
         </DialogClose>
       </div>

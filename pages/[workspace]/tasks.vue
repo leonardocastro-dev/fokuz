@@ -25,8 +25,11 @@ const { workspaceId } = useWorkspace()
 const projectStore = useProjectStore()
 const taskStore = useTaskStore()
 const { members, loadWorkspaceMembers } = useMembers()
-const { projectPermissionsMap, loadProjectPermissions } =
-  useProjectPermissions()
+const {
+  projectPermissionsMap,
+  isLoading: isProjectPermissionsLoading,
+  loadProjectPermissions
+} = useProjectPermissions()
 
 const isInitialLoading = ref(
   !(workspaceId.value && taskStore.loadedWorkspaces[workspaceId.value])
@@ -45,6 +48,12 @@ const canCreateWorkspaceTasks = computed(() => {
     if (hasProjectPermission(null, perms, PERMISSIONS.CREATE_TASKS)) return true
   }
   return false
+})
+
+const isCreateButtonPermissionLoading = computed(() => {
+  if (projectStore.isGuestMode) return false
+  if (isOwnerOrAdmin(projectStore.memberRole)) return false
+  return isInitialLoading.value || isProjectPermissionsLoading.value
 })
 
 // Get project name for a task
@@ -155,20 +164,26 @@ const emptyStateMessage = computed(() => {
       >
         <div>
           <h2 class="text-xl font-semibold">Workspace Tasks</h2>
-          <p class="text-sm text-muted-foreground mt-1">
-            {{ filteredWorkspaceTasks.length }}
-            {{ filteredWorkspaceTasks.length === 1 ? 'task' : 'tasks' }}
-            <span
-              v-if="taskStore.urgentTasks > 0"
-              class="text-red-600 font-medium"
-            >
-              &middot; {{ taskStore.urgentTasks }} urgent pending
-            </span>
+          <p class="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+            <template v-if="isInitialLoading || taskStore.isLoading">
+              <Skeleton class="h-4 w-10 inline-block" />
+              <Skeleton class="h-4 w-24 inline-block ml-1" />
+            </template>
+            <template v-else>
+              {{ filteredWorkspaceTasks.length }}
+              {{ filteredWorkspaceTasks.length === 1 ? 'task' : 'tasks' }}
+              <span
+                v-if="taskStore.urgentTasks > 0"
+                class="text-red-600 font-medium"
+              >
+                &middot; {{ taskStore.urgentTasks }} urgent pending
+              </span>
+            </template>
           </p>
         </div>
 
         <div
-          class="flex sm:flex-row mt-3 sm:mt-0 flex-row-reverse justify-end gap-2"
+          class="flex sm:flex-row items-center mt-3 sm:mt-0 flex-row-reverse justify-end gap-2"
         >
           <Button
             variant="ghost"
@@ -183,8 +198,13 @@ const emptyStateMessage = computed(() => {
             Sync
           </Button>
 
+          <Skeleton
+            v-if="isCreateButtonPermissionLoading"
+            class="h-9 w-[124px] rounded-md"
+          />
+
           <Button
-            v-if="canCreateWorkspaceTasks"
+            v-else-if="canCreateWorkspaceTasks"
             class="flex items-center gap-1"
             :disabled="projectStore.isLoading"
             @click="isAddingTask = true"
@@ -213,11 +233,15 @@ const emptyStateMessage = computed(() => {
                 <Skeleton class="h-5 w-full max-w-40" />
                 <Skeleton class="h-5 min-w-16" />
               </div>
-              <div class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+              <div
+                class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
+              >
                 <div class="min-w-0 sm:flex-1">
                   <Skeleton class="h-4 w-32 max-w-full" />
                 </div>
-                <div class="flex items-center justify-between gap-2 sm:justify-end">
+                <div
+                  class="flex items-center justify-between gap-2 sm:justify-end"
+                >
                   <Skeleton class="h-4 w-24 shrink-0" />
                   <div class="flex -space-x-2">
                     <Skeleton class="h-6 w-6 rounded-full" />

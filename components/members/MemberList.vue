@@ -210,38 +210,40 @@ const handleOwnershipTransferred = () => {
         }
       "
     >
-      <DialogHeader>
-        <DialogTitle>Invite Member</DialogTitle>
-        <DialogDescription>
-          Send an invitation to join this workspace
-        </DialogDescription>
-      </DialogHeader>
+      <div class="grid gap-4 p-6">
+        <DialogHeader>
+          <DialogTitle>Invite Member</DialogTitle>
+          <DialogDescription>
+            Send an invitation to join this workspace
+          </DialogDescription>
+        </DialogHeader>
 
-      <div class="space-y-4 py-4">
-        <div class="space-y-2">
-          <Label for="member-email">Email Address</Label>
-          <Input
-            id="member-email"
-            v-model="memberEmail"
-            type="email"
-            placeholder="colleague@example.com"
-            :disabled="isSending"
-          />
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <Label for="member-email">Email Address</Label>
+            <Input
+              id="member-email"
+              v-model="memberEmail"
+              type="email"
+              placeholder="colleague@example.com"
+              :disabled="isSending"
+            />
+          </div>
         </div>
-      </div>
 
-      <DialogFooter>
-        <Button
-          variant="outline"
-          :disabled="isSending"
-          @click="isInviting = false"
-        >
-          Cancel
-        </Button>
-        <Button :disabled="isSending" @click="handleInvite">
-          {{ isSending ? 'Sending...' : 'Send Invitation' }}
-        </Button>
-      </DialogFooter>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            :disabled="isSending"
+            @click="isInviting = false"
+          >
+            Cancel
+          </Button>
+          <Button :disabled="isSending" @click="handleInvite">
+            {{ isSending ? 'Sending...' : 'Send Invitation' }}
+          </Button>
+        </DialogFooter>
+      </div>
     </DialogContent>
   </Dialog>
 </template>

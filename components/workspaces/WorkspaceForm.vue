@@ -110,13 +110,14 @@ const handleClose = () => {
     "
   >
     <DialogContent>
-      <DialogHeader>
-        <DialogTitle>{{
-          props.editWorkspace ? 'Edit Workspace' : 'Create Workspace'
-        }}</DialogTitle>
-      </DialogHeader>
+      <div class="grid gap-4 p-6">
+        <DialogHeader>
+          <DialogTitle>{{
+            props.editWorkspace ? 'Edit Workspace' : 'Create Workspace'
+          }}</DialogTitle>
+        </DialogHeader>
 
-      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <form class="space-y-6" @submit.prevent="handleSubmit">
         <div class="space-y-2">
           <Label for="name">Workspace Name *</Label>
           <Input
@@ -180,7 +181,8 @@ const handleClose = () => {
             }}
           </Button>
         </DialogFooter>
-      </form>
+        </form>
+      </div>
     </DialogContent>
   </Dialog>
 </template>

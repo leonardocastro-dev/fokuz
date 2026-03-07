@@ -102,7 +102,7 @@ const handleReload = async () => {
         </p>
       </div>
       <div
-        class="flex sm:flex-row mt-3 sm:mt-0 flex-row-reverse justify-end gap-2"
+        class="flex sm:flex-row items-center mt-3 sm:mt-0 flex-row-reverse justify-end gap-2"
       >
         <Button
           variant="ghost"

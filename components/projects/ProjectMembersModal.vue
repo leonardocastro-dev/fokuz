@@ -146,7 +146,7 @@ const save = async () => {
 <template>
   <Dialog v-model:open="open">
     <DialogContent
-      class="p-0 sm:w-[420px] sm:max-h-[90vh] overflow-hidden flex flex-col"
+      class="sm:w-[420px]"
       :can-close="!isSaving"
       @interact-outside="
         (e) => {

@@ -11,6 +11,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import {
   MoreHorizontal,
   Crown,
   LockIcon,
@@ -53,6 +61,9 @@ const isRemoving = ref(false)
 const isPermissionsOpen = ref(false)
 const isUpdatingAdminRole = ref(false)
 const isTransferringOwnership = ref(false)
+const confirmAdminOpen = ref(false)
+const confirmOwnershipOpen = ref(false)
+const pendingAdminAction = ref<boolean>(false)
 
 const isOwner = computed(() => props.member.role === ROLES.OWNER)
 const isAdmin = computed(() => props.member.role === ROLES.ADMIN)
@@ -146,18 +157,14 @@ const removeMember = async () => {
   }
 }
 
+const requestAdminRoleChange = (shouldBeAdmin: boolean) => {
+  pendingAdminAction.value = shouldBeAdmin
+  confirmAdminOpen.value = true
+}
+
 const updateAdminRole = async (shouldBeAdmin: boolean) => {
   if (isUpdatingAdminRole.value) return
-
-  if (typeof window !== 'undefined') {
-    const memberName = props.member.username || props.member.email
-    const actionText = shouldBeAdmin ? 'promote' : 'demote'
-    const targetRoleText = shouldBeAdmin ? 'admin' : 'member'
-    const confirmed = window.confirm(
-      `Are you sure you want to ${actionText} ${memberName} to ${targetRoleText}?`
-    )
-    if (!confirmed) return
-  }
+  confirmAdminOpen.value = false
 
   try {
     isUpdatingAdminRole.value = true
@@ -197,16 +204,13 @@ const updateAdminRole = async (shouldBeAdmin: boolean) => {
   }
 }
 
+const requestTransferOwnership = () => {
+  confirmOwnershipOpen.value = true
+}
+
 const transferOwnership = async () => {
   if (isTransferringOwnership.value) return
-
-  if (typeof window !== 'undefined') {
-    const memberName = props.member.username || props.member.email
-    const confirmed = window.confirm(
-      `Transfer workspace ownership to ${memberName}? This action cannot be undone automatically.`
-    )
-    if (!confirmed) return
-  }
+  confirmOwnershipOpen.value = false
 
   try {
     isTransferringOwnership.value = true
@@ -322,7 +326,7 @@ const handlePermissionsUpdated = () => {
             <DropdownMenuItem
               v-if="canToggleAdminRole && !isAdmin"
               :disabled="isUpdatingAdminRole"
-              @click="updateAdminRole(true)"
+              @click="requestAdminRoleChange(true)"
             >
               <ShieldPlus class="h-4 w-4" />
               {{ isUpdatingAdminRole ? 'Updating...' : 'Promote to Admin' }}
@@ -331,7 +335,7 @@ const handlePermissionsUpdated = () => {
             <DropdownMenuItem
               v-if="canToggleAdminRole && isAdmin"
               :disabled="isUpdatingAdminRole"
-              @click="updateAdminRole(false)"
+              @click="requestAdminRoleChange(false)"
             >
               <ShieldMinus class="h-4 w-4" />
               {{ isUpdatingAdminRole ? 'Updating...' : 'Demote Admin' }}
@@ -340,7 +344,7 @@ const handlePermissionsUpdated = () => {
             <DropdownMenuItem
               v-if="canTransferOwnership"
               :disabled="isTransferringOwnership"
-              @click="transferOwnership"
+              @click="requestTransferOwnership"
             >
               <Crown class="h-4 w-4" />
               {{
@@ -380,4 +384,66 @@ const handlePermissionsUpdated = () => {
     :workspace-id="workspaceId"
     @permissions-updated="handlePermissionsUpdated"
   />
+
+  <!-- Admin Role Confirmation -->
+  <Dialog v-model:open="confirmAdminOpen">
+    <DialogContent class="sm:max-w-md">
+      <div class="grid gap-4 p-6">
+        <DialogHeader>
+          <DialogTitle>
+            {{ pendingAdminAction ? 'Promote to Admin' : 'Demote Admin' }}
+          </DialogTitle>
+          <DialogDescription>
+            Are you sure you want to
+            {{ pendingAdminAction ? 'promote' : 'demote' }}
+            <strong>{{ member.username || member.email }}</strong>
+            to {{ pendingAdminAction ? 'admin' : 'member' }}?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter class="gap-2">
+          <Button variant="outline" @click="confirmAdminOpen = false">
+            Cancel
+          </Button>
+          <Button
+            :disabled="isUpdatingAdminRole"
+            @click="updateAdminRole(pendingAdminAction)"
+          >
+            {{ isUpdatingAdminRole ? 'Updating...' : 'Confirm' }}
+          </Button>
+        </DialogFooter>
+      </div>
+    </DialogContent>
+  </Dialog>
+
+  <!-- Transfer Ownership Confirmation -->
+  <Dialog v-model:open="confirmOwnershipOpen">
+    <DialogContent class="sm:max-w-md">
+      <div class="grid gap-4 p-6">
+        <DialogHeader>
+          <DialogTitle>Transfer Ownership</DialogTitle>
+          <DialogDescription>
+            Transfer workspace ownership to
+            <strong>{{ member.username || member.email }}</strong
+            >? This action cannot be undone automatically.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter class="gap-2">
+          <Button variant="outline" @click="confirmOwnershipOpen = false">
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            :disabled="isTransferringOwnership"
+            @click="transferOwnership"
+          >
+            {{
+              isTransferringOwnership
+                ? 'Transferring...'
+                : 'Transfer Ownership'
+            }}
+          </Button>
+        </DialogFooter>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>

@@ -166,6 +166,7 @@ const handleClose = () => {
     "
   >
     <DialogContent>
+      <div class="grid gap-4 p-6">
       <DialogHeader>
         <div class="flex items-center gap-4">
           <div class="relative">
@@ -292,6 +293,7 @@ const handleClose = () => {
           </Button>
         </DialogFooter>
       </form>
+      </div>
     </DialogContent>
   </Dialog>
 </template>

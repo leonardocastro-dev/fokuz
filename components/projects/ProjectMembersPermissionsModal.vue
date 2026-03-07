@@ -425,7 +425,7 @@ const save = async () => {
 <template>
   <Dialog v-model:open="open">
     <DialogContent
-      class="p-0 sm:w-[480px] sm:max-h-[90vh] overflow-hidden flex flex-col"
+      class="sm:w-[480px]"
       :can-close="!isSaving"
       @interact-outside="
         (e) => {
@@ -433,7 +433,8 @@ const save = async () => {
         }
       "
     >
-      <DialogHeader class="pt-6 px-6 flex-shrink-0">
+      <div class="grid gap-4 py-6">
+      <DialogHeader class="px-6">
         <DialogTitle>Project Members</DialogTitle>
         <DialogDescription>
           Manage members, roles and their task permissions
@@ -442,7 +443,7 @@ const save = async () => {
 
       <hr />
 
-      <div class="flex-1 overflow-y-auto px-6 py-4">
+      <div class="overflow-y-auto px-6">
         <template v-if="isLoading">
           <div v-for="i in 3" :key="i" class="flex items-center space-x-3 py-2">
             <Skeleton class="h-4 w-4" />
@@ -592,7 +593,7 @@ const save = async () => {
 
       <hr />
 
-      <DialogFooter class="pb-6 px-6 flex-shrink-0">
+      <DialogFooter class="px-6">
         <Button variant="outline" :disabled="isSaving" @click="open = false">
           Cancel
         </Button>
@@ -600,6 +601,7 @@ const save = async () => {
           {{ isSaving ? 'Saving...' : 'Save' }}
         </Button>
       </DialogFooter>
+      </div>
     </DialogContent>
   </Dialog>
 </template>

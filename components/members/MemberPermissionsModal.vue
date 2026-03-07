@@ -223,7 +223,7 @@ const savePermissions = async () => {
 <template>
   <Dialog v-model:open="open">
     <DialogContent
-      class="p-0 sm:w-[380px]"
+      class="sm:w-[380px] content-start"
       :can-close="!isSaving"
       @interact-outside="
         (e) => {
@@ -231,34 +231,34 @@ const savePermissions = async () => {
         }
       "
     >
-      <DialogHeader class="pt-6 px-6">
-        <DialogTitle>Permissions</DialogTitle>
-        <DialogDescription>
-          {{ member.username || member.email }}
-        </DialogDescription>
-      </DialogHeader>
+      <div class="grid gap-4 py-6">
+        <DialogHeader class="px-6">
+          <DialogTitle>Permissions</DialogTitle>
+          <DialogDescription>
+            {{ member.username || member.email }}
+          </DialogDescription>
+        </DialogHeader>
 
-      <hr />
+        <hr />
 
-      <div class="space-y-4">
         <NestedCheckboxes
           v-model="permissionsState"
           class="px-6"
           :items="nestedItems"
           :disabled="isSaving"
         />
+
+        <hr />
+
+        <DialogFooter class="px-6">
+          <Button variant="outline" :disabled="isSaving" @click="open = false">
+            Cancel
+          </Button>
+          <Button :disabled="isSaving" @click="savePermissions">
+            {{ isSaving ? 'Saving...' : 'Save' }}
+          </Button>
+        </DialogFooter>
       </div>
-
-      <hr />
-
-      <DialogFooter class="pb-6 px-6">
-        <Button variant="outline" :disabled="isSaving" @click="open = false">
-          Cancel
-        </Button>
-        <Button :disabled="isSaving" @click="savePermissions">
-          {{ isSaving ? 'Saving...' : 'Save' }}
-        </Button>
-      </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>

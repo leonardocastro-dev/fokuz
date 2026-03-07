@@ -63,6 +63,17 @@ const currentProject = computed(() => {
   return projectStore.visibleProjects.find((p) => p.id === projectId)
 })
 
+const isCreateButtonPermissionLoading = computed(() => {
+  if (taskStore.isGuestMode) return false
+  const hasLoadedPermissions = Object.prototype.hasOwnProperty.call(
+    taskStore.permissionsByProject,
+    projectId
+  )
+  return (
+    !hasLoadedPermissions && (projectStore.isLoading || taskStore.isLoading)
+  )
+})
+
 const handleMembersUpdated = async () => {
   await loadAllProjectAssignments(workspaceId, [projectId], true)
 }
@@ -130,7 +141,10 @@ watch(
             <span v-if="currentProject.emoji">{{ currentProject.emoji }}</span>
             {{ currentProject.title }}
           </h1>
-          <p v-if="currentProject.description" class="text-muted-foreground break-all">
+          <p
+            v-if="currentProject.description"
+            class="text-muted-foreground break-all"
+          >
             {{ currentProject.description }}
           </p>
 
@@ -186,7 +200,10 @@ watch(
       </header>
     </div>
 
-    <div v-if="currentProject || projectStore.isLoading" class="-mx-6 border-b border-border mb-6" />
+    <div
+      v-if="currentProject || projectStore.isLoading"
+      class="-mx-6 border-b border-border mb-6"
+    />
 
     <div
       v-if="currentProject || projectStore.isLoading"
@@ -197,19 +214,25 @@ watch(
       >
         <div>
           <h2 class="text-xl font-semibold">Project Tasks</h2>
-          <p class="text-sm text-muted-foreground mt-1">
-            {{ taskStore.totalTasks }}
-            {{ taskStore.totalTasks === 1 ? 'task' : 'tasks' }}
-            <span
-              v-if="taskStore.urgentTasks > 0"
-              class="text-red-600 font-medium"
-            >
-              &middot; {{ taskStore.urgentTasks }} urgent pending
-            </span>
+          <p class="text-sm text-muted-foreground mt-1 flex items-center gap-1">
+            <template v-if="taskStore.isLoading">
+              <Skeleton class="h-4 w-10 inline-block" />
+              <Skeleton class="h-4 w-24 inline-block ml-1" />
+            </template>
+            <template v-else>
+              {{ taskStore.totalTasks }}
+              {{ taskStore.totalTasks === 1 ? 'task' : 'tasks' }}
+              <span
+                v-if="taskStore.urgentTasks > 0"
+                class="text-red-600 font-medium"
+              >
+                &middot; {{ taskStore.urgentTasks }} urgent pending
+              </span>
+            </template>
           </p>
         </div>
         <div
-          class="flex sm:flex-row mt-3 sm:mt-0 flex-row-reverse justify-end gap-2"
+          class="flex sm:flex-row items-center mt-3 sm:mt-0 flex-row-reverse justify-end gap-2"
         >
           <Button
             variant="ghost"
@@ -223,8 +246,12 @@ watch(
             />
             Sync
           </Button>
+          <Skeleton
+            v-if="isCreateButtonPermissionLoading"
+            class="h-9 w-[124px] rounded-md"
+          />
           <Button
-            v-if="taskStore.canCreateTasks"
+            v-else-if="taskStore.canCreateTasks"
             class="flex items-center gap-1"
             :disabled="projectStore.isLoading"
             @click="isAddingTask = true"
