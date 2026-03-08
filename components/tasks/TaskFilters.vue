@@ -27,8 +27,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Label } from '@/components/ui/label'
@@ -48,13 +47,18 @@ const taskStore = useTaskStore()
 const { user } = useAuth()
 const { members } = useMembers()
 
+const memberSearch = ref('')
+
 const sortedMembers = computed(() => {
   const uid = user.value?.uid
-  return [...members.value].sort((a, b) => {
-    if (uid && a.uid === uid) return -1
-    if (uid && b.uid === uid) return 1
-    return (a.username || '').localeCompare(b.username || '')
-  })
+  const query = memberSearch.value.toLowerCase().trim()
+  return [...members.value]
+    .filter((m) => !query || (m.username || '').toLowerCase().includes(query))
+    .sort((a, b) => {
+      if (uid && a.uid === uid) return -1
+      if (uid && b.uid === uid) return 1
+      return (a.username || '').localeCompare(b.username || '')
+    })
 })
 
 const scopeLabel = computed(() => {
@@ -174,7 +178,7 @@ const activeFilterCount = computed(() => {
 
 <template>
   <div class="space-y-4 mb-6">
-    <div class="flex items-center gap-2">
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
       <div class="flex-1 relative">
         <Label for="search" class="sr-only">Search tasks</Label>
         <Search
@@ -192,7 +196,11 @@ const activeFilterCount = computed(() => {
         />
       </div>
 
-      <DropdownMenu v-if="members.length > 0">
+      <div class="flex items-center gap-2">
+      <DropdownMenu
+        v-if="members.length > 0"
+        @update:open="(open: boolean) => { if (!open) memberSearch = '' }"
+      >
         <DropdownMenuTrigger as-child>
           <Button variant="outline" size="default" class="gap-2 shrink-0">
             <Avatar
@@ -216,8 +224,21 @@ const activeFilterCount = computed(() => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-52">
-          <DropdownMenuLabel>Filter by member</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <div class="px-2 py-1.5">
+            <div class="relative">
+              <Search
+                class="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none"
+              />
+              <Input
+                v-model="memberSearch"
+                type="text"
+                placeholder="Search..."
+                class="h-8 pl-7 text-sm"
+                @keydown.stop
+              />
+            </div>
+          </div>
+          <div class="max-h-48 overflow-y-auto overflow-x-hidden">
           <DropdownMenuItem
             class="flex items-center gap-2 cursor-pointer"
             @click="selectMember(null)"
@@ -262,6 +283,7 @@ const activeFilterCount = computed(() => {
               class="h-4 w-4 shrink-0"
             />
           </DropdownMenuItem>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -357,6 +379,7 @@ const activeFilterCount = computed(() => {
           </div>
         </PopoverContent>
       </Popover>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
