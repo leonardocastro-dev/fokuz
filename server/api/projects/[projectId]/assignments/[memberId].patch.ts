@@ -140,7 +140,7 @@ export default defineEventHandler(async (event) => {
       assignedAt: new Date().toISOString(),
       assignedBy: uid,
       permissions:
-        newRole === 'admin' ? undefined : (taskPermissions || undefined)
+        newRole === 'admin' ? undefined : taskPermissions || undefined
     }
     await assignmentRef.set(assignment)
   }

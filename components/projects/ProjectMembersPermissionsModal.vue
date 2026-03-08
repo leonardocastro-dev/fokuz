@@ -434,182 +434,181 @@ const save = async () => {
       "
     >
       <div class="grid gap-4 py-6">
-      <DialogHeader class="px-6">
-        <DialogTitle>Project Members</DialogTitle>
-        <DialogDescription>
-          Manage members, roles and their task permissions
-        </DialogDescription>
-      </DialogHeader>
+        <DialogHeader class="px-6">
+          <DialogTitle>Project Members</DialogTitle>
+          <DialogDescription>
+            Manage members, roles and their task permissions
+          </DialogDescription>
+        </DialogHeader>
 
-      <hr />
+        <hr />
 
-      <div class="overflow-y-auto px-6">
-        <template v-if="isLoading">
-          <div class="space-y-4">
-            <div
-              v-for="i in 3"
-              :key="i"
-              class="border rounded-lg p-3"
-            >
-              <div class="flex items-center space-x-3">
-                <Skeleton class="h-4 w-4 shrink-0" />
-                <Skeleton class="h-8 w-8 rounded-full shrink-0" />
-                <Skeleton class="h-4 w-32 flex-1" />
-                <Skeleton class="h-4 w-4 shrink-0" />
+        <div class="overflow-y-auto px-6">
+          <template v-if="isLoading">
+            <div class="space-y-4">
+              <div v-for="i in 3" :key="i" class="border rounded-lg p-3">
+                <div class="flex items-center space-x-3">
+                  <Skeleton class="h-4 w-4 shrink-0" />
+                  <Skeleton class="h-8 w-8 rounded-full shrink-0" />
+                  <Skeleton class="h-4 w-32 flex-1" />
+                  <Skeleton class="h-4 w-4 shrink-0" />
+                </div>
               </div>
             </div>
-          </div>
-        </template>
+          </template>
 
-        <template v-else-if="membersForProjects.length === 0">
-          <p class="text-sm text-muted-foreground text-center py-4">
-            No eligible members in this workspace
-          </p>
-        </template>
+          <template v-else-if="membersForProjects.length === 0">
+            <p class="text-sm text-muted-foreground text-center py-4">
+              No eligible members in this workspace
+            </p>
+          </template>
 
-        <template v-else>
-          <div class="space-y-4">
-            <div
-              v-for="member in membersForProjects"
-              :key="member.uid"
-              class="border rounded-lg p-3"
-            >
-              <!-- Member Checkbox -->
+          <template v-else>
+            <div class="space-y-4">
               <div
-                class="flex items-center space-x-3"
-                :class="
-                  hasAccessProjectsPermission(member)
-                    ? 'cursor-default'
-                    : 'cursor-pointer'
-                "
-                @click="
-                  !hasAccessProjectsPermission(member) &&
-                  toggleMember(member.uid)
-                "
+                v-for="member in membersForProjects"
+                :key="member.uid"
+                class="border rounded-lg p-3"
               >
-                <Checkbox
-                  :model-value="
-                    hasAccessProjectsPermission(member) ||
-                    selectedMemberIds.includes(member.uid)
-                  "
-                  :disabled="isSaving || hasAccessProjectsPermission(member)"
-                  @click.stop
-                  @update:model-value="
-                    !hasAccessProjectsPermission(member) &&
-                    toggleMember(member.uid)
-                  "
-                />
-                <Avatar :uid="member.uid" class="h-8 w-8 shrink-0">
-                  <AvatarImage
-                    v-if="member.avatarUrl"
-                    :src="member.avatarUrl"
-                    :alt="member.username || ''"
-                  />
-                  <AvatarFallback class="text-xs">
-                    {{ member.username?.charAt(0).toUpperCase() || '?' }}
-                  </AvatarFallback>
-                </Avatar>
-                <Label
+                <!-- Member Checkbox -->
+                <div
+                  class="flex items-center space-x-3"
                   :class="
                     hasAccessProjectsPermission(member)
                       ? 'cursor-default'
                       : 'cursor-pointer'
                   "
-                  class="flex-1 font-medium"
+                  @click="
+                    !hasAccessProjectsPermission(member) &&
+                    toggleMember(member.uid)
+                  "
                 >
-                  {{ member.username || member.email }}
-                </Label>
-                <span
-                  v-if="hasAccessProjectsPermission(member)"
-                  class="text-xs text-muted-foreground"
-                >
-                  All projects
-                </span>
-                <button
-                  v-if="isMemberSelected(member.uid)"
-                  class="p-1 rounded-md hover:bg-muted transition-colors"
-                  @click.stop="toggleExpand(member.uid)"
-                >
-                  <ChevronDown
-                    class="h-4 w-4 text-muted-foreground transition-transform duration-200"
-                    :class="{
-                      'rotate-180': expandedMemberId === member.uid
-                    }"
+                  <Checkbox
+                    :model-value="
+                      hasAccessProjectsPermission(member) ||
+                      selectedMemberIds.includes(member.uid)
+                    "
+                    :disabled="isSaving || hasAccessProjectsPermission(member)"
+                    @click.stop
+                    @update:model-value="
+                      !hasAccessProjectsPermission(member) &&
+                      toggleMember(member.uid)
+                    "
                   />
-                </button>
-              </div>
-
-              <!-- Expanded section (role selector + permissions) -->
-              <div
-                class="grid transition-all duration-300 ease-in-out"
-                :class="
-                  expandedMemberId === member.uid && isMemberSelected(member.uid)
-                    ? 'grid-rows-[1fr] opacity-100 mt-3'
-                    : 'grid-rows-[0fr] opacity-0'
-                "
-              >
-                <div class="overflow-hidden pl-7 border-l-2 border-muted ml-2">
-                  <!-- Role selector -->
-                  <div class="flex items-center gap-2 mb-3">
-                    <Label class="text-xs text-muted-foreground shrink-0">
-                      Role
-                    </Label>
-                    <Select
-                      :model-value="memberRoles[member.uid] || 'member'"
-                      :disabled="isSaving || !canAssignAdminRole"
-                      @update:model-value="
-                        (v) => updateMemberRole(member.uid, v)
-                      "
-                    >
-                      <SelectTrigger class="h-8 w-32 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="member">Member</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <!-- Admin note -->
-                  <p
-                    v-if="memberRoles[member.uid] === 'admin'"
-                    class="text-xs text-muted-foreground italic"
-                  >
-                    Admins have all project permissions
-                  </p>
-
-                  <!-- Task Permissions (only for members) -->
-                  <template v-else>
-                    <Label class="text-xs text-muted-foreground mb-2 block">
-                      Task Permissions
-                    </Label>
-                    <NestedCheckboxes
-                      :model-value="memberTaskPermissions[member.uid] || {}"
-                      :items="taskPermissionItems"
-                      :disabled="isSaving"
-                      @update:model-value="
-                        (v) => updateMemberPermissions(member.uid, v)
-                      "
+                  <Avatar :uid="member.uid" class="h-8 w-8 shrink-0">
+                    <AvatarImage
+                      v-if="member.avatarUrl"
+                      :src="member.avatarUrl"
+                      :alt="member.username || ''"
                     />
-                  </template>
+                    <AvatarFallback class="text-xs">
+                      {{ member.username?.charAt(0).toUpperCase() || '?' }}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Label
+                    :class="
+                      hasAccessProjectsPermission(member)
+                        ? 'cursor-default'
+                        : 'cursor-pointer'
+                    "
+                    class="flex-1 font-medium"
+                  >
+                    {{ member.username || member.email }}
+                  </Label>
+                  <span
+                    v-if="hasAccessProjectsPermission(member)"
+                    class="text-xs text-muted-foreground"
+                  >
+                    All projects
+                  </span>
+                  <button
+                    v-if="isMemberSelected(member.uid)"
+                    class="p-1 rounded-md hover:bg-muted transition-colors"
+                    @click.stop="toggleExpand(member.uid)"
+                  >
+                    <ChevronDown
+                      class="h-4 w-4 text-muted-foreground transition-transform duration-200"
+                      :class="{
+                        'rotate-180': expandedMemberId === member.uid
+                      }"
+                    />
+                  </button>
+                </div>
+
+                <!-- Expanded section (role selector + permissions) -->
+                <div
+                  class="grid transition-all duration-300 ease-in-out"
+                  :class="
+                    expandedMemberId === member.uid &&
+                    isMemberSelected(member.uid)
+                      ? 'grid-rows-[1fr] opacity-100 mt-3'
+                      : 'grid-rows-[0fr] opacity-0'
+                  "
+                >
+                  <div
+                    class="overflow-hidden pl-7 border-l-2 border-muted ml-2"
+                  >
+                    <!-- Role selector -->
+                    <div class="flex items-center gap-2 mb-3">
+                      <Label class="text-xs text-muted-foreground shrink-0">
+                        Role
+                      </Label>
+                      <Select
+                        :model-value="memberRoles[member.uid] || 'member'"
+                        :disabled="isSaving || !canAssignAdminRole"
+                        @update:model-value="
+                          (v) => updateMemberRole(member.uid, v as string)
+                        "
+                      >
+                        <SelectTrigger class="h-8 w-32 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="member">Member</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <!-- Admin note -->
+                    <p
+                      v-if="memberRoles[member.uid] === 'admin'"
+                      class="text-xs text-muted-foreground italic"
+                    >
+                      Admins have all project permissions
+                    </p>
+
+                    <!-- Task Permissions (only for members) -->
+                    <template v-else>
+                      <Label class="text-xs text-muted-foreground mb-2 block">
+                        Task Permissions
+                      </Label>
+                      <NestedCheckboxes
+                        :model-value="memberTaskPermissions[member.uid] || {}"
+                        :items="taskPermissionItems"
+                        :disabled="isSaving"
+                        @update:model-value="
+                          (v) => updateMemberPermissions(member.uid, v)
+                        "
+                      />
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </template>
-      </div>
+          </template>
+        </div>
 
-      <hr />
+        <hr />
 
-      <DialogFooter class="px-6">
-        <Button variant="outline" :disabled="isSaving" @click="open = false">
-          Cancel
-        </Button>
-        <Button :disabled="isSaving || !hasChanges" @click="save">
-          {{ isSaving ? 'Saving...' : 'Save' }}
-        </Button>
-      </DialogFooter>
+        <DialogFooter class="px-6">
+          <Button variant="outline" :disabled="isSaving" @click="open = false">
+            Cancel
+          </Button>
+          <Button :disabled="isSaving || !hasChanges" @click="save">
+            {{ isSaving ? 'Saving...' : 'Save' }}
+          </Button>
+        </DialogFooter>
       </div>
     </DialogContent>
   </Dialog>

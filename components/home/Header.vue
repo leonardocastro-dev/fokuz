@@ -79,11 +79,7 @@ onUnmounted(() => {
               class="flex-1"
               @click="mobileMenuOpen = false"
             >
-              <Button
-                variant="default"
-                size="sm"
-                class="rounded-none w-full"
-              >
+              <Button variant="default" size="sm" class="rounded-none w-full">
                 Register
               </Button>
             </NuxtLink>

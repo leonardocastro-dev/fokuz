@@ -31,9 +31,7 @@ export default defineEventHandler(async (event) => {
     .collection(`workspaces/${workspaceId}/projects`)
     .get()
   // Delete all tasks at workspace level
-  const tasksSnap = await db
-    .collection(`workspaces/${workspaceId}/tasks`)
-    .get()
+  const tasksSnap = await db.collection(`workspaces/${workspaceId}/tasks`).get()
   tasksSnap.docs.forEach((taskDoc) => {
     batch.delete(taskDoc.ref)
   })

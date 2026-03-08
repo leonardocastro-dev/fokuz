@@ -189,7 +189,13 @@ export const useMembers = () => {
 
     try {
       const { $firestore } = useNuxtApp()
-      const taskRef = doc($firestore, 'workspaces', workspaceId, 'tasks', taskId)
+      const taskRef = doc(
+        $firestore,
+        'workspaces',
+        workspaceId,
+        'tasks',
+        taskId
+      )
       const taskSnap = await getDoc(taskRef)
 
       selectedMemberIds.value = taskSnap.exists()

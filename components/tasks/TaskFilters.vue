@@ -361,11 +361,7 @@ const activeFilterCount = computed(() => {
 
     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
       <template v-if="taskStore.isLoading">
-        <Skeleton
-          v-for="i in 4"
-          :key="i"
-          class="h-[62px] w-full rounded-lg"
-        />
+        <Skeleton v-for="i in 4" :key="i" class="h-[62px] w-full rounded-lg" />
       </template>
       <template v-else>
         <button

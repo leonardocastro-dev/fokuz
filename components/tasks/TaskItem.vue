@@ -26,8 +26,7 @@ import { useAuth } from '@/composables/useAuth'
 import type { WorkspaceMember } from '@/composables/useMembers'
 import {
   PERMISSIONS,
-  hasAnyPermission,
-  isOwnerOrAdmin
+  hasAnyPermission
 } from '@/constants/permissions'
 
 const props = defineProps<{
@@ -65,7 +64,8 @@ const handleEditFromInfo = () => {
 // Check project permissions first, then workspace role/permissions, then taskStore fallback
 const checkPermission = (permissions: string[]) => {
   if (props.projectPermissions) {
-    if (hasAnyPermission(null, props.projectPermissions, permissions)) return true
+    if (hasAnyPermission(null, props.projectPermissions, permissions))
+      return true
   }
   if (props.workspaceRole || props.workspacePermissions) {
     if (
@@ -242,14 +242,20 @@ const formatDueDate = (date: Date) => {
             </Badge>
           </div>
 
-          <div class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+          <div
+            class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
+          >
             <div v-if="projectName" class="min-w-0 sm:hidden">
-              <span class="block max-w-[370px] truncate text-xs text-muted-foreground">
+              <span
+                class="block max-w-[370px] truncate text-xs text-muted-foreground"
+              >
                 {{ projectName }}
               </span>
             </div>
 
-            <div class="flex min-w-0 items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-1 sm:justify-between">
+            <div
+              class="flex min-w-0 items-center justify-between gap-2 text-xs text-muted-foreground sm:flex-1 sm:justify-between"
+            >
               <div class="flex min-w-0 items-center gap-2">
                 <span
                   v-if="projectName"
@@ -257,7 +263,9 @@ const formatDueDate = (date: Date) => {
                 >
                   {{ projectName }}
                 </span>
-                <span v-if="projectName" class="hidden shrink-0 sm:block">•</span>
+                <span v-if="projectName" class="hidden shrink-0 sm:block"
+                  >•</span
+                >
                 <span
                   v-if="task.dueDate"
                   class="flex shrink-0 items-center gap-1"

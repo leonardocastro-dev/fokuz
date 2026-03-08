@@ -253,7 +253,9 @@ const handleClose = () => {
 
       <!-- Title -->
       <SheetHeader>
-        <SheetTitle class="md:text-2xl text-lg font-medium leading-tight break-words">
+        <SheetTitle
+          class="md:text-2xl text-lg font-medium leading-tight break-words"
+        >
           {{ task.title }}
         </SheetTitle>
         <SheetDescription class="sr-only">
@@ -262,7 +264,9 @@ const handleClose = () => {
       </SheetHeader>
 
       <!-- Metadata rows -->
-      <div class="p-5 grid grid-cols-1 gap-y-3 md:grid-cols-[auto_1fr] md:gap-x-8 md:gap-y-4 md:items-center overflow-hidden">
+      <div
+        class="p-5 grid grid-cols-1 gap-y-3 md:grid-cols-[auto_1fr] md:gap-x-8 md:gap-y-4 md:items-center overflow-hidden"
+      >
         <!-- Created -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <Calendar class="h-4 w-4 text-muted-foreground/70" />

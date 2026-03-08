@@ -466,9 +466,7 @@ const handlePermissionsUpdated = () => {
             @click="transferOwnership"
           >
             {{
-              isTransferringOwnership
-                ? 'Transferring...'
-                : 'Transfer Ownership'
+              isTransferringOwnership ? 'Transferring...' : 'Transfer Ownership'
             }}
           </Button>
         </DialogFooter>

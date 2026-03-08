@@ -46,7 +46,9 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
         )
       "
     >
-      <div class="flex items-center justify-end gap-2 px-5 py-3 shrink-0 border-b">
+      <div
+        class="flex items-center justify-end gap-2 px-5 py-3 shrink-0 border-b"
+      >
         <slot name="header-actions" />
         <DialogClose
           :class="

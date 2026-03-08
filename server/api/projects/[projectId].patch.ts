@@ -74,7 +74,10 @@ export default defineEventHandler(async (event) => {
   // Validate title and description limits
   if (title !== undefined) {
     if (typeof title !== 'string' || title.trim().length === 0) {
-      throw createError({ statusCode: 400, message: 'Project title is required' })
+      throw createError({
+        statusCode: 400,
+        message: 'Project title is required'
+      })
     }
     if (title.trim().length < 3) {
       throw createError({

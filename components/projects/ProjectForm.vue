@@ -167,132 +167,138 @@ const handleClose = () => {
   >
     <DialogContent>
       <div class="grid gap-4 p-6">
-      <DialogHeader>
-        <div class="flex items-center gap-4">
-          <div class="relative">
-            <!-- Botão que abre o Picker -->
-            <Button
-              type="button"
-              variant="outline"
-              class="w-11 h-11 text-3xl rounded-full"
-              @click="showEmojiPicker = !showEmojiPicker"
-            >
-              <Smile v-if="!emoji" :size="20" />
-              <span v-else class="text-xl">{{ emoji }}</span>
-            </Button>
+        <DialogHeader>
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <!-- Botão que abre o Picker -->
+              <Button
+                type="button"
+                variant="outline"
+                class="w-11 h-11 text-3xl rounded-full"
+                @click="showEmojiPicker = !showEmojiPicker"
+              >
+                <Smile v-if="!emoji" :size="20" />
+                <span v-else class="text-xl">{{ emoji }}</span>
+              </Button>
 
-            <!-- Picker com botão Clear dentro -->
-            <div
-              v-if="showEmojiPicker"
-              class="absolute z-50 mt-2 bg-white rounded-lg shadow-xl"
-            >
-              <Picker :data="emojiIndex" set="twitter" @select="onSelectEmoji">
-                <!-- Slot CUSTOMIZADO -->
-                <template #searchTemplate="{ searchValue, onSearch }">
-                  <div class="flex items-center gap-2 p-2 border-b">
-                    <input
-                      class="flex-1 px-3 py-1 border rounded-md"
-                      type="text"
-                      :value="searchValue"
-                      placeholder="Search emoji..."
-                      @input="
-                        (e) =>
-                          onSearch((e.target as HTMLInputElement)?.value ?? '')
-                      "
-                    />
+              <!-- Picker com botão Clear dentro -->
+              <div
+                v-if="showEmojiPicker"
+                class="absolute z-50 mt-2 bg-white rounded-lg shadow-xl"
+              >
+                <Picker
+                  :data="emojiIndex"
+                  set="twitter"
+                  @select="onSelectEmoji"
+                >
+                  <!-- Slot CUSTOMIZADO -->
+                  <template #searchTemplate="{ searchValue, onSearch }">
+                    <div class="flex items-center gap-2 p-2 border-b">
+                      <input
+                        class="flex-1 px-3 py-1 border rounded-md"
+                        type="text"
+                        :value="searchValue"
+                        placeholder="Search emoji..."
+                        @input="
+                          (e) =>
+                            onSearch(
+                              (e.target as HTMLInputElement)?.value ?? ''
+                            )
+                        "
+                      />
 
-                    <button
-                      v-if="emoji"
-                      class="px-2 py-1 h-full text-sm bg-red-100 text-red-600 rounded-md"
-                      @click="clearEmoji"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </template>
-              </Picker>
+                      <button
+                        v-if="emoji"
+                        class="px-2 py-1 h-full text-sm bg-red-100 text-red-600 rounded-md"
+                        @click="clearEmoji"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </template>
+                </Picker>
+              </div>
+            </div>
+
+            <DialogTitle>
+              {{ editProject ? 'Edit Project' : 'Create New Project' }}
+            </DialogTitle>
+          </div>
+        </DialogHeader>
+
+        <form class="space-y-6" @submit.prevent="handleSubmit">
+          <div class="space-y-2">
+            <Label for="title">Title *</Label>
+            <Input
+              id="title"
+              v-model="title"
+              placeholder="Project title"
+              :maxlength="TITLE_MAX_LENGTH"
+              :class="titleError ? 'border-red-700' : ''"
+              :disabled="isSaving"
+              @update:model-value="
+                (val) => {
+                  if (String(val).trim()) titleError = ''
+                }
+              "
+            />
+            <div class="flex justify-between items-center">
+              <p v-if="titleError" class="text-xs text-red-700">
+                {{ titleError }}
+              </p>
+              <span class="text-xs text-muted-foreground ml-auto">
+                {{ title.length }}/{{ TITLE_MAX_LENGTH }}
+              </span>
             </div>
           </div>
 
-          <DialogTitle>
-            {{ editProject ? 'Edit Project' : 'Create New Project' }}
-          </DialogTitle>
-        </div>
-      </DialogHeader>
-
-      <form class="space-y-6" @submit.prevent="handleSubmit">
-        <div class="space-y-2">
-          <Label for="title">Title *</Label>
-          <Input
-            id="title"
-            v-model="title"
-            placeholder="Project title"
-            :maxlength="TITLE_MAX_LENGTH"
-            :class="titleError ? 'border-red-700' : ''"
-            :disabled="isSaving"
-            @update:model-value="
-              (val) => {
-                if (String(val).trim()) titleError = ''
-              }
-            "
-          />
-          <div class="flex justify-between items-center">
-            <p v-if="titleError" class="text-xs text-red-700">
-              {{ titleError }}
-            </p>
-            <span class="text-xs text-muted-foreground ml-auto">
-              {{ title.length }}/{{ TITLE_MAX_LENGTH }}
-            </span>
+          <div class="space-y-2">
+            <Label for="description">Description (optional)</Label>
+            <Textarea
+              id="description"
+              v-model="description"
+              placeholder="Add a description..."
+              rows="4"
+              :maxlength="DESCRIPTION_MAX_LENGTH"
+              :class="descriptionError ? 'border-red-700' : ''"
+              :disabled="isSaving"
+              @update:model-value="
+                () => {
+                  if (description.length <= DESCRIPTION_MAX_LENGTH)
+                    descriptionError = ''
+                }
+              "
+            />
+            <div class="flex justify-between items-center">
+              <p v-if="descriptionError" class="text-xs text-red-700">
+                {{ descriptionError }}
+              </p>
+              <span class="text-xs text-muted-foreground ml-auto">
+                {{ description.length }}/{{ DESCRIPTION_MAX_LENGTH }}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div class="space-y-2">
-          <Label for="description">Description (optional)</Label>
-          <Textarea
-            id="description"
-            v-model="description"
-            placeholder="Add a description..."
-            rows="4"
-            :maxlength="DESCRIPTION_MAX_LENGTH"
-            :class="descriptionError ? 'border-red-700' : ''"
-            :disabled="isSaving"
-            @update:model-value="
-              () => {
-                if (description.length <= DESCRIPTION_MAX_LENGTH)
-                  descriptionError = ''
-              }
-            "
-          />
-          <div class="flex justify-between items-center">
-            <p v-if="descriptionError" class="text-xs text-red-700">
-              {{ descriptionError }}
-            </p>
-            <span class="text-xs text-muted-foreground ml-auto">
-              {{ description.length }}/{{ DESCRIPTION_MAX_LENGTH }}
-            </span>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            :disabled="isSaving"
-            @click="handleClose"
-          >
-            Cancel
-          </Button>
-          <Button type="submit" :disabled="isSaving || isSubmitDisabled">
-            {{
-              isSaving
-                ? 'Saving...'
-                : editProject
-                  ? 'Update Project'
-                  : 'Create Project'
-            }}
-          </Button>
-        </DialogFooter>
-      </form>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              :disabled="isSaving"
+              @click="handleClose"
+            >
+              Cancel
+            </Button>
+            <Button type="submit" :disabled="isSaving || isSubmitDisabled">
+              {{
+                isSaving
+                  ? 'Saving...'
+                  : editProject
+                    ? 'Update Project'
+                    : 'Create Project'
+              }}
+            </Button>
+          </DialogFooter>
+        </form>
       </div>
     </DialogContent>
   </Dialog>

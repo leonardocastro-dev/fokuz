@@ -36,7 +36,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (description && typeof description === 'string' && description.length > 500) {
+  if (
+    description &&
+    typeof description === 'string' &&
+    description.length > 500
+  ) {
     throw createError({
       statusCode: 400,
       message: 'Description must be less than 500 characters'
