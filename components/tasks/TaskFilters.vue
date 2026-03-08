@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 import type { DateValue } from 'reka-ui'
 import { CalendarDate } from '@internationalized/date'
 import {
@@ -42,6 +43,8 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/composables/useAuth'
 import { useMembers } from '@/composables/useMembers'
+
+const isMobile = useMediaQuery('(max-width: 639px)')
 
 const taskStore = useTaskStore()
 const { user } = useAuth()
@@ -223,7 +226,7 @@ const activeFilterCount = computed(() => {
             <ChevronDown class="h-4 w-4 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" class="w-52">
+        <DropdownMenuContent :align="isMobile ? 'start' : 'end'" class="w-52">
           <div class="px-2 py-1.5">
             <div class="relative">
               <Search
