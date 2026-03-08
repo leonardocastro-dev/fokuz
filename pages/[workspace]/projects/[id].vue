@@ -1,9 +1,23 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { Plus, ArrowLeft, RefreshCw, Users } from 'lucide-vue-next'
+import {
+  Plus,
+  ArrowLeft,
+  RefreshCw,
+  Users,
+  ChevronDown,
+  Search
+} from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import TaskList from '@/components/tasks/TaskList.vue'
 import TaskFilters from '@/components/tasks/TaskFilters.vue'
 import TaskForm from '@/components/tasks/TaskForm.vue'
@@ -42,10 +56,19 @@ const assignedMembers = computed(() => {
   return members.value.filter((m) => assignedIds.includes(m.uid))
 })
 
-const displayedMembers = computed(() => assignedMembers.value.slice(0, 5))
-const extraMembersCount = computed(() =>
-  Math.max(0, assignedMembers.value.length - 5)
-)
+const memberSearch = ref('')
+
+const filteredAssignedMembers = computed(() => {
+  const query = memberSearch.value.toLowerCase().trim()
+  if (!query) return assignedMembers.value
+  return assignedMembers.value.filter((m) =>
+    (m.username || '').toLowerCase().includes(query)
+  )
+})
+
+const firstAssignedMember = computed(() => assignedMembers.value[0] || null)
+const otherAssignedMembers = computed(() => assignedMembers.value.slice(1))
+const hasMultipleAssigned = computed(() => assignedMembers.value.length > 1)
 
 const handleReload = async () => {
   isReloading.value = true
@@ -151,29 +174,104 @@ watch(
           <!-- Members Section -->
           <div class="mt-4 flex items-center gap-3">
             <div
-              v-if="assignedMembers.length > 0"
-              class="flex -space-x-2 *:data-[slot=avatar]:ring-gray-50 *:data-[slot=avatar]:ring-2"
+              v-if="firstAssignedMember && !hasMultipleAssigned"
+              class="flex items-center gap-2"
             >
-              <Avatar
-                v-for="member in displayedMembers"
-                :key="member.uid"
-                :uid="member.uid"
-                class="h-8 w-8"
-              >
+              <Avatar :uid="firstAssignedMember.uid" class="h-6 w-6 shrink-0">
                 <AvatarImage
-                  v-if="member.avatarUrl"
-                  :src="member.avatarUrl"
-                  :alt="member.username || ''"
+                  v-if="firstAssignedMember.avatarUrl"
+                  :src="firstAssignedMember.avatarUrl"
+                  :alt="firstAssignedMember.username || ''"
                 />
-                <AvatarFallback class="text-xs">
-                  {{ member.username?.charAt(0).toUpperCase() || '?' }}
+                <AvatarFallback class="text-[10px]">
+                  {{
+                    firstAssignedMember.username?.charAt(0).toUpperCase() || '?'
+                  }}
                 </AvatarFallback>
               </Avatar>
-              <Avatar v-if="extraMembersCount > 0" class="h-8 w-8">
-                <AvatarFallback class="text-xs bg-muted">
-                  +{{ extraMembersCount }}
-                </AvatarFallback>
-              </Avatar>
+              <span class="text-sm">{{
+                firstAssignedMember.username || 'Unknown'
+              }}</span>
+            </div>
+            <div v-else-if="firstAssignedMember">
+              <DropdownMenu
+                @update:open="
+                  (open: boolean) => {
+                    if (!open) memberSearch = ''
+                  }
+                "
+              >
+                <DropdownMenuTrigger as-child>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    class="max-w-full hover:bg-muted/80 cursor-pointer"
+                  >
+                    <Avatar
+                      :uid="firstAssignedMember.uid"
+                      class="h-5 w-5 shrink-0"
+                    >
+                      <AvatarImage
+                        v-if="firstAssignedMember.avatarUrl"
+                        :src="firstAssignedMember.avatarUrl"
+                        :alt="firstAssignedMember.username || ''"
+                      />
+                      <AvatarFallback class="text-[10px]">
+                        {{
+                          firstAssignedMember.username
+                            ?.charAt(0)
+                            .toUpperCase() || '?'
+                        }}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span class="text-sm truncate">{{
+                      firstAssignedMember.username || 'Unknown'
+                    }}</span>
+                    <span class="text-xs text-muted-foreground"
+                      >+{{ otherAssignedMembers.length }}</span
+                    >
+                    <ChevronDown class="h-3 w-3 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" class="w-52">
+                  <div class="px-2 py-1.5">
+                    <div class="relative">
+                      <Search
+                        class="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none"
+                      />
+                      <Input
+                        v-model="memberSearch"
+                        type="text"
+                        placeholder="Search..."
+                        class="h-8 pl-7 text-sm"
+                        @keydown.stop
+                      />
+                    </div>
+                  </div>
+                  <div class="max-h-48 overflow-y-auto overflow-x-hidden">
+                    <DropdownMenuItem
+                      v-for="member in filteredAssignedMembers"
+                      :key="member.uid"
+                      class="flex items-center gap-2"
+                      @select.prevent
+                    >
+                      <Avatar :uid="member.uid" class="h-5 w-5 shrink-0">
+                        <AvatarImage
+                          v-if="member.avatarUrl"
+                          :src="member.avatarUrl"
+                          :alt="member.username || ''"
+                        />
+                        <AvatarFallback class="text-[10px]">
+                          {{ member.username?.charAt(0).toUpperCase() || '?' }}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span class="text-sm truncate">{{
+                        member.username || 'Unknown'
+                      }}</span>
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <span v-else class="text-sm text-muted-foreground">
               No members assigned

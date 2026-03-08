@@ -429,7 +429,7 @@ export async function updateTaskMembers(
   await syncProjectAssignees(workspaceId, projectId)
 }
 
-async function syncProjectAssignees(
+export async function syncProjectAssignees(
   workspaceId: string,
   projectId: string
 ): Promise<void> {
@@ -496,7 +496,10 @@ export async function cleanupMemberAssignments(
     .where('assigneeIds', 'array-contains', memberId)
     .get()
 
+  const affectedProjectIds = new Set<string>()
   for (const taskDoc of tasksSnap.docs) {
+    const projectId = taskDoc.data().projectId
+    if (projectId) affectedProjectIds.add(projectId)
     batch.update(taskDoc.ref, {
       [`assignments.${memberId}`]: FieldValue.delete(),
       assigneeIds: FieldValue.arrayRemove(memberId),
@@ -505,6 +508,11 @@ export async function cleanupMemberAssignments(
   }
 
   await batch.commit()
+
+  // Recalculate project assigneeIds for affected projects
+  for (const projectId of affectedProjectIds) {
+    await syncProjectAssignees(workspaceId, projectId)
+  }
 }
 
 // Validation Functions

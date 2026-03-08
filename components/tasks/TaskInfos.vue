@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -30,7 +31,8 @@ import {
   MoreHorizontal,
   PenLine,
   Trash2,
-  Lock
+  Lock,
+  Search
 } from 'lucide-vue-next'
 import type { WorkspaceMember } from '@/composables/useMembers'
 
@@ -63,6 +65,16 @@ const taskMembersWithData = computed(() => {
   return props.workspaceMembers.filter((member) => {
     return props.assignedMemberIds?.includes(member.uid)
   })
+})
+
+const assigneeSearch = ref('')
+
+const filteredTaskMembers = computed(() => {
+  const query = assigneeSearch.value.toLowerCase().trim()
+  if (!query) return taskMembersWithData.value
+  return taskMembersWithData.value.filter((m) =>
+    (m.username || '').toLowerCase().includes(query)
+  )
 })
 
 const firstMember = computed(() => taskMembersWithData.value[0] || null)
@@ -392,17 +404,37 @@ const handleClose = () => {
           <Users class="h-4 w-4 text-muted-foreground/70" />
           Assignees
         </span>
-        <div v-if="firstMember">
-          <DropdownMenu>
-            <DropdownMenuTrigger as-child :disabled="!hasMultipleMembers">
+        <div
+          v-if="firstMember && !hasMultipleMembers"
+          class="flex items-center gap-2"
+        >
+          <Avatar :uid="firstMember.uid" class="h-6 w-6 shrink-0">
+            <AvatarImage
+              v-if="firstMember.avatarUrl"
+              :src="firstMember.avatarUrl"
+              :alt="firstMember.username || ''"
+            />
+            <AvatarFallback class="text-[10px]">
+              {{ firstMember.username?.charAt(0).toUpperCase() || '?' }}
+            </AvatarFallback>
+          </Avatar>
+          <span class="text-sm">{{
+            firstMember.username || firstMember.email
+          }}</span>
+        </div>
+        <div v-else-if="firstMember">
+          <DropdownMenu
+            @update:open="
+              (open: boolean) => {
+                if (!open) assigneeSearch = ''
+              }
+            "
+          >
+            <DropdownMenuTrigger as-child>
               <Button
                 variant="outline"
                 size="sm"
-                class="max-w-full"
-                :class="{
-                  'hover:bg-muted/80 cursor-pointer': hasMultipleMembers,
-                  'cursor-default': !hasMultipleMembers
-                }"
+                class="max-w-full hover:bg-muted/80 cursor-pointer"
               >
                 <Avatar :uid="firstMember.uid" class="h-5 w-5 shrink-0">
                   <AvatarImage
@@ -417,34 +449,49 @@ const handleClose = () => {
                 <span class="text-sm truncate">{{
                   firstMember.username || firstMember.email
                 }}</span>
-                <template v-if="hasMultipleMembers">
-                  <span class="text-xs text-muted-foreground"
-                    >+{{ otherMembers.length }}</span
-                  >
-                  <ChevronDown class="h-3 w-3 text-muted-foreground" />
-                </template>
+                <span class="text-xs text-muted-foreground"
+                  >+{{ otherMembers.length }}</span
+                >
+                <ChevronDown class="h-3 w-3 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent v-if="hasMultipleMembers" align="end">
-              <DropdownMenuItem
-                v-for="member in otherMembers"
-                :key="member.uid"
-                class="flex items-center gap-2"
-              >
-                <Avatar :uid="member.uid" class="h-5 w-5">
-                  <AvatarImage
-                    v-if="member.avatarUrl"
-                    :src="member.avatarUrl"
-                    :alt="member.username || ''"
+            <DropdownMenuContent align="start" class="w-52">
+              <div class="px-2 py-1.5">
+                <div class="relative">
+                  <Search
+                    class="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none"
                   />
-                  <AvatarFallback class="text-[10px]">
-                    {{ member.username?.charAt(0).toUpperCase() || '?' }}
-                  </AvatarFallback>
-                </Avatar>
-                <span class="text-sm">{{
-                  member.username || member.email
-                }}</span>
-              </DropdownMenuItem>
+                  <Input
+                    v-model="assigneeSearch"
+                    type="text"
+                    placeholder="Search..."
+                    class="h-8 pl-7 text-sm"
+                    @keydown.stop
+                  />
+                </div>
+              </div>
+              <div class="max-h-48 overflow-y-auto overflow-x-hidden">
+                <DropdownMenuItem
+                  v-for="member in filteredTaskMembers"
+                  :key="member.uid"
+                  class="flex items-center gap-2"
+                  @select.prevent
+                >
+                  <Avatar :uid="member.uid" class="h-5 w-5 shrink-0">
+                    <AvatarImage
+                      v-if="member.avatarUrl"
+                      :src="member.avatarUrl"
+                      :alt="member.username || ''"
+                    />
+                    <AvatarFallback class="text-[10px]">
+                      {{ member.username?.charAt(0).toUpperCase() || '?' }}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span class="text-sm truncate">{{
+                    member.username || member.email
+                  }}</span>
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

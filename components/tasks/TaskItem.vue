@@ -24,10 +24,7 @@ import TaskForm from './TaskForm.vue'
 import TaskInfos from './TaskInfos.vue'
 import { useAuth } from '@/composables/useAuth'
 import type { WorkspaceMember } from '@/composables/useMembers'
-import {
-  PERMISSIONS,
-  hasAnyPermission
-} from '@/constants/permissions'
+import { PERMISSIONS, hasAnyPermission } from '@/constants/permissions'
 
 const props = defineProps<{
   task: Task

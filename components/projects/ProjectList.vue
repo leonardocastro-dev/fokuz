@@ -6,7 +6,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 const props = defineProps<{
   projects: Project[]
   workspaceMembers: WorkspaceMember[]
-  projectAssignmentsMap: Record<string, string[]>
   isLoading: boolean
 }>()
 
@@ -53,7 +52,6 @@ const emit = defineEmits<{
         :key="project.id"
         :project="project"
         :workspace-members="workspaceMembers"
-        :assigned-member-ids="projectAssignmentsMap[project.id] || []"
         @edit="emit('edit', $event)"
         @members-updated="emit('members-updated')"
       />

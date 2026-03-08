@@ -277,6 +277,19 @@ export const useTaskStore = defineStore('tasks', {
         (project.completedTaskCount || 0) + completedCountDelta
     },
 
+    updateProjectAssigneeIds(projectId: string) {
+      const projectStore = useProjectStore()
+      const project = projectStore.projects.find((p) => p.id === projectId)
+      if (!project) return
+      const bucketKey = getTaskBucketKey(projectId)
+      const tasks = this.tasksByProject[bucketKey] || []
+      const assigneeSet = new Set<string>()
+      tasks.forEach((t) => {
+        ;(t.assigneeIds || []).forEach((id: string) => assigneeSet.add(id))
+      })
+      project.assigneeIds = Array.from(assigneeSet)
+    },
+
     resolveTaskBucket(taskId: string): string | null {
       // Fast path: try currentProjectId first
       if (this.currentProjectId) {
@@ -731,6 +744,7 @@ export const useTaskStore = defineStore('tasks', {
         1,
         isCompletedStatus(optimisticTask.status) ? 1 : 0
       )
+      this.updateProjectAssigneeIds(projectId)
 
       try {
         const token = await this.getAuthToken()
@@ -862,6 +876,9 @@ export const useTaskStore = defineStore('tasks', {
       if (completedDelta !== 0) {
         this.updateProjectCounters(existingTask.projectId, 0, completedDelta)
       }
+      if (memberIds) {
+        this.updateProjectAssigneeIds(existingTask.projectId)
+      }
 
       try {
         const workspaceId = this.getWorkspaceId()
@@ -889,6 +906,9 @@ export const useTaskStore = defineStore('tasks', {
         }
         if (completedDelta !== 0) {
           this.updateProjectCounters(existingTask.projectId, 0, -completedDelta)
+        }
+        if (memberIds) {
+          this.updateProjectAssigneeIds(existingTask.projectId)
         }
         showErrorToast('Failed to update task')
       }
@@ -935,6 +955,7 @@ export const useTaskStore = defineStore('tasks', {
         -1,
         isCompletedStatus(deletedTask.status) ? -1 : 0
       )
+      this.updateProjectAssigneeIds(existingTask.projectId)
 
       try {
         const workspaceId = this.getWorkspaceId()
@@ -963,6 +984,7 @@ export const useTaskStore = defineStore('tasks', {
           1,
           isCompletedStatus(deletedTask.status) ? 1 : 0
         )
+        this.updateProjectAssigneeIds(existingTask.projectId)
         showErrorToast('Failed to delete task')
       }
     },

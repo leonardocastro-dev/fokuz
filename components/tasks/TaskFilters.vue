@@ -200,188 +200,198 @@ const activeFilterCount = computed(() => {
       </div>
 
       <div class="flex items-center gap-2">
-      <DropdownMenu
-        v-if="members.length > 0"
-        @update:open="(open: boolean) => { if (!open) memberSearch = '' }"
-      >
-        <DropdownMenuTrigger as-child>
-          <Button variant="outline" size="default" class="gap-2 shrink-0">
-            <Avatar
-              v-if="selectedMember"
-              :key="selectedMember.uid"
-              :uid="selectedMember.uid"
-              class="h-5 w-5"
-            >
-              <AvatarImage
-                v-if="selectedMember.avatarUrl"
-                :src="selectedMember.avatarUrl"
-                :alt="selectedMember.username || ''"
-              />
-              <AvatarFallback class="text-[10px]">
-                {{ selectedMember.username?.charAt(0).toUpperCase() || '?' }}
-              </AvatarFallback>
-            </Avatar>
-            <Users v-else class="text-muted-foreground" />
-            <span>{{ scopeLabel }}</span>
-            <ChevronDown class="h-4 w-4 opacity-50" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent :align="isMobile ? 'start' : 'end'" class="w-52">
-          <div class="px-2 py-1.5">
-            <div class="relative">
-              <Search
-                class="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none"
-              />
-              <Input
-                v-model="memberSearch"
-                type="text"
-                placeholder="Search..."
-                class="h-8 pl-7 text-sm"
-                @keydown.stop
-              />
-            </div>
-          </div>
-          <div class="max-h-48 overflow-y-auto overflow-x-hidden">
-          <DropdownMenuItem
-            class="flex items-center gap-2 cursor-pointer"
-            @click="selectMember(null)"
-          >
-            <Users class="shrink-0" />
-            <span class="flex-1">All</span>
-            <Check
-              v-if="taskStore.scopeFilter === 'all'"
-              class="h-4 w-4 shrink-0"
-            />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            v-for="member in sortedMembers"
-            :key="member.uid"
-            class="flex items-center gap-2 cursor-pointer"
-            @click="selectMember(member.uid)"
-          >
-            <Avatar :uid="member.uid" class="h-5 w-5 shrink-0">
-              <AvatarImage
-                v-if="member.avatarUrl"
-                :src="member.avatarUrl"
-                :alt="member.username || ''"
-              />
-              <AvatarFallback class="text-[10px]">
-                {{ member.username?.charAt(0).toUpperCase() || '?' }}
-              </AvatarFallback>
-            </Avatar>
-            <span class="flex-1 truncate">
-              {{ member.username || 'Unknown' }}
-              <span
-                v-if="user?.uid === member.uid"
-                class="text-muted-foreground text-xs"
-                >(you)</span
-              >
-            </span>
-            <Check
-              v-if="
-                taskStore.scopeFilter === 'assigneds' &&
-                taskStore.scopeUserId === member.uid
-              "
-              class="h-4 w-4 shrink-0"
-            />
-          </DropdownMenuItem>
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <Popover>
-        <PopoverTrigger as-child>
-          <Button variant="outline" size="default" class="gap-2 shrink-0">
-            <SlidersHorizontal class="h-4 w-4" />
-            <span>Filters</span>
-            <Badge
-              v-if="activeFilterCount > 0"
-              variant="secondary"
-              class="ml-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-            >
-              {{ activeFilterCount }}
-            </Badge>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          align="end"
-          class="max-h-[290px] overflow-auto w-72 space-y-4"
+        <DropdownMenu
+          v-if="members.length > 0"
+          @update:open="
+            (open: boolean) => {
+              if (!open) memberSearch = ''
+            }
+          "
         >
-          <div>
-            <Label for="priority-filter" class="mb-1 block text-sm font-medium"
-              >Priority</Label
-            >
-            <Select
-              :model-value="taskStore.priorityFilter"
-              @update:model-value="
-                (val) => taskStore.setPriorityFilter(String(val || 'all'))
-              "
-            >
-              <SelectTrigger id="priority-filter" class="w-full">
-                <SelectValue placeholder="All Priorities" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="urgent">Urgent</SelectItem>
-                <SelectItem value="important">Important</SelectItem>
-                <SelectItem value="normal">Normal</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label class="mb-1 block text-sm font-medium">Due Date</Label>
-            <Popover
-              :open="dueDatePopoverOpen"
-              @update:open="onDueDatePopoverChange"
-            >
-              <PopoverTrigger as-child>
-                <button
-                  class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                >
-                  <span class="flex items-center gap-2">
-                    <CalendarIcon class="h-4 w-4 text-muted-foreground" />
-                    {{ dueDateLabel }}
-                  </span>
-                  <ChevronDown class="h-4 w-4 opacity-50" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="start" class="w-auto p-0" :side-offset="4">
-                <div v-if="!showingCalendar" class="p-1 space-y-0.5">
-                  <button
-                    v-for="option in [
-                      { value: 'all', label: 'All Dates' },
-                      { value: 'overdue', label: 'Overdue' },
-                      { value: 'on-time', label: 'On Time' },
-                      { value: 'no-date', label: 'No Date' },
-                      { value: 'custom', label: 'Custom' }
-                    ]"
-                    :key="option.value"
-                    class="flex w-full items-center rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                    :class="
-                      taskStore.dueDateFilter === option.value
-                        ? 'bg-accent text-accent-foreground'
-                        : ''
-                    "
-                    @click="selectDueDateOption(option.value)"
-                  >
-                    {{ option.label }}
-                  </button>
-                </div>
-                <div v-if="showingCalendar">
-                  <Calendar
-                    :model-value="customDateValue"
-                    @update:model-value="
-                      (val: DateValue) => handleCalendarSelect(val)
-                    "
+          <DropdownMenuTrigger as-child>
+            <Button variant="outline" size="default" class="gap-2 shrink-0">
+              <Avatar
+                v-if="selectedMember"
+                :key="selectedMember.uid"
+                :uid="selectedMember.uid"
+                class="h-5 w-5"
+              >
+                <AvatarImage
+                  v-if="selectedMember.avatarUrl"
+                  :src="selectedMember.avatarUrl"
+                  :alt="selectedMember.username || ''"
+                />
+                <AvatarFallback class="text-[10px]">
+                  {{ selectedMember.username?.charAt(0).toUpperCase() || '?' }}
+                </AvatarFallback>
+              </Avatar>
+              <Users v-else class="text-muted-foreground" />
+              <span>{{ scopeLabel }}</span>
+              <ChevronDown class="h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent :align="isMobile ? 'start' : 'end'" class="w-52">
+            <div class="px-2 py-1.5">
+              <div class="relative">
+                <Search
+                  class="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none"
+                />
+                <Input
+                  v-model="memberSearch"
+                  type="text"
+                  placeholder="Search..."
+                  class="h-8 pl-7 text-sm"
+                  @keydown.stop
+                />
+              </div>
+            </div>
+            <div class="max-h-48 overflow-y-auto overflow-x-hidden">
+              <DropdownMenuItem
+                class="flex items-center gap-2 cursor-pointer"
+                @click="selectMember(null)"
+              >
+                <Users class="shrink-0" />
+                <span class="flex-1">All</span>
+                <Check
+                  v-if="taskStore.scopeFilter === 'all'"
+                  class="h-4 w-4 shrink-0"
+                />
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                v-for="member in sortedMembers"
+                :key="member.uid"
+                class="flex items-center gap-2 cursor-pointer"
+                @click="selectMember(member.uid)"
+              >
+                <Avatar :uid="member.uid" class="h-5 w-5 shrink-0">
+                  <AvatarImage
+                    v-if="member.avatarUrl"
+                    :src="member.avatarUrl"
+                    :alt="member.username || ''"
                   />
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </PopoverContent>
-      </Popover>
+                  <AvatarFallback class="text-[10px]">
+                    {{ member.username?.charAt(0).toUpperCase() || '?' }}
+                  </AvatarFallback>
+                </Avatar>
+                <span class="flex-1 truncate">
+                  {{ member.username || 'Unknown' }}
+                  <span
+                    v-if="user?.uid === member.uid"
+                    class="text-muted-foreground text-xs"
+                    >(you)</span
+                  >
+                </span>
+                <Check
+                  v-if="
+                    taskStore.scopeFilter === 'assigneds' &&
+                    taskStore.scopeUserId === member.uid
+                  "
+                  class="h-4 w-4 shrink-0"
+                />
+              </DropdownMenuItem>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button variant="outline" size="default" class="gap-2 shrink-0">
+              <SlidersHorizontal class="h-4 w-4" />
+              <span>Filters</span>
+              <Badge
+                v-if="activeFilterCount > 0"
+                variant="secondary"
+                class="ml-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              >
+                {{ activeFilterCount }}
+              </Badge>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            :align="isMobile ? 'start' : 'end'"
+            class="max-h-[290px] overflow-auto w-72 space-y-4"
+          >
+            <div>
+              <Label
+                for="priority-filter"
+                class="mb-1 block text-sm font-medium"
+                >Priority</Label
+              >
+              <Select
+                :model-value="taskStore.priorityFilter"
+                @update:model-value="
+                  (val) => taskStore.setPriorityFilter(String(val || 'all'))
+                "
+              >
+                <SelectTrigger id="priority-filter" class="w-full">
+                  <SelectValue placeholder="All Priorities" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priorities</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="important">Important</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label class="mb-1 block text-sm font-medium">Due Date</Label>
+              <Popover
+                :open="dueDatePopoverOpen"
+                @update:open="onDueDatePopoverChange"
+              >
+                <PopoverTrigger as-child>
+                  <button
+                    class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  >
+                    <span class="flex items-center gap-2">
+                      <CalendarIcon class="h-4 w-4 text-muted-foreground" />
+                      {{ dueDateLabel }}
+                    </span>
+                    <ChevronDown class="h-4 w-4 opacity-50" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  class="w-auto p-0"
+                  :side-offset="4"
+                >
+                  <div v-if="!showingCalendar" class="p-1 space-y-0.5">
+                    <button
+                      v-for="option in [
+                        { value: 'all', label: 'All Dates' },
+                        { value: 'overdue', label: 'Overdue' },
+                        { value: 'on-time', label: 'On Time' },
+                        { value: 'no-date', label: 'No Date' },
+                        { value: 'custom', label: 'Custom' }
+                      ]"
+                      :key="option.value"
+                      class="flex w-full items-center rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                      :class="
+                        taskStore.dueDateFilter === option.value
+                          ? 'bg-accent text-accent-foreground'
+                          : ''
+                      "
+                      @click="selectDueDateOption(option.value)"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                  <div v-if="showingCalendar">
+                    <Calendar
+                      :model-value="customDateValue"
+                      @update:model-value="
+                        (val: DateValue) => handleCalendarSelect(val)
+                      "
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
 

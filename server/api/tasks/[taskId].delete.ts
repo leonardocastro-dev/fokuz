@@ -3,7 +3,8 @@ import {
   verifyAuth,
   canAccessProject,
   requireProjectPermission,
-  updateProjectTaskCounters
+  updateProjectTaskCounters,
+  syncProjectAssignees
 } from '@/server/utils/permissions'
 import { PERMISSIONS } from '@/constants/permissions'
 
@@ -58,6 +59,8 @@ export default defineEventHandler(async (event) => {
     -1,
     taskStatus === 'completed' ? -1 : 0
   )
+
+  await syncProjectAssignees(workspaceId, taskProjectId)
 
   return { success: true }
 })

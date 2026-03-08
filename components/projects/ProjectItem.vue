@@ -17,7 +17,6 @@ import ProjectMembersModal from './ProjectMembersModal.vue'
 const props = defineProps<{
   project: Project
   workspaceMembers: WorkspaceMember[]
-  assignedMemberIds: string[]
 }>()
 
 const emit = defineEmits<{
@@ -42,9 +41,9 @@ const projectMembersWithData = computed(() => {
     return []
   }
 
-  // Filter members who are assigned to this project via projectAssignments
+  const activeIds = props.project.assigneeIds || []
   return props.workspaceMembers.filter((member) => {
-    return props.assignedMemberIds.includes(member.uid)
+    return activeIds.includes(member.uid)
   })
 })
 

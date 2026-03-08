@@ -130,7 +130,6 @@ const handleReload = async () => {
     <ProjectList
       :projects="visibleProjects"
       :workspace-members="members"
-      :project-assignments-map="projectAssignmentsMap"
       :is-loading="isInitialLoading"
       @edit="handleEdit"
       @members-updated="loadAssignments"

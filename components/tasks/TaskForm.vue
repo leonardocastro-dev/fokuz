@@ -231,7 +231,7 @@ const handleClose = () => {
   >
     <SheetContent
       side="right"
-      class="sm:max-w-[480px] w-full p-0 flex flex-col overflow-hidden"
+      class="md:max-w-[480px] w-full p-0 flex flex-col overflow-hidden"
     >
       <SheetHeader>
         <SheetTitle class="text-2xl font-medium leading-tight">{{
