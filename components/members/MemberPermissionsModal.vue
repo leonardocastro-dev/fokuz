@@ -40,6 +40,7 @@ const { user } = useAuth()
 const isSaving = ref(false)
 
 const permissionsState = ref<Record<string, boolean>>({})
+const initialPermissionsState = ref<Record<string, boolean>>({})
 
 const getAuthToken = async (): Promise<string | null> => {
   if (!user.value) return null
@@ -72,6 +73,7 @@ const initializePermissions = () => {
 
   initFromItems(nestedItems.value)
   permissionsState.value = state
+  initialPermissionsState.value = { ...state }
 }
 
 const nestedItems = computed<NestedItem[]>(() => {
@@ -174,6 +176,16 @@ const selectedPermissions = computed(() => {
   return optimizedIds
 })
 
+const hasChanges = computed(() => {
+  const current = permissionsState.value
+  const initial = initialPermissionsState.value
+
+  for (const key of Object.keys(current)) {
+    if (current[key] !== initial[key]) return true
+  }
+  return false
+})
+
 const savePermissions = async () => {
   isSaving.value = true
 
@@ -254,7 +266,7 @@ const savePermissions = async () => {
           <Button variant="outline" :disabled="isSaving" @click="open = false">
             Cancel
           </Button>
-          <Button :disabled="isSaving" @click="savePermissions">
+          <Button :disabled="isSaving || !hasChanges" @click="savePermissions">
             {{ isSaving ? 'Saving...' : 'Save' }}
           </Button>
         </DialogFooter>

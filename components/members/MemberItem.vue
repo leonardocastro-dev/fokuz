@@ -63,6 +63,7 @@ const isUpdatingAdminRole = ref(false)
 const isTransferringOwnership = ref(false)
 const confirmAdminOpen = ref(false)
 const confirmOwnershipOpen = ref(false)
+const confirmRemoveOpen = ref(false)
 const pendingAdminAction = ref<boolean>(false)
 
 const isOwner = computed(() => props.member.role === ROLES.OWNER)
@@ -141,6 +142,7 @@ const removeMember = async () => {
 
     if (response.success) {
       emit('member-removed', props.member.uid)
+      confirmRemoveOpen.value = false
       toast.success('Member removed successfully', {
         style: { background: '#6ee7b7' },
         duration: 3000
@@ -148,6 +150,7 @@ const removeMember = async () => {
     }
   } catch (error: any) {
     console.error('Error removing member:', error)
+    confirmRemoveOpen.value = false
     toast.error(error.data?.message || 'Failed to remove member', {
       style: { background: '#fda4af' },
       duration: 3000
@@ -164,7 +167,6 @@ const requestAdminRoleChange = (shouldBeAdmin: boolean) => {
 
 const updateAdminRole = async (shouldBeAdmin: boolean) => {
   if (isUpdatingAdminRole.value) return
-  confirmAdminOpen.value = false
 
   try {
     isUpdatingAdminRole.value = true
@@ -182,6 +184,8 @@ const updateAdminRole = async (shouldBeAdmin: boolean) => {
     )
 
     if (response.success) {
+      emit('role-updated')
+      confirmAdminOpen.value = false
       toast.success(
         shouldBeAdmin
           ? 'Member promoted to admin successfully'
@@ -191,10 +195,10 @@ const updateAdminRole = async (shouldBeAdmin: boolean) => {
           duration: 3000
         }
       )
-      emit('role-updated')
     }
   } catch (error: any) {
     console.error('Error updating admin role:', error)
+    confirmAdminOpen.value = false
     toast.error(error.data?.message || 'Failed to update admin role', {
       style: { background: '#fda4af' },
       duration: 3000
@@ -210,7 +214,6 @@ const requestTransferOwnership = () => {
 
 const transferOwnership = async () => {
   if (isTransferringOwnership.value) return
-  confirmOwnershipOpen.value = false
 
   try {
     isTransferringOwnership.value = true
@@ -228,14 +231,16 @@ const transferOwnership = async () => {
     )
 
     if (response.success) {
+      emit('ownership-transferred')
+      confirmOwnershipOpen.value = false
       toast.success('Ownership transferred successfully', {
         style: { background: '#6ee7b7' },
         duration: 3000
       })
-      emit('ownership-transferred')
     }
   } catch (error: any) {
     console.error('Error transferring ownership:', error)
+    confirmOwnershipOpen.value = false
     toast.error(error.data?.message || 'Failed to transfer ownership', {
       style: { background: '#fda4af' },
       duration: 3000
@@ -359,7 +364,7 @@ const handlePermissionsUpdated = () => {
             <DropdownMenuItem
               v-if="canRemoveMember"
               class="flex items-center gap-2 text-destructive focus:text-destructive"
-              @click="removeMember"
+              @click="confirmRemoveOpen = true"
             >
               <Trash2 class="h-4 w-4 text-destructive/50" />
               Remove Member
@@ -387,7 +392,15 @@ const handlePermissionsUpdated = () => {
 
   <!-- Admin Role Confirmation -->
   <Dialog v-model:open="confirmAdminOpen">
-    <DialogContent class="sm:max-w-md">
+    <DialogContent
+      class="sm:max-w-md"
+      :can-close="!isUpdatingAdminRole"
+      @interact-outside="
+        (e) => {
+          if (isUpdatingAdminRole) e.preventDefault()
+        }
+      "
+    >
       <div class="grid gap-4 p-6">
         <DialogHeader>
           <DialogTitle>
@@ -401,7 +414,11 @@ const handlePermissionsUpdated = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter class="gap-2">
-          <Button variant="outline" @click="confirmAdminOpen = false">
+          <Button
+            variant="outline"
+            :disabled="isUpdatingAdminRole"
+            @click="confirmAdminOpen = false"
+          >
             Cancel
           </Button>
           <Button
@@ -417,7 +434,15 @@ const handlePermissionsUpdated = () => {
 
   <!-- Transfer Ownership Confirmation -->
   <Dialog v-model:open="confirmOwnershipOpen">
-    <DialogContent class="sm:max-w-md">
+    <DialogContent
+      class="sm:max-w-md"
+      :can-close="!isTransferringOwnership"
+      @interact-outside="
+        (e) => {
+          if (isTransferringOwnership) e.preventDefault()
+        }
+      "
+    >
       <div class="grid gap-4 p-6">
         <DialogHeader>
           <DialogTitle>Transfer Ownership</DialogTitle>
@@ -428,7 +453,11 @@ const handlePermissionsUpdated = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter class="gap-2">
-          <Button variant="outline" @click="confirmOwnershipOpen = false">
+          <Button
+            variant="outline"
+            :disabled="isTransferringOwnership"
+            @click="confirmOwnershipOpen = false"
+          >
             Cancel
           </Button>
           <Button
@@ -441,6 +470,46 @@ const handlePermissionsUpdated = () => {
                 ? 'Transferring...'
                 : 'Transfer Ownership'
             }}
+          </Button>
+        </DialogFooter>
+      </div>
+    </DialogContent>
+  </Dialog>
+
+  <!-- Remove Member Confirmation -->
+  <Dialog v-model:open="confirmRemoveOpen">
+    <DialogContent
+      class="sm:max-w-md"
+      :can-close="!isRemoving"
+      @interact-outside="
+        (e) => {
+          if (isRemoving) e.preventDefault()
+        }
+      "
+    >
+      <div class="grid gap-4 p-6">
+        <DialogHeader>
+          <DialogTitle>Remove Member</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to remove
+            <strong>{{ member.username || member.email }}</strong>
+            from this workspace?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter class="gap-2">
+          <Button
+            variant="outline"
+            :disabled="isRemoving"
+            @click="confirmRemoveOpen = false"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            :disabled="isRemoving"
+            @click="removeMember"
+          >
+            {{ isRemoving ? 'Removing...' : 'Remove' }}
           </Button>
         </DialogFooter>
       </div>

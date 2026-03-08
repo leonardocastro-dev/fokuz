@@ -12,8 +12,7 @@ definePageMeta({
 const route = useRoute()
 const workspaceStore = useWorkspaceStore()
 const { user } = useAuth()
-const { members, isLoadingMembers, loadWorkspaceMembers, removeMemberLocally } =
-  useMembers()
+const { members, isLoadingMembers, loadWorkspaceMembers } = useMembers()
 
 const workspaceId = computed(() => route.params.workspace as string)
 const workspace = computed(() =>
@@ -27,17 +26,9 @@ onMounted(async () => {
   await loadWorkspaceMembers(workspaceId.value)
 })
 
-const handleMemberRemoved = (memberId: string) => {
-  // Remove from cached members
-  removeMemberLocally(memberId)
-
-  // Update workspace members in store
-  if (workspace.value) {
-    const index = workspace.value.members.indexOf(memberId)
-    if (index > -1) {
-      workspace.value.members.splice(index, 1)
-    }
-  }
+const handleMemberRemoved = async () => {
+  await workspaceStore.loadWorkspaces(user.value?.uid)
+  await loadWorkspaceMembers(workspaceId.value, true)
 }
 
 const handlePermissionsUpdated = async () => {

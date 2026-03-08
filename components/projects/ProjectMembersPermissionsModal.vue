@@ -445,10 +445,19 @@ const save = async () => {
 
       <div class="overflow-y-auto px-6">
         <template v-if="isLoading">
-          <div v-for="i in 3" :key="i" class="flex items-center space-x-3 py-2">
-            <Skeleton class="h-4 w-4" />
-            <Skeleton class="h-8 w-8 rounded-full" />
-            <Skeleton class="h-4 w-32" />
+          <div class="space-y-4">
+            <div
+              v-for="i in 3"
+              :key="i"
+              class="border rounded-lg p-3"
+            >
+              <div class="flex items-center space-x-3">
+                <Skeleton class="h-4 w-4 shrink-0" />
+                <Skeleton class="h-8 w-8 rounded-full shrink-0" />
+                <Skeleton class="h-4 w-32 flex-1" />
+                <Skeleton class="h-4 w-4 shrink-0" />
+              </div>
+            </div>
           </div>
         </template>
 
