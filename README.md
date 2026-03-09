@@ -1,102 +1,149 @@
-# Task Manager - Full-Stack Todo Application
+# Task Manager - Full-Stack Workspace-Based Task Management
 
 #### Video Demo: [URL HERE]
 
 #### Description:
 
-Task Manager is a comprehensive full-stack todo application built with modern web technologies, featuring user authentication, real-time data synchronization, and an intuitive user interface. This project demonstrates proficiency in Vue.js ecosystem, Firebase integration, state management, and responsive design principles.
+Task Manager is a full-stack workspace-based task management application built with Nuxt 3 and Firebase. It features multi-workspace support, project organization, granular role-based permissions, team collaboration with invitations, and a dual mode that supports both authenticated and guest users.
 
 ## Project Overview
 
-This application serves as a complete task management solution that allows users to create, organize, and track their daily tasks efficiently. The project combines a robust frontend built with Nuxt.js and Vue 3, a Firebase backend for authentication and data storage, and a carefully designed user experience with modern UI components.
+This application provides a complete task management solution organized around workspaces and projects. Users can create workspaces, invite team members, manage projects with emoji identifiers, and track tasks with statuses, priorities, due dates, and assignees.
 
-The application supports both authenticated and guest modes. Authenticated users benefit from cloud synchronization across devices, while guest users can utilize local storage for immediate task management without registration requirements. This dual approach ensures accessibility while providing enhanced features for registered users.
+The application supports both authenticated and guest modes. Authenticated users benefit from cloud synchronization, team collaboration, and workspace management. Guest users can manage tasks locally via localStorage without registration.
 
-## Architecture and Technology Stack
+## Technology Stack
 
-The project is built on a modern JavaScript/TypeScript stack:
+- **Framework:** Nuxt 3 with Vue 3 Composition API
+- **Styling:** TailwindCSS 4 + Shadcn-vue (Reka UI, New York style)
+- **State Management:** Pinia (3 domain-specific stores)
+- **Database:** Firestore (NoSQL)
+- **Authentication:** Firebase Authentication
+- **Validation:** Vee-Validate + Zod
+- **Email:** Vue Email templates + Resend
+- **Cloud Functions:** Firebase Functions (profile sync)
+- **Icons:** Lucide Vue Next
+- **Package Manager:** pnpm
 
-**Frontend Framework**: Nuxt.js 3 with Vue 3 composition API provides the foundation for a reactive, server-side rendered application with excellent performance and SEO capabilities.
+## Data Model
 
-**Styling**: TailwindCSS for utility-first styling, combined with custom CSS variables for consistent theming. The UI components are based on Shadcn/ui, providing a professional and accessible design system.
+```
+workspaces/{id}
+  ├── members/{userId}          # role, permissions
+  ├── projects/{id}             # title, emoji, assigneeIds[]
+  │     └── members/{userId}    # project-level assignments
+  ├── tasks/{id}                # status, priority, dueDate, projectId, assigneeIds[]
 
-**State Management**: Pinia serves as the centralized state management solution, handling task operations, filtering, and user interface state with reactive getters and async actions.
+users/{uid}                     # public profile (username, avatar)
+users_private/{uid}             # private data (email)
+invites/{id}                    # workspace invitations
+```
 
-**Authentication & Database**: Firebase Authentication manages user registration, login, and session handling, while Firebase Realtime Database provides real-time data synchronization across devices.
+## Routing
 
-**Type Safety**: TypeScript throughout the entire codebase ensures type safety and better developer experience with comprehensive interface definitions for tasks, user data, and component props.
+File-based routing via Nuxt. The landing page and auth pages are SSR-enabled. Workspace routes (`/:workspace/**`) have SSR disabled for client-side real-time interactions.
 
-## Core Files and Their Functionality
+| Route | Description |
+|---|---|
+| `/` | Landing page |
+| `/login` | Login |
+| `/register` | Registration |
+| `/forgot-password` | Password recovery |
+| `/settings` | User profile settings |
+| `/workspaces` | Workspace list |
+| `/invite/[token]` | Invite acceptance |
+| `/:workspace/tasks` | Task management |
+| `/:workspace/members` | Member management |
+| `/:workspace/projects` | Project list |
+| `/:workspace/projects/[id]` | Project detail with tasks |
 
-### Backend Integration (`plugins/firebase.ts`)
+## State Management (Pinia)
 
-This file configures Firebase services including Authentication and Realtime Database. It initializes the Firebase SDK with environment-specific configuration and makes these services available throughout the Nuxt application via dependency injection.
+Three domain-specific stores in `stores/`:
 
-### State Management (`store.ts`)
+- **`workspaces.ts`** — workspace CRUD, current workspace tracking
+- **`projects.ts`** — project CRUD with member assignment, permission-based filtering
+- **`tasks.ts`** — multi-project task caching keyed by `projectId`, scope-aware filtering (`all` vs `assigneds`), optimistic updates with rollback, advanced filters (status, priority, due date, search)
 
-The Pinia store manages the entire application state, including tasks array, filtering options, and loading states. Key functionalities include:
+All stores support a dual mode: Firebase for authenticated users, localStorage for guests.
 
-- **Task CRUD Operations**: Create, read, update, and delete tasks with both local storage and Firebase synchronization
-- **Filtering System**: Multi-dimensional filtering by status (pending/completed), priority (normal/important/urgent), and text search
-- **Statistics Calculation**: Real-time computation of task completion percentages, urgent task counts, and progress metrics
-- **Dual Storage Strategy**: Seamlessly handles both authenticated users (Firebase) and guest users (localStorage)
+## Permission System
 
-### Authentication Composable (`composables/useAuth.ts`)
+Hierarchical role-based permissions defined in `constants/permissions.ts` and enforced server-side in `server/utils/permissions.ts`.
 
-This composable encapsulates all authentication logic using Firebase Auth. It provides reactive user state, login/logout functionality, user registration with automatic database user profile creation, and comprehensive error handling with user-friendly toast notifications.
+**Roles:** Owner > Admin > Member
 
-### Type Definitions (`types/Task.ts`)
+**Workspace permissions:** manage-projects, create-projects, edit-projects, delete-projects, manage-members, add-members, remove-members, assign-project
 
-Defines the core Task interface with properties including id, title, description, status (pending/completed), priority levels, and creation timestamps. This ensures type safety across all task-related operations.
+**Project permissions:** manage-tasks, create-tasks, edit-tasks, delete-tasks, toggle-status
 
-### Main Application Layout (`app.vue`)
+Permission implications simplify assignment (e.g., `manage-projects` implies `create-projects`, `edit-projects`, `delete-projects`). Project-level assignments can override workspace permissions. Task assignees can toggle task status without explicit edit permission.
 
-The root component that sets up the application shell, including the toast notification system for user feedback and the main routing outlet for page components.
+## Server API Routes
 
-### Primary Interface (`pages/index.vue`)
+All mutations go through `server/api/` routes which validate permissions before writing to Firestore. Client reads go directly to Firestore, secured by `firestore.rules`.
 
-The main application interface that orchestrates all major components:
+- **Auth:** `POST /api/auth/check-username`
+- **Workspaces:** CRUD, admin toggling, ownership transfer
+- **Projects:** CRUD, member assignment
+- **Tasks:** CRUD
+- **Members:** update permissions, remove
+- **Invites:** send, accept, get details
 
-- **Header Section**: Displays application branding and authentication controls
-- **Task Statistics**: Shows completion percentages and task counts
-- **Filtering Controls**: Provides search and filter options
-- **Task Management**: Lists tasks and provides creation interface
-- **Responsive Design**: Adapts to different screen sizes with mobile-first approach
+## Composables
 
-### Component Architecture
+- **`useAuth.ts`** — singleton auth state, profile management, registration with rollback
+- **`useWorkspace.ts`** — workspace context resolution (store > route)
+- **`useMembers.ts`** — member management with project-specific filtering
+- **`useProjectPermissions.ts`** — project-level permission resolution and caching
+- **`useScrollReveal.ts`** — landing page scroll animations
 
-**TaskForm Component** (`components/TaskForm.vue`): A modal-based form for creating and editing tasks, featuring form validation, priority selection, due date handling, and responsive design.
+## Components
 
-**TaskList Component** (`components/TaskList.vue`): Renders the filterable list of tasks with support for status toggling, inline editing, task deletion, and empty state handling.
+Components are organized by domain:
 
-**TaskItem Component** (`components/TaskItem.vue`): Individual task representation with checkbox controls, priority indicators, action buttons, and status-based styling.
+- **`components/ui/`** — Shadcn-vue component library (buttons, cards, dialogs, forms, selects, sheets, dropdowns, etc.)
+- **`components/home/`** — Landing page sections (Hero, Features, Benefits, CTA, Footer, Header)
+- **`components/landing/`** — Additional landing components (HowItWorks, Permissions, ProductMockup, SocialProof)
+- **`components/tasks/`** — TaskForm, TaskList, TaskItem, TaskFilters, TaskInfos
+- **`components/projects/`** — ProjectForm, ProjectList, ProjectItem, ProjectMembersModal, ProjectMembersPermissionsModal
+- **`components/members/`** — MemberList, MemberItem, MemberPermissionsModal
+- **`components/settings/`** — ProfileTab, PasswordTab, EmailTab
+- **`components/workspaces/`** — WorkspaceForm, WorkspaceItem
 
-**TaskFilters Component** (`components/TaskFilters.vue`): Provides search input and dropdown filters for status and priority, with real-time filtering updates.
+## Type Definitions
 
-### UI Component Library (`components/ui/`)
+- **`types/task.d.ts`** — Task interface (status: `pending` | `inProgress` | `completed`, priority: `urgent` | `important` | `normal`)
+- **`types/projects.d.ts`** — Project interface with task counts and emoji
+- **`types/Workspace.ts`** — Workspace interface
+- **`types/assignments.d.ts`** — Project and task assignment interfaces with roles and permissions
 
-A comprehensive collection of reusable UI components based on Radix UI and styled with TailwindCSS, including buttons, cards, dialogs, forms, inputs, and more. These components ensure consistency across the application and provide accessibility features out of the box.
+## Firebase Cloud Functions
 
-## Design Decisions and Implementation Choices
+- **`syncUserProfileToMembers`** — Firestore trigger that syncs user profile changes (username, avatar, email) to all workspace member records automatically.
 
-**State Management Strategy**: I chose Pinia over Vuex due to its better TypeScript integration, simpler API, and excellent developer experience. The store design separates concerns between data management and UI state, making the codebase more maintainable.
+## Development
 
-**Authentication Architecture**: Firebase Authentication was selected for its robust security features, social login capabilities, and seamless integration with other Firebase services. The composable pattern encapsulates auth logic, making it reusable and testable.
+```bash
+pnpm dev              # Start dev server (port 3000)
+pnpm build            # Production build
+pnpm lint             # ESLint
+pnpm prettier         # Check formatting
+pnpm prettier:fix     # Fix formatting
+pnpm typecheck        # TypeScript type checking
+pnpm deploy           # Full CI: prettier + lint + typecheck + build
+```
 
-**Data Persistence Strategy**: The dual storage approach (Firebase for authenticated users, localStorage for guests) maximizes accessibility while providing premium features for registered users. This decision balances user convenience with data persistence requirements.
+Firebase Functions (from `functions/` directory):
 
-**Component Design**: I implemented a component-based architecture with clear separation of concerns. Each component handles a specific aspect of the user interface, promoting reusability and maintainability.
+```bash
+npm run build         # Compile TypeScript
+npm run serve         # Build + start Firebase emulators
+npm run deploy        # Deploy functions to Firebase
+```
 
-**Styling Approach**: TailwindCSS was chosen for its utility-first approach, which enables rapid development while maintaining design consistency. The integration with Shadcn/ui components provides professional aesthetics with minimal custom CSS.
+## Code Style
 
-**Type Safety Implementation**: TypeScript usage throughout ensures runtime safety and better developer experience. Interface definitions for tasks, user data, and component props prevent common errors and improve code documentation.
-
-## Features and Functionality
-
-The application provides comprehensive task management capabilities including task creation with title, description, priority, and due date settings, real-time task status updates with visual feedback, advanced filtering by text search, status, and priority, progress tracking with completion statistics, user authentication with secure login/registration, cloud synchronization for authenticated users, responsive design for mobile and desktop use, and accessibility features throughout the interface.
-
-## Development and Deployment
-
-The project uses modern development tools including ESLint for code quality, Prettier for code formatting, TypeScript for type safety, and Pnpm for efficient package management. The development server provides hot module replacement for rapid iteration, while the build process optimizes assets for production deployment.
-
-This Task Manager application demonstrates proficiency in modern web development practices, including reactive programming with Vue 3, state management patterns, authentication integration, responsive design, and type-safe development. The codebase structure promotes maintainability and scalability, making it suitable for both educational purposes and real-world deployment.
+- **Prettier:** single quotes, no semicolons, no trailing commas
+- **ESLint:** `@typescript-eslint/no-explicit-any` disabled, `vue/html-self-closing` disabled
+- Prettier rules enforced via ESLint integration
