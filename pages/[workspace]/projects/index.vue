@@ -13,7 +13,6 @@ const { workspaceId } = useWorkspace()
 const projectStore = useProjectStore()
 const {
   members,
-  projectAssignmentsMap,
   loadWorkspaceMembers,
   loadAllProjectAssignments
 } = useMembers()

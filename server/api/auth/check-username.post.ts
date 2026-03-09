@@ -1,13 +1,4 @@
-import { getFirestore } from 'firebase-admin/firestore'
-import { initializeApp, getApps, cert } from 'firebase-admin/app'
-
-if (!getApps().length) {
-  initializeApp({
-    credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!))
-  })
-}
-
-const db = getFirestore()
+import { db } from '~/server/utils/firebase-admin'
 
 export default defineEventHandler(async (event) => {
   const { username } = await readBody(event)

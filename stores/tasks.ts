@@ -95,11 +95,8 @@ const isTaskMatchingFilters = (
 
 export const useTaskStore = defineStore('tasks', {
   state: () => ({
-    // Cache multi-projeto: Map de projectId → tasks
     tasksByProject: {} as Record<string, Task[]>,
-    // Cache de permissões por projeto
     permissionsByProject: {} as Record<string, Record<string, boolean> | null>,
-    // Rastreia quais projetos já foram carregados (para evitar re-fetch)
     loadedProjects: {} as Record<
       string,
       { workspaceId: string; loadedAt: number; scope: string }
@@ -121,12 +118,10 @@ export const useTaskStore = defineStore('tasks', {
   }),
 
   getters: {
-    // Getter para obter as tasks do projeto atual
     tasks: (state): Task[] => {
       if (!state.currentProjectId) return []
       return state.tasksByProject[state.currentProjectId] || []
     },
-    // Getter para obter as permissões do projeto atual
     memberPermissions: (state): Record<string, boolean> | null => {
       if (!state.currentProjectId) return null
       return state.permissionsByProject[state.currentProjectId] ?? null
@@ -166,9 +161,7 @@ export const useTaskStore = defineStore('tasks', {
       ).length
       return total > 0 ? Math.round((completed / total) * 100) : 0
     },
-    // Check if user can create tasks
     canCreateTasks(state): boolean {
-      // Guest mode: can always create local tasks
       if (state.isGuestMode) return true
       const projectStore = useProjectStore()
       return hasAnyPermission(projectStore.memberRole, this.memberPermissions, [
@@ -176,9 +169,7 @@ export const useTaskStore = defineStore('tasks', {
         PERMISSIONS.CREATE_TASKS
       ])
     },
-    // Check if user can delete tasks
     canDeleteTasks(state): boolean {
-      // Guest mode: can always delete local tasks
       if (state.isGuestMode) return true
       const projectStore = useProjectStore()
       return hasAnyPermission(projectStore.memberRole, this.memberPermissions, [
@@ -186,9 +177,7 @@ export const useTaskStore = defineStore('tasks', {
         PERMISSIONS.DELETE_TASKS
       ])
     },
-    // Check if user can edit tasks
     canEditTasks(state): boolean {
-      // Guest mode: can always edit local tasks
       if (state.isGuestMode) return true
       const projectStore = useProjectStore()
       return hasAnyPermission(projectStore.memberRole, this.memberPermissions, [
@@ -196,18 +185,14 @@ export const useTaskStore = defineStore('tasks', {
         PERMISSIONS.EDIT_TASKS
       ])
     },
-    // Check if user can manage tasks (all task permissions)
     canManageTasks(state): boolean {
-      // Guest mode: can always manage local tasks
       if (state.isGuestMode) return true
       const projectStore = useProjectStore()
       return hasAnyPermission(projectStore.memberRole, this.memberPermissions, [
         PERMISSIONS.MANAGE_TASKS
       ])
     },
-    // Check if user can toggle task status in the current project context
     canToggleTaskStatus(state): boolean {
-      // Guest mode: can always toggle local tasks
       if (state.isGuestMode) return true
       const projectStore = useProjectStore()
       return hasAnyPermission(projectStore.memberRole, this.memberPermissions, [
@@ -248,14 +233,12 @@ export const useTaskStore = defineStore('tasks', {
   },
 
   actions: {
-    // Helper to get auth token
     async getAuthToken(): Promise<string | null> {
       const { user } = useAuth()
       if (!user.value) return null
       return await user.value.getIdToken()
     },
 
-    // Helper to get workspaceId from current project
     getWorkspaceId(): string | undefined {
       const projectStore = useProjectStore()
       const project = projectStore.projects.find(
@@ -291,7 +274,6 @@ export const useTaskStore = defineStore('tasks', {
     },
 
     resolveTaskBucket(taskId: string): string | null {
-      // Fast path: try currentProjectId first
       if (this.currentProjectId) {
         const currentProjectBucket = getTaskBucketKey(this.currentProjectId)
         const tasks = this.tasksByProject[currentProjectBucket]
@@ -300,7 +282,6 @@ export const useTaskStore = defineStore('tasks', {
         }
       }
 
-      // Search all projects
       for (const [bucketKey, tasks] of Object.entries(this.tasksByProject)) {
         if (tasks.some((t) => t.id === taskId)) {
           return bucketKey
@@ -334,7 +315,6 @@ export const useTaskStore = defineStore('tasks', {
 
       const currentScope = this.scopeFilter || 'assigneds'
 
-      // Verifica se o projeto já está no cache (e não é forceReload)
       const cachedProject = this.loadedProjects[projectId]
       if (
         !forceReload &&
@@ -343,7 +323,6 @@ export const useTaskStore = defineStore('tasks', {
       ) {
         const cachedScope = cachedProject.scope
         if (cachedScope === 'all' || cachedScope === currentScope) {
-          // Tasks já em cache, mas garante que permissões sejam carregadas
           if (workspaceId && !this.permissionsByProject[projectId]) {
             await this.loadProjectPermissions(projectId, userId, workspaceId)
           }
@@ -352,7 +331,6 @@ export const useTaskStore = defineStore('tasks', {
         }
       }
 
-      // Se o workspace já carregou tasks com scope compatível
       if (!forceReload && workspaceId && this.loadedWorkspaces[workspaceId]) {
         const wsScope = this.loadedWorkspaces[workspaceId]
         if (
@@ -387,7 +365,6 @@ export const useTaskStore = defineStore('tasks', {
       const { $firestore } = useNuxtApp()
       const projectStore = useProjectStore()
       const workspacePermissions = projectStore.memberPermissions || {}
-      // Filter to only workspace-scoped permissions (exclude task permissions)
       const filteredWorkspacePerms: Record<string, boolean> = {}
       for (const [key, val] of Object.entries(workspacePermissions)) {
         if (WORKSPACE_PERMISSION_SET.has(key)) {
@@ -443,7 +420,6 @@ export const useTaskStore = defineStore('tasks', {
 
           await this.loadProjectPermissions(projectId, userId, workspaceId)
 
-          // Query tasks from workspace-level collection filtered by projectId
           const tasksRef = collection(
             $firestore,
             'workspaces',
@@ -469,16 +445,12 @@ export const useTaskStore = defineStore('tasks', {
             })) as Task[]
           }
 
-          // Se já tem dados de 'assigneds' e agora carregou 'all', sobrescreve
-          // Se carregou 'assigneds' e já tinha 'all', não sobrescreve
           const cachedScope = this.loadedProjects[projectId]?.scope
           if (cachedScope === 'all' && scope === 'assigneds') {
-            // Já tem dados completos, não sobrescreve
           } else {
             this.tasksByProject[projectId] = loadedTasks
           }
         } else {
-          // Guest mode for localStorage
           this.isGuestMode = true
           this.permissionsByProject[projectId] = null
           const localTasks = localStorage.getItem(`localTasks_${projectId}`)
@@ -486,7 +458,6 @@ export const useTaskStore = defineStore('tasks', {
           this.tasksByProject[projectId] = loadedTasks
         }
 
-        // Marca o projeto como carregado com o scope mais amplo
         const prevScope = this.loadedProjects[projectId]?.scope
         this.loadedProjects[projectId] = {
           workspaceId: workspaceId || '',
@@ -511,7 +482,6 @@ export const useTaskStore = defineStore('tasks', {
       )
     },
 
-    // Limpa cache de um projeto específico
     clearProjectCache(projectId: string) {
       const { [projectId]: _tasks, ...restTasks } = this.tasksByProject
       const { [projectId]: _loaded, ...restLoaded } = this.loadedProjects
@@ -521,7 +491,6 @@ export const useTaskStore = defineStore('tasks', {
       this.permissionsByProject = restPerms
     },
 
-    // Limpa todo o cache
     clearCache() {
       this.tasksByProject = {}
       this.loadedProjects = {}
@@ -569,7 +538,6 @@ export const useTaskStore = defineStore('tasks', {
       this.workspaceScope = scope
       this.workspaceUserId = userId || null
 
-      // Guest mode: carregar tasks do localStorage
       if (!userId) {
         this.isGuestMode = true
         const projectStore = useProjectStore()
@@ -592,7 +560,6 @@ export const useTaskStore = defineStore('tasks', {
 
       this.isGuestMode = false
 
-      // Cache: if already loaded 'all' for this workspace, getter filters client-side
       if (!forceReload && this.loadedWorkspaces[workspaceId]) {
         const loadedScope = this.loadedWorkspaces[workspaceId]
         if (loadedScope === 'all' || loadedScope === scope) {
@@ -626,7 +593,6 @@ export const useTaskStore = defineStore('tasks', {
 
         const snapshot = await getDocs(q)
 
-        // Group tasks by projectId
         const grouped: Record<string, Task[]> = {}
         snapshot.docs.forEach((docSnap) => {
           const data = docSnap.data()
@@ -642,14 +608,11 @@ export const useTaskStore = defineStore('tasks', {
           grouped[bucketKey].push(task)
         })
 
-        // Store in tasksByProject
         for (const [bucketKey, projectTasks] of Object.entries(grouped)) {
-          // For 'assigneds' scope, don't overwrite projects that already have full data
           if (scope === 'assigneds' && this.loadedProjects[bucketKey]) continue
           this.tasksByProject[bucketKey] = projectTasks
         }
 
-        // For 'all' scope, mark projects as fully loaded
         if (scope === 'all') {
           for (const bucketKey of Object.keys(grouped)) {
             this.loadedProjects[bucketKey] = {
@@ -686,7 +649,6 @@ export const useTaskStore = defineStore('tasks', {
       const projectId = task.projectId
       const bucketKey = getTaskBucketKey(projectId)
 
-      // Garante que o array existe
       if (!this.tasksByProject[bucketKey]) {
         this.tasksByProject[bucketKey] = []
       }
@@ -716,7 +678,6 @@ export const useTaskStore = defineStore('tasks', {
         return
       }
 
-      // Optimistic: create task with temporary ID and push immediately
       const tempId = crypto.randomUUID()
       const now = new Date().toISOString()
       const assignments: Record<string, TaskAssignment> = {}
@@ -768,7 +729,6 @@ export const useTaskStore = defineStore('tasks', {
           }
         )
 
-        // Replace optimistic task with server task (real ID)
         if (response.success && response.task) {
           const responseBucket = getTaskBucketKey(response.task.projectId)
           if (responseBucket !== bucketKey) {
@@ -791,7 +751,6 @@ export const useTaskStore = defineStore('tasks', {
         }
       } catch (error) {
         console.error('Error adding task:', error)
-        // Rollback: remove the optimistic task
         this.tasksByProject[bucketKey] = this.tasksByProject[bucketKey].filter(
           (t) => t.id !== tempId
         )
@@ -843,7 +802,6 @@ export const useTaskStore = defineStore('tasks', {
         return
       }
 
-      // Optimistic: snapshot + apply immediately
       const snapshot = { ...projectTasks[taskIndex] }
       let optimisticUpdate: Partial<Task> = updatedTask
       if (memberIds) {
@@ -899,7 +857,6 @@ export const useTaskStore = defineStore('tasks', {
         })
       } catch (error) {
         console.error('Error updating task:', error)
-        // Rollback: restore snapshot
         const currentIndex = projectTasks.findIndex((t) => t.id === id)
         if (currentIndex !== -1) {
           projectTasks[currentIndex] = snapshot
@@ -942,7 +899,6 @@ export const useTaskStore = defineStore('tasks', {
         return
       }
 
-      // Optimistic: save task + position, remove immediately
       const projectTasks = this.tasksByProject[bucketKey] || []
       const deletedIndex = projectTasks.findIndex((task) => task.id === id)
       if (deletedIndex === -1) return
@@ -974,7 +930,6 @@ export const useTaskStore = defineStore('tasks', {
         })
       } catch (error) {
         console.error('Error deleting task:', error)
-        // Rollback: re-insert at original position
         const currentTasks = this.tasksByProject[bucketKey] || []
         const insertIndex = Math.min(deletedIndex, currentTasks.length)
         currentTasks.splice(insertIndex, 0, deletedTask)
@@ -1030,7 +985,6 @@ export const useTaskStore = defineStore('tasks', {
       }
     },
 
-    // Atualiza apenas o estado local (para UI otimista)
     updateLocalTaskStatus(id: string, status: Status) {
       const bucketKey = this.resolveTaskBucket(id)
       if (!bucketKey) return
@@ -1053,7 +1007,6 @@ export const useTaskStore = defineStore('tasks', {
         )
       }
 
-      // Atualiza localStorage se necessário
       const localTasks = localStorage.getItem(`localTasks_${bucketKey}`)
       if (localTasks) {
         localStorage.setItem(
@@ -1063,8 +1016,6 @@ export const useTaskStore = defineStore('tasks', {
       }
     },
 
-    // Sincroniza com servidor (chamado com debounce)
-    // Lança erro para que o composable possa reverter a UI
     async syncTaskStatusToServer(
       id: string,
       status: Status,

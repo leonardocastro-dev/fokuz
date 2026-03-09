@@ -424,7 +424,7 @@ const activeFilterCount = computed(() => {
           <div class="min-w-0">
             <p class="text-sm font-medium leading-tight">{{ item.label }}</p>
             <p class="text-xs text-muted-foreground">
-              {{ item.count }} {{ item.count === 1 ? 'tarefa' : 'tarefas' }}
+              {{ item.count }} {{ item.count === 1 ? 'task' : 'tasks' }}
             </p>
           </div>
         </button>

@@ -533,7 +533,7 @@ const handleClose = () => {
         >
           <ChevronDown v-if="!descriptionExpanded" class="h-3 w-3" />
           <ChevronUp v-else class="h-3 w-3" />
-          {{ descriptionExpanded ? 'Recolher' : 'Expandir' }}
+          {{ descriptionExpanded ? 'Collapse' : 'Expand' }}
         </div>
         <p
           v-if="!task.description"

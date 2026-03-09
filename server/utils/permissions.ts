@@ -237,48 +237,6 @@ export async function requireOwnerOrAdmin(
   return member
 }
 
-// Project Assignment Functions
-
-export async function assignUserToProject(
-  workspaceId: string,
-  projectId: string,
-  userId: string,
-  role: ProjectRole = 'member',
-  assignedBy?: string
-): Promise<void> {
-  const assignmentRef = db.doc(
-    `workspaces/${workspaceId}/projects/${projectId}/members/${userId}`
-  )
-  const assignment: ProjectAssignment = {
-    role,
-    assignedAt: new Date().toISOString(),
-    assignedBy
-  }
-  await assignmentRef.set(assignment)
-}
-
-export async function removeUserFromProject(
-  workspaceId: string,
-  projectId: string,
-  userId: string
-): Promise<void> {
-  const assignmentRef = db.doc(
-    `workspaces/${workspaceId}/projects/${projectId}/members/${userId}`
-  )
-  await assignmentRef.delete()
-}
-
-export async function getProjectMembers(
-  workspaceId: string,
-  projectId: string
-): Promise<string[]> {
-  const assignmentsRef = db.collection(
-    `workspaces/${workspaceId}/projects/${projectId}/members`
-  )
-  const snapshot = await assignmentsRef.get()
-  return snapshot.docs.map((doc) => doc.id)
-}
-
 export async function updateProjectMembers(
   workspaceId: string,
   projectId: string,
@@ -316,36 +274,6 @@ export async function updateProjectMembers(
   }
 
   await batch.commit()
-}
-
-export async function updateMemberProjectAssignment(
-  workspaceId: string,
-  projectId: string,
-  memberId: string,
-  permissions: ProjectAssignmentPermissions,
-  assignedBy?: string,
-  role?: ProjectRole
-): Promise<void> {
-  const assignmentRef = db.doc(
-    `workspaces/${workspaceId}/projects/${projectId}/members/${memberId}`
-  )
-  const assignmentSnap = await assignmentRef.get()
-
-  if (assignmentSnap.exists) {
-    const updateData: Record<string, unknown> = { permissions }
-    if (role !== undefined) {
-      updateData.role = role
-    }
-    await assignmentRef.update(updateData)
-  } else {
-    const assignment: ProjectAssignment = {
-      role: role || 'member',
-      assignedAt: new Date().toISOString(),
-      assignedBy,
-      permissions
-    }
-    await assignmentRef.set(assignment)
-  }
 }
 
 // Task Assignment Functions

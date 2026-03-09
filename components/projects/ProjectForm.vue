@@ -42,7 +42,6 @@ const TITLE_MAX_LENGTH = 100
 const TITLE_MIN_LENGTH = 3
 const DESCRIPTION_MAX_LENGTH = 500
 
-const currentTag = ref('')
 const titleError = ref('')
 const descriptionError = ref('')
 const isSaving = ref(false)
@@ -145,7 +144,6 @@ const resetForm = () => {
   description.value = ''
   emoji.value = ''
   showEmojiPicker.value = false
-  currentTag.value = ''
   titleError.value = ''
   descriptionError.value = ''
 }

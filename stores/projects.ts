@@ -45,34 +45,27 @@ export const useProjectStore = defineStore('projects', {
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       )
     },
-    // Check if user can create projects
     canCreateProjects: (state) => {
-      // Guest mode: can always create local projects
       if (state.isGuestMode) return true
       return hasAnyPermission(state.memberRole, state.memberPermissions, [
         PERMISSIONS.MANAGE_PROJECTS,
         PERMISSIONS.CREATE_PROJECTS
       ])
     },
-    // Check if user can delete projects
     canDeleteProjects: (state) => {
-      // Guest mode: can always delete local projects
       if (state.isGuestMode) return true
       return hasAnyPermission(state.memberRole, state.memberPermissions, [
         PERMISSIONS.MANAGE_PROJECTS,
         PERMISSIONS.DELETE_PROJECTS
       ])
     },
-    // Check if user can edit projects
     canEditProjects: (state) => {
-      // Guest mode: can always edit local projects
       if (state.isGuestMode) return true
       return hasAnyPermission(state.memberRole, state.memberPermissions, [
         PERMISSIONS.MANAGE_PROJECTS,
         PERMISSIONS.EDIT_PROJECTS
       ])
     },
-    // Check if user can assign members to projects
     canAssignProjectMembers: (state) => {
       if (state.isGuestMode) return false
       return hasAnyPermission(state.memberRole, state.memberPermissions, [
@@ -82,7 +75,6 @@ export const useProjectStore = defineStore('projects', {
   },
 
   actions: {
-    // Helper to get auth token
     async getAuthToken(): Promise<string | null> {
       const { user } = useAuth()
       if (!user.value) return null
@@ -98,7 +90,6 @@ export const useProjectStore = defineStore('projects', {
       }
 
       this.isGuestMode = false
-      // Legacy support - now projects are in workspaces subcollections
       this.projects = []
     },
 
@@ -107,7 +98,6 @@ export const useProjectStore = defineStore('projects', {
       userId: string | null = null,
       forceReload: boolean = false
     ) {
-      // Skip if already loaded for this workspace (unless forced)
       if (!forceReload && this.loadedWorkspaceId === workspaceId) {
         return
       }
@@ -133,7 +123,6 @@ export const useProjectStore = defineStore('projects', {
 
         const { $firestore } = useNuxtApp()
 
-        // Get the member's permissions for workspace-level access checks
         const memberRef = doc(
           $firestore,
           'workspaces',
@@ -166,7 +155,6 @@ export const useProjectStore = defineStore('projects', {
               ...doc.data()
             })) as Project[]
 
-            // Load project assignments for non-admin users
             if (!this.hasFullProjectAccess) {
               const assignedIds: string[] = []
               await Promise.all(
@@ -211,7 +199,6 @@ export const useProjectStore = defineStore('projects', {
     },
 
     async reloadProjects(workspaceId: string, userId: string | null = null) {
-      // Limpa o cache de tasks ao recarregar projetos
       const taskStore = useTaskStore()
       taskStore.clearCache()
 
@@ -222,7 +209,6 @@ export const useProjectStore = defineStore('projects', {
       this.loadedWorkspaceId = null
     },
 
-    // Save current workspace projects to localStorage without losing other workspaces
     saveLocalProjects() {
       const allLocal: Project[] = JSON.parse(
         localStorage.getItem('localProjects') || '[]'
@@ -248,7 +234,6 @@ export const useProjectStore = defineStore('projects', {
         workspaceId: workspaceId || undefined
       }
 
-      // Optimistic: Add immediately
       this.projects.push(projectWithTimestamp)
 
       if (!userId || !workspaceId) {
@@ -277,7 +262,6 @@ export const useProjectStore = defineStore('projects', {
         )
 
         if (response.success && response.project) {
-          // Update with server response
           const index = this.projects.findIndex((p) => p.id === project.id)
           if (index !== -1) {
             this.projects[index] = { ...response.project, workspaceId }
@@ -286,7 +270,6 @@ export const useProjectStore = defineStore('projects', {
 
         showSuccessToast('Project added successfully')
       } catch (error) {
-        // Rollback: Remove from state
         this.projects = this.projects.filter((p) => p.id !== project.id)
         console.error('Error adding project:', error)
         showErrorToast('Failed to add project')
@@ -303,10 +286,8 @@ export const useProjectStore = defineStore('projects', {
       const index = this.projects.findIndex((project) => project.id === id)
       if (index === -1) return
 
-      // Backup for rollback
       const backup = { ...this.projects[index] }
 
-      // Optimistic: Update immediately
       this.projects[index] = {
         ...this.projects[index],
         ...updatedProject,
@@ -345,7 +326,6 @@ export const useProjectStore = defineStore('projects', {
           }
         }
       } catch (error) {
-        // Rollback: Restore backup
         this.projects[index] = backup
         console.error('Error updating project:', error)
         showErrorToast('Failed to update project')
@@ -357,10 +337,8 @@ export const useProjectStore = defineStore('projects', {
       const projectToDelete = this.projects.find((project) => project.id === id)
       if (!projectToDelete) return
 
-      // Backup for rollback
       const backup = [...this.projects]
 
-      // Optimistic: Remove immediately
       this.projects = this.projects.filter((project) => project.id !== id)
 
       if (!userId || !projectToDelete.workspaceId) {
@@ -387,7 +365,6 @@ export const useProjectStore = defineStore('projects', {
           showSuccessToast('Project deleted successfully')
         }
       } catch (error) {
-        // Rollback: Restore projects
         this.projects = backup
         console.error('Error deleting project:', error)
         showErrorToast('Failed to delete project')

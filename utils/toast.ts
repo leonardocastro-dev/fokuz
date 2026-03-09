@@ -2,8 +2,7 @@ import { toast } from 'vue-sonner'
 
 export const TOAST_CONFIG = {
   success: { background: '#6ee7b7' },
-  error: { background: '#fda4af' },
-  warning: { background: '#fdba74' }
+  error: { background: '#fda4af' }
 } as const
 
 export const TOAST_DURATION = 3000
@@ -22,9 +21,3 @@ export const showErrorToast = (message: string) => {
   })
 }
 
-export const showWarningToast = (message: string) => {
-  toast.message(message, {
-    style: TOAST_CONFIG.warning,
-    duration: TOAST_DURATION
-  })
-}
