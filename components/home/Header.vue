@@ -31,7 +31,7 @@ onUnmounted(() => {
     :class="mobileMenuOpen ? '' : 'shadow-sm'"
   >
     <NuxtLink to="#home">
-      <img src="/logo-light.svg" alt="Fokuz" class="h-10" />
+      <img src="/logo-light.svg" alt="Fokuz" class="md:h-10 h-9" />
     </NuxtLink>
     <div
       :class="{ 'nav-burguer md:hidden': true, open: mobileMenuOpen }"
