@@ -45,11 +45,6 @@ export const PROJECT_PERMISSIONS = {
   TOGGLE_STATUS: PERMISSIONS.TOGGLE_STATUS
 } as const
 
-export type WorkspacePermission =
-  (typeof WORKSPACE_PERMISSIONS)[keyof typeof WORKSPACE_PERMISSIONS]
-export type ProjectPermission =
-  (typeof PROJECT_PERMISSIONS)[keyof typeof PROJECT_PERMISSIONS]
-
 export const PROJECT_ROLES = {
   ADMIN: 'admin',
   MEMBER: 'member'

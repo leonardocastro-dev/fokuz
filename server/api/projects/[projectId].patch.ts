@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
 
   const member = await getMemberData(workspaceId, uid)
 
-
   const isMemberAssignmentOnly =
     memberIds !== undefined &&
     title === undefined &&

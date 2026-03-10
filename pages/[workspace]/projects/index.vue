@@ -11,11 +11,8 @@ import { useMembers } from '@/composables/useMembers'
 const { user } = useAuth()
 const { workspaceId } = useWorkspace()
 const projectStore = useProjectStore()
-const {
-  members,
-  loadWorkspaceMembers,
-  loadAllProjectAssignments
-} = useMembers()
+const { members, loadWorkspaceMembers, loadAllProjectAssignments } =
+  useMembers()
 
 const isAddingProject = ref(false)
 const editingProject = ref<Project | undefined>()

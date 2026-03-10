@@ -6,11 +6,7 @@ import type { Role } from '@/constants/permissions'
 import {
   ROLES,
   PERMISSIONS,
-  WORKSPACE_PERMISSIONS,
-  PROJECT_PERMISSIONS,
   PROJECT_ROLES,
-  impliesWorkspace,
-  impliesProject,
   isOwner,
   isAdmin,
   isOwnerOrAdmin,
@@ -34,11 +30,7 @@ export {
   hasProjectPermission,
   ROLES,
   PERMISSIONS,
-  WORKSPACE_PERMISSIONS,
-  PROJECT_PERMISSIONS,
   PROJECT_ROLES,
-  impliesWorkspace,
-  impliesProject,
   WORKSPACE_PERMISSION_SET,
   PROJECT_PERMISSION_SET
 }

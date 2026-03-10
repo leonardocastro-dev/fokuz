@@ -15,6 +15,7 @@ pnpm deploy           # Full CI: prettier + lint + typecheck + build
 ```
 
 Firebase Cloud Functions (separate project in `functions/`):
+
 ```bash
 cd functions && npm run build    # Compile TypeScript
 cd functions && npm run serve    # Build + start Firebase emulators

@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
     status,
     priority,
     dueDate,
-    completed,
     memberIds
   } = await readBody(event)
 
@@ -64,7 +63,7 @@ export default defineEventHandler(async (event) => {
   const taskProjectId = taskDoc.data()?.projectId as string
 
   const isStatusOnlyUpdate =
-    (status !== undefined || completed !== undefined) &&
+    status !== undefined &&
     title === undefined &&
     description === undefined &&
     priority === undefined &&
@@ -134,10 +133,6 @@ export default defineEventHandler(async (event) => {
 
   if (dueDate !== undefined) {
     updates.dueDate = dueDate
-  }
-
-  if (completed !== undefined) {
-    updates.completed = completed
   }
 
   await taskRef.update(updates)

@@ -43,18 +43,18 @@ invites/{id}                    # workspace invitations
 
 File-based routing via Nuxt. The landing page and auth pages are SSR-enabled. Workspace routes (`/:workspace/**`) have SSR disabled for client-side real-time interactions.
 
-| Route | Description |
-|---|---|
-| `/` | Landing page |
-| `/login` | Login |
-| `/register` | Registration |
-| `/forgot-password` | Password recovery |
-| `/settings` | User profile settings |
-| `/workspaces` | Workspace list |
-| `/invite/[token]` | Invite acceptance |
-| `/:workspace/tasks` | Task management |
-| `/:workspace/members` | Member management |
-| `/:workspace/projects` | Project list |
+| Route                       | Description               |
+| --------------------------- | ------------------------- |
+| `/`                         | Landing page              |
+| `/login`                    | Login                     |
+| `/register`                 | Registration              |
+| `/forgot-password`          | Password recovery         |
+| `/settings`                 | User profile settings     |
+| `/workspaces`               | Workspace list            |
+| `/invite/[token]`           | Invite acceptance         |
+| `/:workspace/tasks`         | Task management           |
+| `/:workspace/members`       | Member management         |
+| `/:workspace/projects`      | Project list              |
 | `/:workspace/projects/[id]` | Project detail with tasks |
 
 ## State Management (Pinia)

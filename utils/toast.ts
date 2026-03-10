@@ -20,4 +20,3 @@ export const showErrorToast = (message: string) => {
     duration: TOAST_DURATION
   })
 }
-

@@ -186,5 +186,4 @@ const completionPercentage = computed(() =>
       </DropdownMenu>
     </CardContent>
   </Card>
-
 </template>

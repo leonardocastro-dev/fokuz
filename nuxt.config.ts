@@ -4,9 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   app: {
     head: {
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ]
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
     }
   },
   routeRules: {
@@ -19,13 +17,7 @@ export default defineNuxtConfig({
     transpile: ['emoji-mart-vue-fast']
   },
   devtools: { enabled: true },
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/fonts',
-    '@nuxt/image',
-    'shadcn-nuxt',
-    '@pinia/nuxt'
-  ],
+  modules: ['@nuxt/eslint', '@nuxt/fonts', 'shadcn-nuxt', '@pinia/nuxt'],
   shadcn: {
     /**
      * Prefix for all the imported component
@@ -54,8 +46,7 @@ export default defineNuxtConfig({
       firebaseStorageBucket: process.env.NUXT_FIREBASE_STORAGE_BUCKET,
       firebaseMessagingSenderId: process.env.NUXT_FIREBASE_MESSAGING_SENDER_ID,
       firebaseAppId: process.env.NUXT_FIREBASE_APP_ID,
-      firebaseMeasurementId: process.env.NUXT_FIREBASE_MEASUREMENT_ID,
-      firebaseDatabaseURL: process.env.NUXT_FIREBASE_DATABASE_URL
+      firebaseMeasurementId: process.env.NUXT_FIREBASE_MEASUREMENT_ID
     }
   }
 })
