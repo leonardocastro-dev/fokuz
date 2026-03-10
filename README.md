@@ -103,10 +103,9 @@ All mutations go through `server/api/` routes which validate permissions before 
 Components are organized by domain:
 
 - **`components/ui/`** — Shadcn-vue component library (buttons, cards, dialogs, forms, selects, sheets, dropdowns, etc.)
-- **`components/home/`** — Landing page sections (Hero, Features, Benefits, CTA, Footer, Header)
-- **`components/landing/`** — Additional landing components (HowItWorks, Permissions, ProductMockup, SocialProof)
+- **`components/home/`** — Landing page (Hero, Header, Footer, Features, Benefits, CTA, HowItWorks, Permissions, ProductMockup, SocialProof)
 - **`components/tasks/`** — TaskForm, TaskList, TaskItem, TaskFilters, TaskInfos
-- **`components/projects/`** — ProjectForm, ProjectList, ProjectItem, ProjectMembersModal, ProjectMembersPermissionsModal
+- **`components/projects/`** — ProjectForm, ProjectList, ProjectItem, ProjectMembersPermissionsModal
 - **`components/members/`** — MemberList, MemberItem, MemberPermissionsModal
 - **`components/settings/`** — ProfileTab, PasswordTab, EmailTab
 - **`components/workspaces/`** — WorkspaceForm, WorkspaceItem

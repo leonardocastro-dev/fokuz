@@ -131,7 +131,6 @@ const handleReload = async () => {
       :workspace-members="members"
       :is-loading="isInitialLoading"
       @edit="handleEdit"
-      @members-updated="loadAssignments"
     />
 
     <ProjectForm

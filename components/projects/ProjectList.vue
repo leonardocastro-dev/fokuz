@@ -18,7 +18,6 @@ const sortedProjects = computed(() => {
 
 const emit = defineEmits<{
   edit: [project: Project]
-  'members-updated': []
 }>()
 </script>
 
@@ -53,7 +52,6 @@ const emit = defineEmits<{
         :project="project"
         :workspace-members="workspaceMembers"
         @edit="emit('edit', $event)"
-        @members-updated="emit('members-updated')"
       />
     </div>
   </div>

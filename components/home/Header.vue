@@ -28,7 +28,7 @@ onUnmounted(() => {
   <!-- Mobile Header -->
   <header
     class="md:hidden fixed top-0 left-0 right-0 h-16 bg-background border-b z-40 flex items-center justify-between px-6 transition-shadow duration-200"
-    :class="mobileMenuOpen ? '' : 'shadow-sm'"
+    :class="scrolled && !mobileMenuOpen ? 'shadow-sm' : ''"
   >
     <NuxtLink to="#home">
       <img src="/logo-light.svg" alt="Fokuz" class="md:h-10 h-9" />

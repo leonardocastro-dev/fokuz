@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -10,9 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Lock, Trash2, PenLine, Users } from 'lucide-vue-next'
+import { MoreHorizontal, Lock, Trash2, PenLine } from 'lucide-vue-next'
 import { useAuth } from '@/composables/useAuth'
-import ProjectMembersModal from './ProjectMembersModal.vue'
 
 const props = defineProps<{
   project: Project
@@ -21,20 +20,15 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   edit: [project: Project]
-  'members-updated': []
 }>()
 
 const router = useRouter()
 const route = useRoute()
 const projectStore = useProjectStore()
 const { user } = useAuth()
-const isMembersOpen = ref(false)
 const canEdit = computed(() => projectStore.canEditProjects)
 const canDelete = computed(() => projectStore.canDeleteProjects)
-const canManageMembers = computed(() => projectStore.canAssignProjectMembers)
-const hasAnyAction = computed(
-  () => canEdit.value || canDelete.value || canManageMembers.value
-)
+const hasAnyAction = computed(() => canEdit.value || canDelete.value)
 
 const projectMembersWithData = computed(() => {
   if (!props.workspaceMembers || props.workspaceMembers.length === 0) {
@@ -173,23 +167,6 @@ const completionPercentage = computed(() =>
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            v-if="canManageMembers"
-            class="flex items-center gap-2"
-            @click.stop="isMembersOpen = true"
-          >
-            <Users class="h-3 w-3" />
-            Manage Members
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            v-else
-            disabled
-            class="flex items-center gap-2 opacity-50 cursor-not-allowed"
-          >
-            <Lock class="h-3 w-3" />
-            Manage Members
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
             v-if="canDelete"
             class="flex items-center gap-2 text-destructive focus:text-destructive"
             @click.stop="projectStore.deleteProject(project.id, user?.uid)"
@@ -210,10 +187,4 @@ const completionPercentage = computed(() =>
     </CardContent>
   </Card>
 
-  <ProjectMembersModal
-    v-model:open="isMembersOpen"
-    :project="project"
-    :workspace-id="route.params.workspace as string"
-    @members-updated="emit('members-updated')"
-  />
 </template>
