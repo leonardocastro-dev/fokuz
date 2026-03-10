@@ -33,7 +33,6 @@ const benefits = [
 <template>
   <section id="benefits" class="pb-20 md:pb-28 bg-gradient-subtle">
     <div class="container mx-auto px-4 md:px-6">
-      <!-- Section Header -->
       <div class="text-center space-y-4 mb-16 reveal">
         <h2 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           Why
@@ -48,7 +47,6 @@ const benefits = [
         </p>
       </div>
 
-      <!-- Benefits Grid -->
       <div class="grid gap-8 md:grid-cols-3 reveal-stagger">
         <Card
           v-for="(benefit, index) in benefits"

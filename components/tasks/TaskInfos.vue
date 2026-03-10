@@ -263,7 +263,6 @@ const handleClose = () => {
         </DropdownMenu>
       </template>
 
-      <!-- Title -->
       <SheetHeader>
         <SheetTitle
           class="md:text-2xl text-lg font-medium leading-tight break-words"
@@ -275,11 +274,9 @@ const handleClose = () => {
         </SheetDescription>
       </SheetHeader>
 
-      <!-- Metadata rows -->
       <div
         class="p-5 grid grid-cols-1 gap-y-3 md:grid-cols-[auto_1fr] md:gap-x-8 md:gap-y-4 md:items-center overflow-hidden"
       >
-        <!-- Created -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <Calendar class="h-4 w-4 text-muted-foreground/70" />
           Created
@@ -292,7 +289,6 @@ const handleClose = () => {
             formatTime(new Date(task.createdAt || Date.now()))
           }}</span>
         </span>
-        <!-- Status -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <CircleDashed class="h-4 w-4 text-muted-foreground/70" />
           Status
@@ -362,7 +358,6 @@ const handleClose = () => {
           </Badge>
         </div>
 
-        <!-- Priority -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <component
             :is="getPriorityIcon()"
@@ -376,7 +371,6 @@ const handleClose = () => {
           </Badge>
         </div>
 
-        <!-- Due Date -->
         <span
           class="text-sm flex items-center gap-2"
           :class="isOverdue ? 'text-red-500' : 'text-muted-foreground'"
@@ -399,7 +393,6 @@ const handleClose = () => {
           No due date
         </span>
 
-        <!-- Assignees -->
         <span class="text-sm text-muted-foreground flex items-center gap-2">
           <Users class="h-4 w-4 text-muted-foreground/70" />
           Assignees
@@ -500,7 +493,6 @@ const handleClose = () => {
         </span>
       </div>
 
-      <!-- Description -->
       <div class="px-5">
         <div
           v-if="task.description"

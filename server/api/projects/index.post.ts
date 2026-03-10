@@ -47,7 +47,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verify user is a workspace member
   const member = await getMemberData(workspaceId, uid)
 
   if (!member) {
@@ -57,7 +56,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verify user has permission to create projects
   if (
     !hasAnyPermission(member.role, member.permissions, [
       PERMISSIONS.MANAGE_PROJECTS,
@@ -87,7 +85,6 @@ export default defineEventHandler(async (event) => {
   const projectRef = db.doc(`workspaces/${workspaceId}/projects/${projectId}`)
   await projectRef.set(project)
 
-  // Assign member access if provided (validate memberIds first)
   if (Array.isArray(memberIds) && memberIds.length > 0) {
     const { valid, invalid } = await validateWorkspaceMemberIds(
       workspaceId,

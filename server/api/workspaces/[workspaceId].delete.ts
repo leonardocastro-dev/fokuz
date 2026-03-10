@@ -15,7 +15,6 @@ export default defineEventHandler(async (event) => {
 
   await requireOwner(workspaceId, uid)
 
-  // Clean up all projectAssignments and taskAssignments first
   await cleanupWorkspaceAssignments(workspaceId)
 
   const batch = db.batch()
@@ -30,7 +29,6 @@ export default defineEventHandler(async (event) => {
   const projectsSnap = await db
     .collection(`workspaces/${workspaceId}/projects`)
     .get()
-  // Delete all tasks at workspace level
   const tasksSnap = await db.collection(`workspaces/${workspaceId}/tasks`).get()
   tasksSnap.docs.forEach((taskDoc) => {
     batch.delete(taskDoc.ref)

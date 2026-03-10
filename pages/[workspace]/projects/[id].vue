@@ -171,7 +171,6 @@ watch(
             {{ currentProject.description }}
           </p>
 
-          <!-- Members Section -->
           <div class="mt-4 flex items-center gap-3">
             <div
               v-if="firstAssignedMember && !hasMultipleAssigned"

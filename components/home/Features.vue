@@ -55,7 +55,6 @@ const features = [
 <template>
   <section id="features" class="bg-background">
     <div class="container mx-auto px-4 md:px-6">
-      <!-- Section Header -->
       <div class="text-center space-y-4 mb-16 reveal">
         <h2 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
           Everything a serious team needs
@@ -65,7 +64,6 @@ const features = [
         </p>
       </div>
 
-      <!-- Features Grid -->
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 reveal-stagger">
         <Card
           v-for="(feature, index) in features"

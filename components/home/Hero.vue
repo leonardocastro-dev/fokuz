@@ -16,7 +16,6 @@ import {
   >
     <div class="container mx-auto px-4 md:px-6">
       <div class="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-        <!-- Left: copy -->
         <div class="flex flex-col space-y-8 animate-fade-in">
           <div class="space-y-4">
             <h1
@@ -76,9 +75,7 @@ import {
           </div>
         </div>
 
-        <!-- Right: task pill cluster -->
         <div class="relative flex flex-col gap-3 lg:pl-8" aria-hidden="true">
-          <!-- Task pills -->
           <div
             class="rounded-xl border border-border bg-card p-4 shadow-md flex items-start gap-2 hover:border-primary/40 transition-colors"
           >
@@ -176,7 +173,6 @@ import {
             </div>
           </div>
 
-          <!-- Decorative blur -->
           <div
             class="absolute -bottom-8 -right-8 h-48 w-48 rounded-full opacity-20"
             style="background: var(--gradient-primary); filter: blur(48px)"

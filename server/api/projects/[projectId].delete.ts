@@ -21,7 +21,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check access via isOwnerOrAdmin, access-projects permission, OR projectAssignment
   const hasAccess = await canAccessProject(workspaceId, projectId, uid)
 
   if (!hasAccess) {
@@ -31,7 +30,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verify user has permission to delete projects
   const member = await getMemberData(workspaceId, uid)
 
   if (
@@ -53,7 +51,6 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Project not found' })
   }
 
-  // Query tasks that belong to this project
   const tasksSnap = await db
     .collection(`workspaces/${workspaceId}/tasks`)
     .where('projectId', '==', projectId)
@@ -61,7 +58,6 @@ export default defineEventHandler(async (event) => {
 
   const batch = db.batch()
 
-  // Delete tasks
   for (const taskDoc of tasksSnap.docs) {
     batch.delete(taskDoc.ref)
   }
@@ -70,7 +66,6 @@ export default defineEventHandler(async (event) => {
 
   await batch.commit()
 
-  // Delete project assignments
   await deleteProjectAssignments(workspaceId, projectId)
 
   return { success: true }

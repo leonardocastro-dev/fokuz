@@ -35,7 +35,6 @@ export default defineEventHandler(async (event) => {
 
   const taskProjectId = taskDoc.data()?.projectId as string
 
-  // Check if user has permission to delete tasks (project-scoped)
   await requireProjectPermission(workspaceId, taskProjectId, uid, [
     PERMISSIONS.MANAGE_TASKS,
     PERMISSIONS.DELETE_TASKS
@@ -49,7 +48,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Delete the task
   await taskRef.delete()
 
   const taskStatus = taskDoc.data()?.status

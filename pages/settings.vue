@@ -92,7 +92,6 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-gray-50 p-8">
     <div class="max-w-4xl mx-auto">
-      <!-- Header -->
       <header class="mb-8">
         <div class="flex items-center gap-4 mb-4">
           <Button
@@ -114,12 +113,10 @@ onMounted(() => {
         </div>
       </header>
 
-      <!-- Loading State -->
       <div v-if="isLoading" class="flex justify-center py-12">
         <LoadingSpinner />
       </div>
 
-      <!-- Settings Content -->
       <Tabs v-else default-value="profile" class="w-full">
         <TabsList class="grid w-full grid-cols-3">
           <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -127,7 +124,6 @@ onMounted(() => {
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
 
-        <!-- Profile Tab -->
         <TabsContent value="profile">
           <ProfileTab
             :username="username"
@@ -137,12 +133,10 @@ onMounted(() => {
           />
         </TabsContent>
 
-        <!-- Email Tab -->
         <TabsContent value="email">
           <EmailTab :email="email" @update:email="email = $event" />
         </TabsContent>
 
-        <!-- Password Tab -->
         <TabsContent value="password">
           <PasswordTab />
         </TabsContent>

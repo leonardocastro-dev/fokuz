@@ -87,7 +87,6 @@ const roles = [
         </Card>
       </div>
 
-      <!-- Per-project override callout -->
       <div
         class="reveal mt-10 mx-auto max-w-2xl rounded-xl border border-primary/30 bg-primary/5 p-6 text-center space-y-2"
       >

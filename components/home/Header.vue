@@ -25,7 +25,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- Mobile Header -->
   <header
     class="md:hidden fixed top-0 left-0 right-0 h-16 bg-background border-b z-40 flex items-center justify-between px-6 transition-shadow duration-200"
     :class="scrolled && !mobileMenuOpen ? 'shadow-sm' : ''"
@@ -43,7 +42,6 @@ onUnmounted(() => {
     </div>
   </header>
 
-  <!-- Mobile Menu Overlay -->
   <Transition
     enter-active-class="transition-transform duration-200 ease-out"
     enter-from-class="-translate-y-full"
@@ -98,7 +96,6 @@ onUnmounted(() => {
     </div>
   </Transition>
 
-  <!-- Desktop Header -->
   <header
     :class="[
       'hidden md:block sticky top-0 z-50 w-full border-b transition-all duration-300',

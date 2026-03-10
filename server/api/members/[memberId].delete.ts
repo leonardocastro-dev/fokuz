@@ -74,7 +74,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Clean up all projectAssignments and taskAssignments for this member
   await cleanupMemberAssignments(workspaceId, memberId)
 
   const batch = db.batch()

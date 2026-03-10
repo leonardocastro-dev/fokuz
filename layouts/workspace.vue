@@ -41,7 +41,6 @@ watch(() => route.fullPath, closeMobileMenu)
 
 <template>
   <div class="flex min-h-screen bg-gray-50">
-    <!-- Mobile Header -->
     <header
       class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background border-b z-40 flex items-center justify-between px-6 transition-shadow duration-200"
       :class="isMobileMenuOpen ? '' : 'shadow-sm'"
@@ -59,7 +58,6 @@ watch(() => route.fullPath, closeMobileMenu)
       </div>
     </header>
 
-    <!-- Mobile Menu Overlay -->
     <Transition
       enter-active-class="transition-transform duration-200 ease-out"
       enter-from-class="-translate-y-full"
@@ -195,7 +193,6 @@ watch(() => route.fullPath, closeMobileMenu)
       </div>
     </Transition>
 
-    <!-- Desktop Sidebar -->
     <aside
       class="hidden lg:flex w-64 bg-background border-r fixed h-screen flex-col"
     >

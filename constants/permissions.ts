@@ -25,7 +25,6 @@ export const PERMISSIONS = {
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
-// Scoped permission groupings
 export const WORKSPACE_PERMISSIONS = {
   ACCESS_PROJECTS: PERMISSIONS.ACCESS_PROJECTS,
   MANAGE_PROJECTS: PERMISSIONS.MANAGE_PROJECTS,
@@ -64,7 +63,6 @@ export const isProjectAdmin = (
   return projectRole === PROJECT_ROLES.ADMIN
 }
 
-// Scoped implies maps
 export const impliesWorkspace: Record<string, string[]> = {
   [PERMISSIONS.MANAGE_PROJECTS]: [
     PERMISSIONS.CREATE_PROJECTS,
@@ -87,7 +85,6 @@ export const impliesProject: Record<string, string[]> = {
   ]
 }
 
-// Validation sets
 export const WORKSPACE_PERMISSION_SET = new Set<string>(
   Object.values(WORKSPACE_PERMISSIONS)
 )

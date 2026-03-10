@@ -57,7 +57,6 @@ export default defineEventHandler(async (event) => {
   }
   const normalizedProjectId = projectId.trim()
 
-  // Check if user has permission to create tasks (project-scoped)
   await requireProjectPermission(workspaceId, normalizedProjectId, uid, [
     PERMISSIONS.MANAGE_TASKS,
     PERMISSIONS.CREATE_TASKS
@@ -118,7 +117,6 @@ export default defineEventHandler(async (event) => {
     task.status === 'completed' ? 1 : 0
   )
 
-  // Assign members to task if provided (validate memberIds first)
   if (memberIds && Array.isArray(memberIds) && memberIds.length > 0) {
     const { valid, invalid } = await validateWorkspaceMemberIds(
       workspaceId,

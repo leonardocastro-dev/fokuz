@@ -29,12 +29,10 @@ import {
         </p>
       </div>
 
-      <!-- Mobile: bento grid (hidden on md+) -->
       <div
         class="md:hidden grid grid-cols-2 gap-3 reveal-stagger"
         aria-hidden="true"
       >
-        <!-- Featured: Priority — full width -->
         <div
           class="col-span-2 rounded-2xl border border-primary/30 bg-primary/5 p-5 flex items-center gap-4 shadow-lg"
           style="
@@ -69,7 +67,6 @@ import {
           </div>
         </div>
 
-        <!-- Due dates -->
         <div
           class="rounded-2xl border border-border bg-card p-4 space-y-3 hover:border-primary/30 transition-colors"
         >
@@ -86,7 +83,6 @@ import {
           </div>
         </div>
 
-        <!-- Assignees -->
         <div
           class="rounded-2xl border border-border bg-card p-4 space-y-3 hover:border-primary/30 transition-colors"
         >
@@ -103,7 +99,6 @@ import {
           </div>
         </div>
 
-        <!-- Featured: Progress — full width -->
         <div
           class="col-span-2 rounded-2xl border border-border bg-card p-5 flex items-center gap-4 hover:border-primary/30 transition-colors"
         >
@@ -130,7 +125,6 @@ import {
           </div>
         </div>
 
-        <!-- Projects -->
         <div
           class="rounded-2xl border border-border bg-card p-4 space-y-3 hover:border-primary/30 transition-colors"
         >
@@ -147,7 +141,6 @@ import {
           </div>
         </div>
 
-        <!-- Filters -->
         <div
           class="rounded-2xl border border-border bg-card p-4 space-y-3 hover:border-primary/30 transition-colors"
         >
@@ -165,12 +158,10 @@ import {
         </div>
       </div>
 
-      <!-- Desktop: Browser chrome wrapper -->
       <div
         class="float-animation mx-auto max-w-4xl rounded-2xl border border-border shadow-2xl overflow-hidden hidden md:block"
         aria-hidden="true"
       >
-        <!-- Title bar -->
         <div
           class="flex items-center gap-3 bg-muted/60 px-4 py-3 border-b border-border"
         >
@@ -186,13 +177,10 @@ import {
           </div>
         </div>
 
-        <!-- App layout -->
         <div class="flex h-[420px] bg-background">
-          <!-- Sidebar -->
           <div
             class="w-52 flex-shrink-0 border-r border-border bg-background flex flex-col"
           >
-            <!-- Logo + workspace -->
             <div class="p-4 pb-3">
               <img src="/logo-light.svg" alt="Fokuz" class="h-7" />
               <div class="mt-3 px-1">
@@ -207,7 +195,6 @@ import {
               </div>
             </div>
 
-            <!-- Nav -->
             <nav class="flex flex-col flex-1 gap-1 px-2 py-1">
               <div
                 class="flex items-center px-3 py-1.5 text-xs font-medium text-muted-foreground rounded-md"
@@ -215,7 +202,6 @@ import {
                 Tasks
               </div>
 
-              <!-- Projects with chevron (expanded) -->
               <div>
                 <div
                   class="flex items-center justify-between px-3 py-1.5 text-xs font-medium text-primary bg-accent rounded-md"
@@ -267,7 +253,6 @@ import {
               </div>
             </nav>
 
-            <!-- User -->
             <div class="p-3 border-t border-border">
               <p class="text-xs text-muted-foreground truncate px-1">
                 john@acme.com
@@ -275,9 +260,7 @@ import {
             </div>
           </div>
 
-          <!-- Main content -->
           <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Project header -->
             <div class="px-4 pt-3 pb-2.5 border-b border-border">
               <h1
                 class="text-sm font-bold text-primary flex items-center gap-1.5"
@@ -290,7 +273,6 @@ import {
             </div>
 
             <div class="px-4 py-2.5 space-y-2 border-b border-border">
-              <!-- Section header -->
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-xs font-semibold">Project Tasks</p>
@@ -312,7 +294,6 @@ import {
                 </div>
               </div>
 
-              <!-- Filter bar -->
               <div class="flex items-center gap-2">
                 <div
                   class="flex items-center gap-1.5 bg-muted rounded-md px-2.5 py-1.5 flex-1"
@@ -334,7 +315,6 @@ import {
                 </div>
               </div>
 
-              <!-- Status cards -->
               <div class="grid grid-cols-3 gap-2">
                 <div
                   class="flex items-center gap-2 rounded-lg border border-primary bg-primary/5 px-2.5 py-2"
@@ -390,9 +370,7 @@ import {
               </div>
             </div>
 
-            <!-- Task list -->
             <div class="flex-1 overflow-y-auto p-3 space-y-2">
-              <!-- Task 1: urgent + overdue -->
               <div
                 class="rounded-lg border border-border bg-card p-3 flex items-start gap-2 hover:border-primary/40 transition-colors"
               >
@@ -432,7 +410,6 @@ import {
                 </div>
               </div>
 
-              <!-- Task 2: important + completed -->
               <div
                 class="rounded-lg border border-border bg-card p-3 flex items-start gap-2"
               >

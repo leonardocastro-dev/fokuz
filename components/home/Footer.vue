@@ -21,7 +21,6 @@ const footerLinks = {
   <footer class="border-t border-border bg-background">
     <div class="container mx-auto px-4 md:px-6 py-12 md:py-16">
       <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-        <!-- Brand -->
         <div class="lg:col-span-2 space-y-4">
           <NuxtLink to="/">
             <img src="/logo-light.svg" alt="Fokuz" class="h-10" />
@@ -41,7 +40,6 @@ const footerLinks = {
           </a>
         </div>
 
-        <!-- Product Links -->
         <div class="space-y-4">
           <h3 class="text-sm font-semibold text-foreground">Product</h3>
           <ul class="space-y-2">
@@ -56,7 +54,6 @@ const footerLinks = {
           </ul>
         </div>
 
-        <!-- Get started Links -->
         <div class="space-y-4">
           <h3 class="text-sm font-semibold text-foreground">Get started</h3>
           <ul class="space-y-2">
@@ -72,7 +69,6 @@ const footerLinks = {
         </div>
       </div>
 
-      <!-- Bottom Bar -->
       <div
         class="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4"
       >

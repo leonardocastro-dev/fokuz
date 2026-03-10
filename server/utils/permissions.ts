@@ -96,13 +96,11 @@ export async function canAccessProject(
   if (!member) return false
   if (isOwnerOrAdmin(member.role)) return true
 
-  // Check if user has access-projects permission (grants access to ALL projects)
   if (
     hasPermission(member.role, member.permissions, PERMISSIONS.ACCESS_PROJECTS)
   )
     return true
 
-  // Check for specific project assignment
   const assignmentRef = db.doc(
     `workspaces/${workspaceId}/projects/${projectId}/members/${userId}`
   )
@@ -171,7 +169,6 @@ export async function requireProjectPermission(
 
   if (isOwnerOrAdmin(member.role)) return member
 
-  // Check project-level permissions (assignment)
   const assignmentRef = db.doc(
     `workspaces/${workspaceId}/projects/${projectId}/members/${userId}`
   )
@@ -186,7 +183,6 @@ export async function requireProjectPermission(
 
   const assignmentData = snap.data()
 
-  // Project admin has all project permissions
   if (isProjectAdmin(assignmentData?.role)) return member
 
   const projectPerms = assignmentData?.permissions || {}
@@ -251,7 +247,6 @@ export async function updateProjectMembers(
 
   const batch = db.batch()
 
-  // Add new members
   for (const memberId of memberIds) {
     if (!currentMemberIds.includes(memberId)) {
       const assignmentRef = db.doc(
@@ -266,7 +261,6 @@ export async function updateProjectMembers(
     }
   }
 
-  // Remove members no longer in the list
   for (const doc of currentSnapshot.docs) {
     if (!memberIds.includes(doc.id)) {
       batch.delete(doc.ref)
@@ -286,7 +280,6 @@ export async function canToggleTaskStatus(
   const member = await getMemberData(workspaceId, userId)
   if (!member) return false
 
-  // Owner/Admin can always toggle
   if (isOwnerOrAdmin(member.role)) return true
 
   const assignmentRef = db.doc(
@@ -298,7 +291,6 @@ export async function canToggleTaskStatus(
 
   const assignmentData = assignmentSnap.data()
 
-  // Project admin can always toggle
   if (isProjectAdmin(assignmentData?.role)) return true
 
   const assignmentPermissions = assignmentData?.permissions || {}
@@ -333,7 +325,6 @@ export async function updateTaskMembers(
 
   const now = new Date().toISOString()
 
-  // Build new assignments map: preserve existing entries, add new ones
   const newAssignments: Record<string, TaskAssignment> = {}
   for (const memberId of memberIds) {
     if (currentAssignments[memberId]) {
@@ -353,7 +344,6 @@ export async function updateTaskMembers(
     updatedAt: now
   })
 
-  // Recalculate and update project assignedUserIds
   await syncProjectAssignees(workspaceId, projectId)
 }
 
@@ -361,19 +351,16 @@ export async function syncProjectAssignees(
   workspaceId: string,
   projectId: string
 ): Promise<void> {
-  // Get all tasks for this project
   const tasksRef = db.collection(`workspaces/${workspaceId}/tasks`)
   const tasksQuery = tasksRef.where('projectId', '==', projectId)
   const tasksSnapshot = await tasksQuery.get()
 
-  // Collect all unique assignee IDs
   const assigneeSet = new Set<string>()
   tasksSnapshot.docs.forEach((doc) => {
     const assigneeIds = doc.data().assigneeIds || []
     assigneeIds.forEach((id: string) => assigneeSet.add(id))
   })
 
-  // Update project document
   const projectRef = db.doc(`workspaces/${workspaceId}/projects/${projectId}`)
   await projectRef.update({
     assigneeIds: Array.from(assigneeSet),
@@ -388,7 +375,6 @@ export async function cleanupWorkspaceAssignments(
 ): Promise<void> {
   const batch = db.batch()
 
-  // Delete all project member assignments
   const projectsRef = db.collection(`workspaces/${workspaceId}/projects`)
   const projectsSnap = await projectsRef.get()
 
@@ -406,7 +392,6 @@ export async function cleanupMemberAssignments(
 ): Promise<void> {
   const batch = db.batch()
 
-  // Remove from all project member assignments
   const projectsRef = db.collection(`workspaces/${workspaceId}/projects`)
   const projectsSnap = await projectsRef.get()
 
@@ -418,7 +403,6 @@ export async function cleanupMemberAssignments(
     }
   }
 
-  // Remove from all task assignments
   const tasksRef = db.collection(`workspaces/${workspaceId}/tasks`)
   const tasksSnap = await tasksRef
     .where('assigneeIds', 'array-contains', memberId)
@@ -437,7 +421,6 @@ export async function cleanupMemberAssignments(
 
   await batch.commit()
 
-  // Recalculate project assigneeIds for affected projects
   for (const projectId of affectedProjectIds) {
     await syncProjectAssignees(workspaceId, projectId)
   }
@@ -480,7 +463,6 @@ export async function updateProjectTaskCounters(
 
   const data = projectSnap.data()
 
-  // Backfill: if counters don't exist yet, calculate from scratch
   if (data?.taskCount === undefined || data?.taskCount === null) {
     const tasksRef = db.collection(`workspaces/${workspaceId}/tasks`)
     const tasksSnap = await tasksRef.where('projectId', '==', projectId).get()
@@ -499,7 +481,6 @@ export async function updateProjectTaskCounters(
     return
   }
 
-  // Fast path: use atomic increment
   const updates: Record<string, unknown> = {}
   if (taskCountDelta !== 0) {
     updates.taskCount = FieldValue.increment(taskCountDelta)

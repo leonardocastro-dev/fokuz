@@ -470,7 +470,6 @@ const save = async () => {
                 :key="member.uid"
                 class="border rounded-lg p-3"
               >
-                <!-- Member Checkbox -->
                 <div
                   class="flex items-center space-x-3"
                   :class="
@@ -535,7 +534,6 @@ const save = async () => {
                   </button>
                 </div>
 
-                <!-- Expanded section (role selector + permissions) -->
                 <div
                   class="grid transition-all duration-300 ease-in-out"
                   :class="
@@ -548,7 +546,6 @@ const save = async () => {
                   <div
                     class="overflow-hidden pl-7 border-l-2 border-muted ml-2"
                   >
-                    <!-- Role selector -->
                     <div class="flex items-center gap-2 mb-3">
                       <Label class="text-xs text-muted-foreground shrink-0">
                         Role
@@ -570,7 +567,6 @@ const save = async () => {
                       </Select>
                     </div>
 
-                    <!-- Admin note -->
                     <p
                       v-if="memberRoles[member.uid] === 'admin'"
                       class="text-xs text-muted-foreground italic"
@@ -578,7 +574,6 @@ const save = async () => {
                       Admins have all project permissions
                     </p>
 
-                    <!-- Task Permissions (only for members) -->
                     <template v-else>
                       <Label class="text-xs text-muted-foreground mb-2 block">
                         Task Permissions

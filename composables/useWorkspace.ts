@@ -6,7 +6,6 @@ export const useWorkspace = () => {
   const route = useRoute()
   const workspaceStore = useWorkspaceStore()
 
-  // Priority 1: Store, Priority 2: Route
   const workspaceId = computed(() => {
     if (workspaceStore.currentWorkspace?.id) {
       return workspaceStore.currentWorkspace.id

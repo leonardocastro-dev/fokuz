@@ -168,7 +168,6 @@ const handleClose = () => {
         <DialogHeader>
           <div class="flex items-center gap-4">
             <div class="relative">
-              <!-- Botão que abre o Picker -->
               <Button
                 type="button"
                 variant="outline"
@@ -179,7 +178,6 @@ const handleClose = () => {
                 <span v-else class="text-xl">{{ emoji }}</span>
               </Button>
 
-              <!-- Picker com botão Clear dentro -->
               <div
                 v-if="showEmojiPicker"
                 class="absolute z-50 mt-2 bg-white rounded-lg shadow-xl"
@@ -189,7 +187,6 @@ const handleClose = () => {
                   set="twitter"
                   @select="onSelectEmoji"
                 >
-                  <!-- Slot CUSTOMIZADO -->
                   <template #searchTemplate="{ searchValue, onSearch }">
                     <div class="flex items-center gap-2 p-2 border-b">
                       <input

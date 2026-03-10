@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // Check if username already exists
     const usersRef = db.collection('users')
     const snapshot = await usersRef.where('username', '==', username).get()
 

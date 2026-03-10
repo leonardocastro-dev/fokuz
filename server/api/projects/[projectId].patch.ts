@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check access via isOwnerOrAdmin, access-projects permission, OR projectAssignment
   const hasAccess = await canAccessProject(workspaceId, projectId, uid)
 
   if (!hasAccess) {
@@ -33,10 +32,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verify user has permission to edit projects
   const member = await getMemberData(workspaceId, uid)
 
-  // Check if this is only a member assignment update (no title, description, or emoji changes)
+
   const isMemberAssignmentOnly =
     memberIds !== undefined &&
     title === undefined &&
@@ -44,7 +42,6 @@ export default defineEventHandler(async (event) => {
     emoji === undefined
 
   if (isMemberAssignmentOnly) {
-    // For member-only updates, allow assign-project permission
     if (
       !hasAnyPermission(member?.role, member?.permissions ?? null, [
         PERMISSIONS.EDIT_PROJECTS,
@@ -57,7 +54,6 @@ export default defineEventHandler(async (event) => {
       })
     }
   } else {
-    // For full project edits, require manage-projects or edit-projects
     if (
       !hasAnyPermission(member?.role, member?.permissions ?? null, [
         PERMISSIONS.MANAGE_PROJECTS,
@@ -71,7 +67,6 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Validate title and description limits
   if (title !== undefined) {
     if (typeof title !== 'string' || title.trim().length === 0) {
       throw createError({
@@ -123,7 +118,6 @@ export default defineEventHandler(async (event) => {
 
   await projectRef.update(updateData)
 
-  // Update member access if provided (validate memberIds first)
   if (memberIds !== undefined && Array.isArray(memberIds)) {
     if (memberIds.length > 0) {
       const { valid, invalid } = await validateWorkspaceMemberIds(
@@ -140,7 +134,6 @@ export default defineEventHandler(async (event) => {
 
       await updateProjectMembers(workspaceId, projectId, valid, uid)
     } else {
-      // Empty array means remove all members
       await updateProjectMembers(workspaceId, projectId, [], uid)
     }
   }

@@ -87,7 +87,6 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Reject project-scoped permissions at workspace level
   const invalidProjectPerms = Object.keys(permissions).filter((key) =>
     PROJECT_PERMISSION_SET.has(key)
   )

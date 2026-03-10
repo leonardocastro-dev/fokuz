@@ -72,7 +72,6 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Get user data to store in member document
     const userRef = db.collection('users').doc(decoded.uid)
     const userSnap = await tx.get(userRef)
     const userData = userSnap.exists ? userSnap.data() : null
@@ -81,7 +80,6 @@ export default defineEventHandler(async (event) => {
       members: FieldValue.arrayUnion(decoded.uid)
     })
 
-    // Create member document with uid as ID
     tx.set(memberRef, {
       uid: decoded.uid,
       email: decoded.email || userData?.email || '',

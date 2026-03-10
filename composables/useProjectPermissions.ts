@@ -17,7 +17,6 @@ export const useProjectPermissions = () => {
       const { $firestore } = useNuxtApp()
       const projectStore = useProjectStore()
 
-      // Filter to only workspace-scoped permissions (exclude task permissions)
       const workspacePerms = projectStore.memberPermissions || {}
       const filteredWorkspacePerms: Record<string, boolean> = {}
       for (const [key, val] of Object.entries(workspacePerms)) {
@@ -26,7 +25,6 @@ export const useProjectPermissions = () => {
         }
       }
 
-      // Load project-specific permissions for each project
       const permPromises = projectIds.map(async (projectId) => {
         const assignmentRef = doc(
           $firestore,
@@ -50,7 +48,6 @@ export const useProjectPermissions = () => {
           }
         }
 
-        // Merge filtered workspace + project permissions
         projectPermissionsMap.value[projectId] = {
           ...filteredWorkspacePerms,
           ...projectPerms

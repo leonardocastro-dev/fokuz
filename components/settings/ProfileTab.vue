@@ -184,7 +184,6 @@ const removeAvatar = async () => {
       >
     </CardHeader>
     <CardContent class="space-y-6">
-      <!-- Avatar Upload -->
       <div class="flex flex-col sm:flex-row gap-6">
         <div class="relative">
           <Avatar :uid="user?.uid" class="h-24 w-24">
@@ -234,7 +233,6 @@ const removeAvatar = async () => {
         </div>
       </div>
 
-      <!-- Username -->
       <div class="space-y-2">
         <Label for="username">Username</Label>
         <div class="flex gap-2">

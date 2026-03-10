@@ -27,7 +27,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Validate role if provided
   if (newRole !== undefined && newRole !== 'admin' && newRole !== 'member') {
     throw createError({
       statusCode: 400,
@@ -35,7 +34,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Check access via isOwnerOrAdmin, access-projects permission, OR projectAssignment
   const hasAccess = await canAccessProject(workspaceId, projectId, uid)
 
   if (!hasAccess) {
@@ -45,11 +43,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verify caller permissions
   const member = await getMemberData(workspaceId, uid)
   const callerIsWsOwnerOrAdmin = isOwnerOrAdmin(member?.role)
 
-  // Check if caller is project admin
   let callerIsProjectAdmin = false
   if (!callerIsWsOwnerOrAdmin) {
     const callerAssignmentRef = db.doc(
@@ -61,7 +57,6 @@ export default defineEventHandler(async (event) => {
       isProjectAdmin(callerAssignmentSnap.data()?.role)
   }
 
-  // Only workspace owner/admin can set role to 'admin'
   if (newRole === 'admin' && !callerIsWsOwnerOrAdmin) {
     throw createError({
       statusCode: 403,
@@ -69,7 +64,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Workspace owner/admin or project admin can manage assignments
   if (!callerIsWsOwnerOrAdmin && !callerIsProjectAdmin) {
     if (
       !hasAnyPermission(member?.role, member?.permissions ?? null, [
@@ -83,7 +77,6 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Prevent self-assignment to avoid privilege escalation
   if (memberId === uid) {
     throw createError({
       statusCode: 403,
@@ -91,7 +84,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Validate task permissions against allowed project-scoped keys
   if (taskPermissions && typeof taskPermissions === 'object') {
     const invalidKeys = Object.keys(taskPermissions).filter(
       (key) => !PROJECT_PERMISSION_SET.has(key)
@@ -104,7 +96,6 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Verify the target member exists in workspace
   const memberRef = db.doc(`workspaces/${workspaceId}/members/${memberId}`)
   const memberSnap = await memberRef.get()
 
@@ -115,7 +106,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Get or create the assignment
   const assignmentRef = db.doc(
     `workspaces/${workspaceId}/projects/${projectId}/members/${memberId}`
   )
@@ -128,7 +118,6 @@ export default defineEventHandler(async (event) => {
     }
     if (newRole !== undefined) {
       updateData.role = newRole
-      // Admin does not need granular permissions
       if (newRole === 'admin') {
         updateData.permissions = null
       }

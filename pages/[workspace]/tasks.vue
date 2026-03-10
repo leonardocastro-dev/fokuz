@@ -218,7 +218,6 @@ const emptyStateMessage = computed(() => {
 
     <TaskFilters />
 
-    <!-- Loading State -->
     <div v-if="isInitialLoading || taskStore.isLoading" class="space-y-2">
       <Card
         v-for="i in 6"
@@ -256,12 +255,10 @@ const emptyStateMessage = computed(() => {
       </Card>
     </div>
 
-    <!-- Empty State -->
     <Alert v-else-if="filteredWorkspaceTasks.length === 0">
       <AlertDescription>{{ emptyStateMessage }}</AlertDescription>
     </Alert>
 
-    <!-- Task List -->
     <div v-else class="space-y-2">
       <TaskItem
         v-for="task in filteredWorkspaceTasks"

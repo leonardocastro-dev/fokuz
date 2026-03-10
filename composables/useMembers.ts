@@ -16,11 +16,9 @@ const isOwnerOrAdmin = (role: string | undefined): boolean => {
   return role === ROLES.OWNER || role === ROLES.ADMIN
 }
 
-// Singleton state - shared across all component instances
 const allMembers = ref<WorkspaceMember[]>([])
 const selectedMemberIds = ref<string[]>([])
 
-// Filtered members for project access (excludes owners/admins)
 const membersForProjects = computed(() =>
   allMembers.value.filter((member) => !isOwnerOrAdmin(member.role))
 )
@@ -49,7 +47,6 @@ export const useMembers = () => {
   ) => {
     if (!workspaceId) return
 
-    // Skip if already loaded for this workspace (unless forcing reload)
     if (
       !forceReload &&
       loadedWorkspaceId.value === workspaceId &&
@@ -100,7 +97,6 @@ export const useMembers = () => {
 
     try {
       const { $firestore } = useNuxtApp()
-      // Query project members collection for assigned members
       const assignmentsRef = collection(
         $firestore,
         'workspaces',

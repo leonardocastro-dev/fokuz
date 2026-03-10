@@ -161,7 +161,6 @@ const handleOwnershipTransferred = () => {
 
   <Card>
     <CardContent>
-      <!-- Loading Skeletons -->
       <div v-if="isLoadingMembers" class="space-y-4">
         <div
           v-for="i in 3"
@@ -182,7 +181,6 @@ const handleOwnershipTransferred = () => {
         </div>
       </div>
 
-      <!-- Members List -->
       <div v-else class="space-y-4">
         <MemberItem
           v-for="member in members"
@@ -200,7 +198,6 @@ const handleOwnershipTransferred = () => {
     </CardContent>
   </Card>
 
-  <!-- Invite Member Dialog -->
   <Dialog v-model:open="isInviting">
     <DialogContent
       :can-close="!isSending"

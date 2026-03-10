@@ -12,18 +12,15 @@ export const useWorkspaceStore = defineStore('workspace', () => {
 
   const { user } = useAuth()
 
-  // Helper to get auth token
   const getAuthToken = async (): Promise<string | null> => {
     if (!user.value) return null
     return await user.value.getIdToken()
   }
 
-  // Helper to save workspaces to localStorage
   const saveToLocalStorage = () => {
     localStorage.setItem('localWorkspaces', JSON.stringify(workspaces.value))
   }
 
-  // Actions
   const loadWorkspaces = async (userId: string | null = null) => {
     isLoading.value = true
     try {
@@ -36,7 +33,6 @@ export const useWorkspaceStore = defineStore('workspace', () => {
 
       const { $firestore } = useNuxtApp()
 
-      // Query workspaces where user is owner or member
       const workspacesRef = collection($firestore, 'workspaces')
       const q = query(workspacesRef, where('members', 'array-contains', userId))
 
@@ -56,12 +52,10 @@ export const useWorkspaceStore = defineStore('workspace', () => {
 
   const createWorkspace = async (name: string, description?: string) => {
     if (!user.value?.uid) {
-      // Modo offline - salvar no localStorage
       let slug = name
         .toLowerCase()
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '')
-      // Fallback if slug is empty (e.g., name was only emojis)
       if (!slug) {
         slug = 'workspace'
       }
@@ -116,7 +110,6 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     if (workspaceIndex === -1) return null
 
     if (!user.value?.uid) {
-      // Modo offline
       const updatedWorkspace = {
         ...workspaces.value[workspaceIndex],
         name,
@@ -204,13 +197,11 @@ export const useWorkspaceStore = defineStore('workspace', () => {
   }
 
   return {
-    // State
     workspaces,
     currentWorkspace,
     isLoading,
     loaded,
 
-    // Actions
     loadWorkspaces,
     createWorkspace,
     updateWorkspace,

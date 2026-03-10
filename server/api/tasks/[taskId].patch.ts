@@ -63,7 +63,6 @@ export default defineEventHandler(async (event) => {
 
   const taskProjectId = taskDoc.data()?.projectId as string
 
-  // Determine if this is a status-only update (toggle complete/incomplete)
   const isStatusOnlyUpdate =
     (status !== undefined || completed !== undefined) &&
     title === undefined &&
@@ -81,7 +80,6 @@ export default defineEventHandler(async (event) => {
   }
 
   if (isStatusOnlyUpdate) {
-    // For status toggle, allow only for owner/admin or project toggle-status permission
     const canToggle = await canToggleTaskStatus(workspaceId, taskProjectId, uid)
     if (!canToggle) {
       throw createError({
@@ -90,7 +88,6 @@ export default defineEventHandler(async (event) => {
       })
     }
   } else {
-    // For other edits, require full edit permissions (project-scoped)
     await requireProjectPermission(workspaceId, taskProjectId, uid, [
       PERMISSIONS.MANAGE_TASKS,
       PERMISSIONS.EDIT_TASKS
@@ -145,7 +142,6 @@ export default defineEventHandler(async (event) => {
 
   await taskRef.update(updates)
 
-  // Update project task counters if status changed
   if (status !== undefined) {
     const oldStatus = taskDoc.data()?.status
     if (oldStatus !== status) {
@@ -161,7 +157,6 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Update task member assignments if provided (validate memberIds first)
   if (memberIds !== undefined && Array.isArray(memberIds)) {
     if (memberIds.length > 0) {
       const { valid, invalid } = await validateWorkspaceMemberIds(
@@ -178,7 +173,6 @@ export default defineEventHandler(async (event) => {
 
       await updateTaskMembers(workspaceId, taskProjectId, taskId, valid, uid)
     } else {
-      // Empty array means remove all members
       await updateTaskMembers(workspaceId, taskProjectId, taskId, [], uid)
     }
   }

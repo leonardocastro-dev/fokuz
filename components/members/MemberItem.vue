@@ -390,7 +390,6 @@ const handlePermissionsUpdated = () => {
     @permissions-updated="handlePermissionsUpdated"
   />
 
-  <!-- Admin Role Confirmation -->
   <Dialog v-model:open="confirmAdminOpen">
     <DialogContent
       class="sm:max-w-md"
@@ -432,7 +431,6 @@ const handlePermissionsUpdated = () => {
     </DialogContent>
   </Dialog>
 
-  <!-- Transfer Ownership Confirmation -->
   <Dialog v-model:open="confirmOwnershipOpen">
     <DialogContent
       class="sm:max-w-md"
@@ -474,7 +472,6 @@ const handlePermissionsUpdated = () => {
     </DialogContent>
   </Dialog>
 
-  <!-- Remove Member Confirmation -->
   <Dialog v-model:open="confirmRemoveOpen">
     <DialogContent
       class="sm:max-w-md"
