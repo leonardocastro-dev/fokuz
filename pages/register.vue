@@ -25,7 +25,6 @@ import { watch } from 'vue'
 const route = useRoute()
 const { user, register, loading } = useAuth()
 
-// Redirect if already logged in
 watch(
   () => user.value,
   (newUser) => {
