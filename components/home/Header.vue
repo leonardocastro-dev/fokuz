@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { Button } from '@/components/ui/button'
 
 const mobileMenuOpen = ref(false)
@@ -15,12 +15,22 @@ function onScroll() {
   scrolled.value = window.scrollY > 20
 }
 
+const setBodyScrollLocked = (locked: boolean) => {
+  if (typeof document === 'undefined') return
+  document.body.style.overflow = locked ? 'hidden' : ''
+}
+
+watch(mobileMenuOpen, (isOpen) => {
+  setBodyScrollLocked(isOpen)
+})
+
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
+  setBodyScrollLocked(false)
 })
 </script>
 
@@ -52,9 +62,9 @@ onUnmounted(() => {
   >
     <div
       v-if="mobileMenuOpen"
-      class="md:hidden fixed inset-0 top-16 bg-background z-30 flex flex-col origin-top"
+      class="md:hidden fixed inset-0 top-16 bg-background z-30 flex flex-col origin-top overflow-y-auto overscroll-contain"
     >
-      <nav class="flex flex-col flex-1 gap-2 px-4 py-4">
+      <nav class="flex flex-col flex-1 min-h-0 gap-2 px-4 py-4">
         <a
           v-for="link in navLinks"
           :key="link.name"
@@ -67,7 +77,7 @@ onUnmounted(() => {
         <div class="border-t my-2" />
         <div class="flex flex-col gap-2 px-4">
           <NuxtLink to="/login" @click="mobileMenuOpen = false">
-            <Button variant="ghost" size="sm" class="w-full"> Login </Button>
+            <Button variant="outline" size="sm" class="w-full"> Login </Button>
           </NuxtLink>
           <div
             class="flex items-center border border-border rounded-lg overflow-hidden divide-x divide-border"
@@ -86,7 +96,7 @@ onUnmounted(() => {
               class="flex-1"
               @click="mobileMenuOpen = false"
             >
-              <Button variant="ghost" size="sm" class="rounded-none w-full">
+              <Button variant="secondary" size="sm" class="rounded-none w-full">
                 Guest
               </Button>
             </NuxtLink>

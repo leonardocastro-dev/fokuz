@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { LogOut, Lock, ChevronRight, Info } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/composables/useAuth'
@@ -32,6 +32,11 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
 }
 
+const setBodyScrollLocked = (locked: boolean) => {
+  if (typeof document === 'undefined') return
+  document.body.style.overflow = locked ? 'hidden' : ''
+}
+
 const openWorkspaceInfos = () => {
   if (!workspace.value) return
   isWorkspaceInfosOpen.value = true
@@ -49,6 +54,14 @@ const isWorkspaceSectionActive = (section: string) => {
 
 // Close menu on route change
 watch(() => route.fullPath, closeMobileMenu)
+
+watch(isMobileMenuOpen, (isOpen) => {
+  setBodyScrollLocked(isOpen)
+})
+
+onUnmounted(() => {
+  setBodyScrollLocked(false)
+})
 </script>
 
 <template>
@@ -80,11 +93,11 @@ watch(() => route.fullPath, closeMobileMenu)
     >
       <div
         v-if="isMobileMenuOpen"
-        class="lg:hidden fixed inset-0 top-16 bg-background z-30 flex flex-col origin-top"
+        class="lg:hidden fixed inset-0 top-16 bg-background z-30 flex flex-col origin-top overflow-y-auto overscroll-contain"
       >
         <nav
           aria-label="Main navigation"
-          class="flex flex-col flex-1 gap-2 px-4 py-4"
+          class="flex flex-col flex-1 min-h-0 gap-2 px-4 py-4 overflow-y-auto overscroll-contain"
         >
           <NuxtLink
             :to="`/${workspaceSlug}/tasks`"
@@ -221,7 +234,7 @@ watch(() => route.fullPath, closeMobileMenu)
     </Transition>
 
     <aside
-      class="hidden lg:flex w-64 bg-background border-r fixed h-screen flex-col"
+      class="hidden lg:flex w-64 bg-background border-r fixed h-screen flex-col overflow-hidden"
     >
       <div class="p-4 pb-4">
         <NuxtLink to="/workspaces">
@@ -256,7 +269,7 @@ watch(() => route.fullPath, closeMobileMenu)
 
       <nav
         aria-label="Main navigation"
-        class="flex flex-col flex-1 gap-2 px-4 py-2"
+        class="flex flex-col flex-1 min-h-0 gap-2 px-4 py-2 overflow-y-auto"
       >
         <NuxtLink
           :to="`/${workspaceSlug}/tasks`"
