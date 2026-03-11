@@ -522,7 +522,7 @@ const save = async () => {
                   </span>
                   <button
                     v-if="isMemberSelected(member.uid)"
-                    class="p-1 rounded-md hover:bg-muted transition-colors"
+                    class="p-1 rounded-md cursor-pointer hover:bg-muted transition-colors"
                     @click.stop="toggleExpand(member.uid)"
                   >
                     <ChevronDown

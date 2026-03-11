@@ -14,6 +14,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (name.trim().length < 3) {
+    throw createError({
+      statusCode: 400,
+      message: 'Workspace name must be at least 3 characters'
+    })
+  }
+
+  if (name.trim().length > 50) {
+    throw createError({
+      statusCode: 400,
+      message: 'Workspace name must not exceed 50 characters'
+    })
+  }
+
+  if (description && typeof description === 'string' && description.trim().length > 200) {
+    throw createError({
+      statusCode: 400,
+      message: 'Workspace description must not exceed 200 characters'
+    })
+  }
+
   let slug = name
     .toLowerCase()
     .replace(/\s+/g, '-')

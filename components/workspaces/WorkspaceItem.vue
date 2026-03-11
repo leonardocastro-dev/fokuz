@@ -35,23 +35,32 @@ const deleteWorkspace = async () => {
 
 <template>
   <Card
-    class="bg-card border rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer min-h-[250px] flex flex-col"
+    class="w-full max-w-full overflow-hidden bg-card border rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer min-h-[250px] flex flex-col"
     @click="goToWorkspace"
   >
-    <CardContent class="flex-1 flex p-0 flex-col">
-      <div class="flex items-start justify-between mb-4 flex-1">
-        <div class="flex-1">
-          <h3 class="text-lg font-semibold text-foreground mb-1">
+    <CardContent class="flex-1 flex p-0 flex-col min-w-0">
+      <div class="flex items-start justify-between mb-4 flex-1 min-w-0 gap-2">
+        <div class="flex-1 min-w-0">
+          <h3
+            class="text-lg font-semibold text-foreground mb-1 truncate max-w-full"
+          >
             {{ workspace.name }}
           </h3>
-          <p class="text-sm text-muted-foreground line-clamp-3">
+          <p
+            class="text-sm text-muted-foreground line-clamp-3 break-all overflow-hidden"
+          >
             {{ workspace.description }}
           </p>
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="sm" class="h-8 w-8 p-0" @click.stop>
+            <Button
+              variant="ghost"
+              size="sm"
+              class="h-8 w-8 p-0 shrink-0"
+              @click.stop
+            >
               <span class="sr-only">Open menu</span>
               <MoreHorizontal class="h-4 w-4" />
             </Button>

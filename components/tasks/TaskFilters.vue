@@ -182,7 +182,7 @@ const activeFilterCount = computed(() => {
 <template>
   <div class="space-y-4 mb-6">
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-      <div class="flex-1 relative">
+      <div class="flex-1 max-w-sm relative">
         <Label for="search" class="sr-only">Search tasks</Label>
         <Search
           class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none"

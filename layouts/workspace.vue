@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { LogOut, Lock, ChevronRight } from 'lucide-vue-next'
+import { LogOut, Lock, ChevronRight, Info } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/composables/useAuth'
+import WorkspaceInfos from '@/components/workspaces/WorkspaceInfos.vue'
 
 const { user, userProfile, logout } = useAuth()
 const route = useRoute()
@@ -13,6 +14,7 @@ const workspaceSlug = computed(() => route.params.workspace as string)
 const isGuest = computed(() => !user.value)
 const isMobileMenuOpen = ref(false)
 const projectsExpanded = ref(false)
+const isWorkspaceInfosOpen = ref(false)
 
 watch(
   () => route.path,
@@ -28,6 +30,16 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
+}
+
+const openWorkspaceInfos = () => {
+  if (!workspace.value) return
+  isWorkspaceInfosOpen.value = true
+}
+
+const openWorkspaceInfosFromMobile = () => {
+  closeMobileMenu()
+  openWorkspaceInfos()
 }
 
 const isWorkspaceSectionActive = (section: string) => {
@@ -143,15 +155,30 @@ watch(() => route.fullPath, closeMobileMenu)
         </nav>
 
         <div class="p-4 border-t">
-          <div v-if="workspace?.name" class="mb-3 px-2">
-            <p
-              class="text-xs text-muted-foreground uppercase tracking-wide font-medium"
+          <div v-if="workspace?.name" class="mb-3">
+            <button
+              type="button"
+              class="w-full text-left rounded-md border border-border/70 bg-muted/30 px-2.5 py-2 transition-colors hover:bg-accent/60 hover:border-primary/40 cursor-pointer"
+              @click="openWorkspaceInfosFromMobile"
             >
-              Workspace
-            </p>
-            <p class="text-sm font-semibold text-foreground truncate mt-0.5">
-              {{ workspace.name }}
-            </p>
+              <p
+                class="text-xs text-muted-foreground uppercase tracking-wide font-medium"
+              >
+                Workspace
+              </p>
+              <p class="text-sm font-semibold text-foreground truncate mt-0.5">
+                {{ workspace.name }}
+              </p>
+              <div
+                class="mt-1.5 flex items-center justify-between text-xs text-muted-foreground"
+              >
+                <span class="inline-flex items-center gap-1">
+                  <Info class="h-3.5 w-3.5" />
+                  View details
+                </span>
+                <ChevronRight class="h-3.5 w-3.5" />
+              </div>
+            </button>
           </div>
           <div v-if="user">
             <div class="mb-3 px-2">
@@ -196,19 +223,34 @@ watch(() => route.fullPath, closeMobileMenu)
     <aside
       class="hidden lg:flex w-64 bg-background border-r fixed h-screen flex-col"
     >
-      <div class="p-6 pb-4">
+      <div class="p-4 pb-4">
         <NuxtLink to="/workspaces">
           <img src="/logo-light.svg" alt="Fokuz" class="h-10" />
         </NuxtLink>
-        <div v-if="workspace?.name" class="mt-4 px-1">
-          <p
-            class="text-xs text-muted-foreground uppercase tracking-wide font-medium"
+        <div v-if="workspace?.name" class="mt-4">
+          <button
+            type="button"
+            class="w-full text-left rounded-md border border-border/70 bg-muted/30 px-2.5 py-2 transition-colors hover:bg-accent/60 hover:border-primary/40 cursor-pointer"
+            @click="openWorkspaceInfos"
           >
-            Workspace
-          </p>
-          <p class="text-sm font-semibold text-foreground truncate mt-0.5">
-            {{ workspace.name }}
-          </p>
+            <p
+              class="text-xs text-muted-foreground uppercase tracking-wide font-medium"
+            >
+              Workspace
+            </p>
+            <p class="text-sm font-semibold text-foreground truncate mt-0.5">
+              {{ workspace.name }}
+            </p>
+            <div
+              class="mt-1.5 flex items-center justify-between text-xs text-muted-foreground"
+            >
+              <span class="inline-flex items-center gap-1">
+                <Info class="h-3.5 w-3.5" />
+                View details
+              </span>
+              <ChevronRight class="h-3.5 w-3.5" />
+            </div>
+          </button>
         </div>
       </div>
 
@@ -362,5 +404,11 @@ watch(() => route.fullPath, closeMobileMenu)
     <main class="flex-1 overflow-hidden lg:ml-64 p-6 pt-20 lg:pt-6">
       <slot />
     </main>
+
+    <WorkspaceInfos
+      :is-open="isWorkspaceInfosOpen"
+      :workspace="workspace"
+      @close="isWorkspaceInfosOpen = false"
+    />
   </div>
 </template>

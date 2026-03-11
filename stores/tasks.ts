@@ -99,7 +99,7 @@ export const useTaskStore = defineStore('tasks', {
     permissionsByProject: {} as Record<string, Record<string, boolean> | null>,
     loadedProjects: {} as Record<
       string,
-      { workspaceId: string; loadedAt: number; scope: string }
+      { workspaceId: string; loadedAt: number }
     >,
     currentProjectId: null as string | null,
     currentWorkspaceId: null as string | null,
@@ -108,13 +108,11 @@ export const useTaskStore = defineStore('tasks', {
     priorityFilter: 'all',
     dueDateFilter: 'all',
     customDueDate: null as string | null,
-    scopeFilter: 'assigneds' as string,
+    scopeFilter: 'all' as string,
     scopeUserId: null as string | null,
     isLoading: true,
     isGuestMode: false,
-    workspaceScope: 'all' as string,
-    workspaceUserId: null as string | null,
-    loadedWorkspaces: {} as Record<string, string>
+    loadedWorkspaces: {} as Record<string, boolean>
   }),
 
   getters: {
@@ -313,47 +311,35 @@ export const useTaskStore = defineStore('tasks', {
         return
       }
 
-      const currentScope = this.scopeFilter || 'assigneds'
-
       const cachedProject = this.loadedProjects[projectId]
       if (
         !forceReload &&
         cachedProject &&
         cachedProject.workspaceId === workspaceId
       ) {
-        const cachedScope = cachedProject.scope
-        if (cachedScope === 'all' || cachedScope === currentScope) {
-          if (workspaceId && !this.permissionsByProject[projectId]) {
-            await this.loadProjectPermissions(projectId, userId, workspaceId)
-          }
-          this.isLoading = false
-          return
-        }
-      }
-
-      if (!forceReload && workspaceId && this.loadedWorkspaces[workspaceId]) {
-        const wsScope = this.loadedWorkspaces[workspaceId]
-        if (
-          (wsScope === 'all' || wsScope === currentScope) &&
-          this.tasksByProject[getTaskBucketKey(projectId)]
-        ) {
+        if (workspaceId && !this.permissionsByProject[projectId]) {
           await this.loadProjectPermissions(projectId, userId, workspaceId)
-          this.loadedProjects[projectId] = {
-            workspaceId: workspaceId,
-            loadedAt: Date.now(),
-            scope: wsScope
-          }
-          this.isLoading = false
-          return
         }
+        this.isLoading = false
+        return
       }
 
-      await this.loadTasksForProject(
-        projectId,
-        userId,
-        workspaceId,
-        currentScope
-      )
+      if (
+        !forceReload &&
+        workspaceId &&
+        this.loadedWorkspaces[workspaceId] &&
+        this.tasksByProject[getTaskBucketKey(projectId)]
+      ) {
+        await this.loadProjectPermissions(projectId, userId, workspaceId)
+        this.loadedProjects[projectId] = {
+          workspaceId: workspaceId,
+          loadedAt: Date.now()
+        }
+        this.isLoading = false
+        return
+      }
+
+      await this.loadTasksForProject(projectId, userId, workspaceId)
     },
 
     async loadProjectPermissions(
@@ -405,8 +391,7 @@ export const useTaskStore = defineStore('tasks', {
     async loadTasksForProject(
       projectId: string,
       userId: string | null = null,
-      workspaceId?: string,
-      scope: string = 'all'
+      workspaceId?: string
     ) {
       const { $firestore } = useNuxtApp()
 
@@ -426,16 +411,7 @@ export const useTaskStore = defineStore('tasks', {
             workspaceId,
             'tasks'
           )
-          let q
-          if (scope === 'assigneds' && userId) {
-            q = query(
-              tasksRef,
-              where('projectId', '==', projectId),
-              where('assigneeIds', 'array-contains', userId)
-            )
-          } else {
-            q = query(tasksRef, where('projectId', '==', projectId))
-          }
+          const q = query(tasksRef, where('projectId', '==', projectId))
           const snapshot = await getDocs(q)
 
           if (!snapshot.empty) {
@@ -445,11 +421,7 @@ export const useTaskStore = defineStore('tasks', {
             })) as Task[]
           }
 
-          const cachedScope = this.loadedProjects[projectId]?.scope
-          if (cachedScope === 'all' && scope === 'assigneds') {
-          } else {
-            this.tasksByProject[projectId] = loadedTasks
-          }
+          this.tasksByProject[projectId] = loadedTasks
         } else {
           this.isGuestMode = true
           this.permissionsByProject[projectId] = null
@@ -458,11 +430,9 @@ export const useTaskStore = defineStore('tasks', {
           this.tasksByProject[projectId] = loadedTasks
         }
 
-        const prevScope = this.loadedProjects[projectId]?.scope
         this.loadedProjects[projectId] = {
           workspaceId: workspaceId || '',
-          loadedAt: Date.now(),
-          scope: prevScope === 'all' ? 'all' : scope
+          loadedAt: Date.now()
         }
       } catch (error) {
         console.error('Error loading tasks:', error)
@@ -477,8 +447,7 @@ export const useTaskStore = defineStore('tasks', {
       await this.loadTasksForProject(
         this.currentProjectId,
         userId,
-        this.currentWorkspaceId,
-        this.scopeFilter || 'assigneds'
+        this.currentWorkspaceId
       )
     },
 
@@ -498,8 +467,6 @@ export const useTaskStore = defineStore('tasks', {
       this.loadedWorkspaces = {}
       this.currentProjectId = null
       this.currentWorkspaceId = null
-      this.workspaceScope = 'all'
-      this.workspaceUserId = null
     },
 
     clearWorkspaceCache(workspaceId: string) {
@@ -530,13 +497,10 @@ export const useTaskStore = defineStore('tasks', {
 
     async loadWorkspaceTasks(
       workspaceId: string,
-      scope: 'all' | 'assigneds',
       userId: string | undefined,
       forceReload = false
     ) {
       this.currentWorkspaceId = workspaceId
-      this.workspaceScope = scope
-      this.workspaceUserId = userId || null
 
       if (!userId) {
         this.isGuestMode = true
@@ -553,7 +517,7 @@ export const useTaskStore = defineStore('tasks', {
               : []
           }
         }
-        this.loadedWorkspaces[workspaceId] = 'all'
+        this.loadedWorkspaces[workspaceId] = true
         this.isLoading = false
         return
       }
@@ -561,11 +525,8 @@ export const useTaskStore = defineStore('tasks', {
       this.isGuestMode = false
 
       if (!forceReload && this.loadedWorkspaces[workspaceId]) {
-        const loadedScope = this.loadedWorkspaces[workspaceId]
-        if (loadedScope === 'all' || loadedScope === scope) {
-          this.isLoading = false
-          return
-        }
+        this.isLoading = false
+        return
       }
 
       const { $firestore } = useNuxtApp()
@@ -580,16 +541,7 @@ export const useTaskStore = defineStore('tasks', {
           $firestore,
           `workspaces/${workspaceId}/tasks`
         )
-        let q
-        if (scope === 'assigneds' && userId) {
-          q = query(
-            tasksRef,
-            where('assigneeIds', 'array-contains', userId),
-            orderBy('updatedAt', 'desc')
-          )
-        } else {
-          q = query(tasksRef, orderBy('updatedAt', 'desc'))
-        }
+        const q = query(tasksRef, orderBy('updatedAt', 'desc'))
 
         const snapshot = await getDocs(q)
 
@@ -609,21 +561,17 @@ export const useTaskStore = defineStore('tasks', {
         })
 
         for (const [bucketKey, projectTasks] of Object.entries(grouped)) {
-          if (scope === 'assigneds' && this.loadedProjects[bucketKey]) continue
           this.tasksByProject[bucketKey] = projectTasks
         }
 
-        if (scope === 'all') {
-          for (const bucketKey of Object.keys(grouped)) {
-            this.loadedProjects[bucketKey] = {
-              workspaceId,
-              loadedAt: Date.now(),
-              scope
-            }
+        for (const bucketKey of Object.keys(grouped)) {
+          this.loadedProjects[bucketKey] = {
+            workspaceId,
+            loadedAt: Date.now()
           }
         }
 
-        this.loadedWorkspaces[workspaceId] = scope
+        this.loadedWorkspaces[workspaceId] = true
       } catch (error) {
         console.error('Error loading workspace tasks:', error)
         showErrorToast('Failed to load workspace tasks')
@@ -1044,8 +992,18 @@ export const useTaskStore = defineStore('tasks', {
     },
 
     setScopeFilter(scope: string, userId?: string | null) {
-      this.scopeFilter = scope || 'assigneds'
+      this.scopeFilter = scope || 'all'
       if (userId !== undefined) this.scopeUserId = userId || null
+    },
+
+    resetFilters() {
+      this.searchQuery = ''
+      this.statusFilter = 'all'
+      this.priorityFilter = 'all'
+      this.dueDateFilter = 'all'
+      this.customDueDate = null
+      this.scopeFilter = 'all'
+      this.scopeUserId = null
     },
 
     setCustomDueDate(date: string | null) {

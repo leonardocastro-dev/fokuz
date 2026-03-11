@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import {
   Plus,
   ArrowLeft,
@@ -31,7 +31,6 @@ const { user } = useAuth()
 const {
   members,
   loadWorkspaceMembers,
-  projectAssignmentsMap,
   projectAssignmentsDataMap,
   loadAllProjectAssignments
 } = useMembers()
@@ -52,7 +51,7 @@ const canManageMembers = computed(() => {
 })
 
 const assignedMembers = computed(() => {
-  const assignedIds = projectAssignmentsMap.value[projectId] || []
+  const assignedIds = currentProject.value?.assigneeIds || []
   return members.value.filter((m) => assignedIds.includes(m.uid))
 })
 
@@ -102,7 +101,6 @@ const handleMembersUpdated = async () => {
 }
 
 onMounted(async () => {
-  taskStore.setScopeFilter('assigneds', user.value?.uid)
   await projectStore.loadProjectsForWorkspace(workspaceId, user.value?.uid)
 
   // Check if user has access to this project
@@ -129,6 +127,10 @@ watch(
     }
   }
 )
+
+onBeforeUnmount(() => {
+  taskStore.resetFilters()
+})
 </script>
 
 <template>

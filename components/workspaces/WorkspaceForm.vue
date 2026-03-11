@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,10 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import type { Workspace } from '@/types/Workspace'
+
+const NAME_MAX_LENGTH = 50
+const NAME_MIN_LENGTH = 3
+const DESCRIPTION_MAX_LENGTH = 200
 
 const props = defineProps<{
   isOpen: boolean
@@ -28,7 +32,16 @@ const router = useRouter()
 const name = ref('')
 const description = ref('')
 const nameError = ref('')
+const descriptionError = ref('')
 const isSubmitting = ref(false)
+
+const isSubmitDisabled = computed(() => {
+  const trimmed = name.value.trim()
+  if (!trimmed || trimmed.length < NAME_MIN_LENGTH) return true
+  if (trimmed.length > NAME_MAX_LENGTH) return true
+  if (description.value.length > DESCRIPTION_MAX_LENGTH) return true
+  return false
+})
 
 watch(
   () => props.isOpen,
@@ -51,11 +64,26 @@ watch(
 )
 
 const handleSubmit = async () => {
-  if (!name.value.trim()) {
+  const trimmed = name.value.trim()
+  if (!trimmed) {
     nameError.value = 'Workspace name is required'
     return
   }
+  if (trimmed.length < NAME_MIN_LENGTH) {
+    nameError.value = `Name must be at least ${NAME_MIN_LENGTH} characters`
+    return
+  }
+  if (trimmed.length > NAME_MAX_LENGTH) {
+    nameError.value = `Name must not exceed ${NAME_MAX_LENGTH} characters`
+    return
+  }
+  if (description.value.length > DESCRIPTION_MAX_LENGTH) {
+    descriptionError.value = `Description must not exceed ${DESCRIPTION_MAX_LENGTH} characters`
+    return
+  }
 
+  nameError.value = ''
+  descriptionError.value = ''
   isSubmitting.value = true
 
   try {
@@ -91,6 +119,7 @@ const resetForm = () => {
   name.value = ''
   description.value = ''
   nameError.value = ''
+  descriptionError.value = ''
   isSubmitting.value = false
 }
 
@@ -124,26 +153,50 @@ const handleClose = () => {
               id="name"
               v-model="name"
               placeholder="Enter workspace name"
+              :maxlength="NAME_MAX_LENGTH"
               :class="nameError ? 'border-red-700' : ''"
-              @input="
-                () => {
-                  if (name.trim()) nameError = ''
+              :disabled="isSubmitting"
+              @update:model-value="
+                (val) => {
+                  if (String(val).trim()) nameError = ''
                 }
               "
             />
-            <p v-if="nameError" class="text-xs text-red-700">
-              {{ nameError }}
-            </p>
+            <div class="flex justify-between items-center">
+              <p v-if="nameError" class="text-xs text-red-700">
+                {{ nameError }}
+              </p>
+              <span class="text-xs text-muted-foreground ml-auto">
+                {{ name.length }}/{{ NAME_MAX_LENGTH }}
+              </span>
+            </div>
           </div>
 
           <div class="space-y-2">
-            <Label for="description">Description</Label>
+            <Label for="description">Description (optional)</Label>
             <Textarea
               id="description"
               v-model="description"
               placeholder="Describe your workspace..."
               rows="3"
+              :maxlength="DESCRIPTION_MAX_LENGTH"
+              :class="descriptionError ? 'border-red-700' : ''"
+              :disabled="isSubmitting"
+              @update:model-value="
+                () => {
+                  if (description.length <= DESCRIPTION_MAX_LENGTH)
+                    descriptionError = ''
+                }
+              "
             />
+            <div class="flex justify-between items-center">
+              <p v-if="descriptionError" class="text-xs text-red-700">
+                {{ descriptionError }}
+              </p>
+              <span class="text-xs text-muted-foreground ml-auto">
+                {{ description.length }}/{{ DESCRIPTION_MAX_LENGTH }}
+              </span>
+            </div>
           </div>
 
           <DialogFooter>
@@ -155,7 +208,7 @@ const handleClose = () => {
             >
               Cancel
             </Button>
-            <Button type="submit" :disabled="isSubmitting || !name.trim()">
+            <Button type="submit" :disabled="isSubmitting || isSubmitDisabled">
               <svg
                 v-if="isSubmitting"
                 class="w-4 h-4 mr-2 animate-spin"

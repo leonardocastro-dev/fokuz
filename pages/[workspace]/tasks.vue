@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Plus, RefreshCw } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -78,13 +78,8 @@ onMounted(async () => {
         loadPromises.push(loadWorkspaceMembers(workspaceId.value))
       }
       await Promise.all(loadPromises)
-      taskStore.setScopeFilter('assigneds', user.value?.uid)
       // Load tasks via taskStore (will use cache if available)
-      await taskStore.loadWorkspaceTasks(
-        workspaceId.value,
-        'assigneds',
-        user.value?.uid
-      )
+      await taskStore.loadWorkspaceTasks(workspaceId.value, user.value?.uid)
 
       // Load permissions for all projects
       const projectIds = projectStore.projects.map((p) => p.id)
@@ -103,36 +98,13 @@ onMounted(async () => {
   }
 })
 
-// When scope changes, load all tasks if needed (for 'all' or filtering by another member)
-watch(
-  [() => taskStore.scopeFilter, () => taskStore.scopeUserId],
-  async ([newScope, newUserId]) => {
-    if (!workspaceId.value) return
-    const needsAllData =
-      newScope === 'all' ||
-      (newScope === 'assigneds' && newUserId && newUserId !== user.value?.uid)
-    if (needsAllData) {
-      await taskStore.loadWorkspaceTasks(
-        workspaceId.value,
-        'all',
-        user.value?.uid
-      )
-    }
-  }
-)
-
 // Force reload when clicking Sync button
 const handleReload = async () => {
   if (!workspaceId.value) return
   isReloading.value = true
   try {
     taskStore.clearWorkspaceCache(workspaceId.value)
-    await taskStore.loadWorkspaceTasks(
-      workspaceId.value,
-      taskStore.scopeFilter as 'all' | 'assigneds',
-      user.value?.uid,
-      true
-    )
+    await taskStore.loadWorkspaceTasks(workspaceId.value, user.value?.uid, true)
   } finally {
     isReloading.value = false
   }
@@ -146,6 +118,10 @@ const emptyStateMessage = computed(() => {
     return 'No tasks assigned to you yet.'
   }
   return 'No tasks in this workspace yet.'
+})
+
+onBeforeUnmount(() => {
+  taskStore.resetFilters()
 })
 </script>
 
