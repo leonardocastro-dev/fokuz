@@ -1,6 +1,6 @@
 # Fokuz/Task Manager - Full-Stack Workspace-Based Task Management
 
-#### Video Demo: https://drive.google.com/file/d/1iVqREYQ-JAqZVSi4AaxzcPlTAY2EG-WZ/view?usp=sharing
+#### Video Demo: https://youtu.be/jeWHqot4Rw0
 
 #### Description:
 

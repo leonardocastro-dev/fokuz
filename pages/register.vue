@@ -22,6 +22,7 @@ import * as z from 'zod'
 import { useAuth } from '@/composables/useAuth'
 import { watch } from 'vue'
 
+const route = useRoute()
 const { user, register, loading } = useAuth()
 
 // Redirect if already logged in
@@ -29,7 +30,8 @@ watch(
   () => user.value,
   (newUser) => {
     if (newUser && !loading.value) {
-      navigateTo('/workspaces')
+      const redirect = route.query.redirect as string
+      navigateTo(redirect || '/workspaces')
     }
   },
   { immediate: true }
@@ -169,7 +171,13 @@ const onSubmit = handleSubmit(async (data) => {
           <Button
             variant="outline"
             class="w-full"
-            @click="navigateTo('/login')"
+            @click="
+              navigateTo(
+                route.query.redirect
+                  ? `/login?redirect=${route.query.redirect}`
+                  : '/login'
+              )
+            "
           >
             Login
           </Button>

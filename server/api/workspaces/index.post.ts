@@ -28,7 +28,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (description && typeof description === 'string' && description.trim().length > 200) {
+  if (
+    description &&
+    typeof description === 'string' &&
+    description.trim().length > 200
+  ) {
     throw createError({
       statusCode: 400,
       message: 'Workspace description must not exceed 200 characters'

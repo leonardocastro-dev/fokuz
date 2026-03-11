@@ -22,13 +22,15 @@ import * as z from 'zod'
 import { useAuth } from '@/composables/useAuth'
 import { watch } from 'vue'
 
+const route = useRoute()
 const { user, login, loading } = useAuth()
 
 watch(
   [() => user.value, () => loading.value],
   ([newUser, isLoading]) => {
     if (newUser && !isLoading) {
-      navigateTo('/workspaces')
+      const redirect = route.query.redirect as string
+      navigateTo(redirect || '/workspaces')
     }
   },
   { immediate: true }

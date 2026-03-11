@@ -4,6 +4,9 @@ import prettier from 'eslint-plugin-prettier'
 import vueParser from 'vue-eslint-parser'
 
 export default withNuxt([
+  {
+    ignores: ['functions/lib/**']
+  },
   ...tseslint.configs.recommended,
   {
     files: ['**/*.vue'],
