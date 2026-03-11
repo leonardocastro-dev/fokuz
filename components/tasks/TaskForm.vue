@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -30,7 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { Users, CalendarIcon } from 'lucide-vue-next'
+import { Users, CalendarIcon, Search } from 'lucide-vue-next'
 import { useMembers } from '@/composables/useMembers'
 
 type Priority = 'normal' | 'important' | 'urgent'
@@ -66,6 +67,7 @@ const dueDate = ref<DateValue | undefined>(undefined)
 const selectedProjectId = ref(
   props.projectId || props.editTask?.projectId || ''
 )
+const assigneeSearch = ref('')
 const titleError = ref('')
 const projectError = ref('')
 
@@ -79,6 +81,7 @@ watch(
   () => props.isOpen,
   async (isOpen) => {
     if (!isOpen) return
+    assigneeSearch.value = ''
 
     if (!props.editTask) {
       selectedProjectId.value = props.projectId || ''
@@ -188,6 +191,17 @@ const availableProjects = computed(() => {
   )
 })
 
+const filteredMembers = computed(() => {
+  const query = assigneeSearch.value.toLowerCase().trim()
+  if (!query) return members.value
+
+  return members.value.filter((member) => {
+    const username = (member.username || '').toLowerCase()
+    const email = (member.email || '').toLowerCase()
+    return username.includes(query) || email.includes(query)
+  })
+})
+
 const isProjectSelectionRequired = computed(
   () => !props.editTask && !props.projectId
 )
@@ -217,6 +231,10 @@ const isSubmitDisabled = computed(() => {
 const handleClose = () => {
   resetForm()
   emit('close')
+}
+
+const getMemberInitial = (username?: string, email?: string) => {
+  return (username || email || '?').charAt(0).toUpperCase()
 }
 </script>
 
@@ -378,7 +396,19 @@ const handleClose = () => {
             Select members to assign to this task.
           </p>
 
-          <div class="max-h-[140px] overflow-y-auto rounded-md border p-4">
+          <div class="relative">
+            <Search
+              class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none"
+            />
+            <Input
+              v-model="assigneeSearch"
+              type="text"
+              placeholder="Search members..."
+              class="h-9 pl-9"
+            />
+          </div>
+
+          <div class="max-h-[180px] overflow-y-auto rounded-md border p-4">
             <div class="space-y-3">
               <template v-if="isLoadingMembers">
                 <div
@@ -392,7 +422,7 @@ const handleClose = () => {
               </template>
               <template v-else>
                 <div
-                  v-for="member in members"
+                  v-for="member in filteredMembers"
                   :key="member.uid"
                   class="flex items-center space-x-2"
                 >
@@ -412,9 +442,31 @@ const handleClose = () => {
                   />
                   <Label
                     :for="`task-member-${member.uid}`"
-                    class="cursor-pointer flex-1 font-normal"
+                    class="cursor-pointer flex-1 font-normal min-w-0"
                   >
-                    {{ member.username || member.email }}
+                    <span class="flex items-center gap-2 min-w-0">
+                      <Avatar :uid="member.uid" class="h-6 w-6 shrink-0">
+                        <AvatarImage
+                          v-if="member.avatarUrl"
+                          :src="member.avatarUrl"
+                          :alt="member.username || member.email"
+                        />
+                        <AvatarFallback class="text-[10px]">
+                          {{ getMemberInitial(member.username, member.email) }}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span class="min-w-0">
+                        <span class="block text-sm truncate">
+                          {{ member.username || member.email }}
+                        </span>
+                        <span
+                          v-if="member.username && member.email"
+                          class="block text-xs text-muted-foreground truncate"
+                        >
+                          {{ member.email }}
+                        </span>
+                      </span>
+                    </span>
                   </Label>
                 </div>
 
@@ -423,6 +475,12 @@ const handleClose = () => {
                   class="text-sm text-muted-foreground text-center py-4"
                 >
                   No members in this workspace
+                </p>
+                <p
+                  v-else-if="filteredMembers.length === 0"
+                  class="text-sm text-muted-foreground text-center py-4"
+                >
+                  No members found
                 </p>
               </template>
             </div>

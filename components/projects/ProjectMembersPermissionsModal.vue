@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, Search } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -56,6 +57,7 @@ const projectStore = useProjectStore()
 
 const isSaving = ref(false)
 const isLoading = ref(false)
+const memberSearch = ref('')
 const selectedMemberIds = ref<string[]>([])
 const initialMemberIds = ref<string[]>([])
 const expandedMemberId = ref<string | null>(null)
@@ -198,8 +200,22 @@ const initializeMemberRole = (memberId: string): ProjectRole => {
 
 watch(open, async (isOpen) => {
   if (isOpen) {
+    memberSearch.value = ''
     await loadData()
+    return
   }
+  memberSearch.value = ''
+})
+
+const filteredMembersForProjects = computed(() => {
+  const query = memberSearch.value.toLowerCase().trim()
+  if (!query) return membersForProjects.value
+
+  return membersForProjects.value.filter((member) => {
+    const username = (member.username || '').toLowerCase()
+    const email = (member.email || '').toLowerCase()
+    return username.includes(query) || email.includes(query)
+  })
 })
 
 const loadData = async () => {
@@ -443,7 +459,21 @@ const save = async () => {
 
         <hr />
 
-        <div class="overflow-y-auto px-6">
+        <div class="px-6">
+          <div class="relative">
+            <Search
+              class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none"
+            />
+            <Input
+              v-model="memberSearch"
+              type="text"
+              placeholder="Search members..."
+              class="h-9 pl-9"
+            />
+          </div>
+        </div>
+
+        <div class="overflow-y-auto px-6 space-y-3">
           <template v-if="isLoading">
             <div class="space-y-4">
               <div v-for="i in 3" :key="i" class="border rounded-lg p-3">
@@ -466,7 +496,7 @@ const save = async () => {
           <template v-else>
             <div class="space-y-4">
               <div
-                v-for="member in membersForProjects"
+                v-for="member in filteredMembersForProjects"
                 :key="member.uid"
                 class="border rounded-lg p-3"
               >
@@ -510,9 +540,17 @@ const save = async () => {
                         ? 'cursor-default'
                         : 'cursor-pointer'
                     "
-                    class="flex-1 font-medium"
+                    class="flex flex-col !items-start !gap-0 flex-1 min-w-0 text-left"
                   >
-                    {{ member.username || member.email }}
+                    <span class="block max-w-full text-sm font-medium truncate">
+                      {{ member.username || 'No username' }}
+                    </span>
+                    <span
+                      v-if="member.email"
+                      class="block max-w-full text-xs text-muted-foreground truncate"
+                    >
+                      {{ member.email }}
+                    </span>
                   </Label>
                   <span
                     v-if="hasAccessProjectsPermission(member)"
@@ -591,6 +629,12 @@ const save = async () => {
                 </div>
               </div>
             </div>
+            <p
+              v-if="filteredMembersForProjects.length === 0"
+              class="text-sm text-muted-foreground text-center py-4"
+            >
+              No members found
+            </p>
           </template>
         </div>
 
