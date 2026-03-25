@@ -1,0 +1,31 @@
+{
+  "global": {
+    "disabled": {
+      "opacity": "0.5",
+      "cursor": "not-allowed",
+      "pointerEvents": "none"
+    },
+    "loading": {
+      "type": "pulse",
+      "properties": {
+        "animation": "gleap-pulse 5s infinite",
+        "description": "Used on tooltip hotspot indicators as a pulsing attention ring"
+      }
+    },
+    "empty": {
+      "display": "hidden"
+    },
+    "error": {
+      "borderColor": "roles.error.base",
+      "textColor": "roles.error.base"
+    },
+    "hidden-mobile": {
+      "display": "none at mobile breakpoint",
+      "description": "Elements with .hidden-mobile class are display:none on mobile"
+    },
+    "hidden-tablet": {
+      "display": "none at tablet breakpoint",
+      "description": "Elements with .hide-tablet class are display:none on tablet and below"
+    }
+  }
+}

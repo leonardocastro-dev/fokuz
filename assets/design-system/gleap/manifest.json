@@ -1,0 +1,39 @@
+{
+  "name": "Gleap - AI-powered Customer Support OS",
+  "source": "Gleap - AI-powered Customer Support OS.html",
+  "extractedAt": "2026-03-18T00:00:00Z",
+  "summary": {
+    "colorCount": 18,
+    "fontFamilies": ["system-ui", "Segoe UI", "Roboto", "Helvetica", "Arial"],
+    "componentCount": 8,
+    "patternCount": 9,
+    "breakpoints": [479, 767, 991],
+    "hasDarkMode": false,
+    "cssFramework": "webflow",
+    "iconSystem": "custom-svg",
+    "jsLibraries": {
+      "animation": ["webflow-ix2"],
+      "webgl": null,
+      "scroll": [],
+      "particles": null,
+      "cursor": false
+    }
+  },
+  "identity": {
+    "dominantColor": "#000000",
+    "mood": "modern and professional with clean SaaS aesthetic",
+    "typographicVoice": "system sans-serif, clean and neutral with bold headings",
+    "visualWeight": "medium",
+    "motionPersonality": "snappy and responsive with subtle hover transitions"
+  },
+  "files": {
+    "tokens": ["colors.json", "typography.json", "spacing.json", "shadows.json", "motion.json", "radii.json", "z-index.json"],
+    "semantics": ["color-roles.json", "typography-roles.json", "elevation-roles.json", "motion-roles.json"],
+    "primitives": ["button.json", "tag.json", "card.json", "nav-link.json", "link-button.json", "testimonial-card.json", "pricing-table.json", "tab-link.json"],
+    "patterns": ["header.json", "hero.json", "logo-bar.json", "feature-cards.json", "category-grid.json", "pricing-comparison.json", "breaker.json", "testimonials.json", "footer.json"],
+    "layout": ["grid.json", "breakpoints.json", "containers.json", "spacing-rules.json"],
+    "behavior": ["interactions.json", "scroll-effects.json", "state-rules.json"],
+    "mappings": ["token-to-css-vars.json", "token-to-tailwind.json", "component-to-pattern.json"],
+    "exports": ["variables.css", "base.css", "components.css", "theme.css"]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "tag",
+  "description": "Small label/badge used as section eyebrow or category indicator",
+  "anatomy": {
+    "slots": ["label"],
+    "required": ["label"]
+  },
+  "base": {
+    "display": "inline-block",
+    "padding": "spacing.1.5 spacing.4",
+    "borderRadius": "radii.full",
+    "fontSize": "caption",
+    "fontWeight": 500,
+    "fontFamily": "system",
+    "lineHeight": "1.4",
+    "textAlign": "center"
+  },
+  "variants": {
+    "base": {
+      "background": "white.200",
+      "color": "black.900",
+      "border": "1px solid gray.300"
+    },
+    "light": {
+      "background": "rgba(255,255,255,0.15)",
+      "color": "white.50",
+      "border": "1px solid rgba(255,255,255,0.2)"
+    },
+    "navigation": {
+      "background": "black.900",
+      "color": "white.50",
+      "border": "none"
+    }
+  },
+  "states": {
+    "hover": {
+      "inferred": true
+    },
+    "disabled": {
+      "opacity": "0.5",
+      "inferred": true
+    }
+  },
+  "sizes": {},
+  "icon": null
+}

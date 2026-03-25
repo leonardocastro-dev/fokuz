@@ -1,0 +1,49 @@
+{
+  "name": "link-button",
+  "description": "Inline link with arrow icon used for secondary CTAs within cards and sections",
+  "anatomy": {
+    "slots": ["label", "icon-right"],
+    "required": ["label"]
+  },
+  "base": {
+    "display": "inline-flex",
+    "alignItems": "center",
+    "gap": "spacing.2",
+    "fontSize": "overline",
+    "fontWeight": 500,
+    "fontFamily": "system",
+    "lineHeight": "1.5",
+    "cursor": "pointer",
+    "transition": "motion.hover",
+    "textDecoration": "none"
+  },
+  "variants": {
+    "base": {
+      "background": "transparent",
+      "color": "black.900",
+      "border": "none"
+    },
+    "navigation": {
+      "background": "transparent",
+      "color": "black.900",
+      "border": "none"
+    }
+  },
+  "states": {
+    "hover": {
+      "gap": "spacing.3",
+      "inferred": false
+    },
+    "disabled": {
+      "opacity": "0.5",
+      "cursor": "not-allowed",
+      "inferred": true
+    }
+  },
+  "sizes": {},
+  "icon": {
+    "semantic": "arrow-right",
+    "position": "right",
+    "size": "16px"
+  }
+}

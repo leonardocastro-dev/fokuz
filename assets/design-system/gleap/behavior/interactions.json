@@ -1,0 +1,75 @@
+{
+  "interactions": {
+    "navigation-scroll": {
+      "trigger": "scroll",
+      "target": ".navigation-container",
+      "properties": {
+        "background-color": { "from": "transparent/white", "to": "black.900" },
+        "color": { "from": "black.900", "to": "white.50" }
+      },
+      "transition": "all 250ms ease",
+      "description": "When user scrolls past 0px, navigation gains .navigation-scrolled class which inverts colors to dark theme. Logo shrinks and inverts, wordmark fades, links turn white, sign-up button inverts."
+    },
+    "navigation-logo-scroll": {
+      "trigger": "scroll",
+      "target": ".navigation-logo",
+      "properties": {
+        "width": { "from": "auto", "to": "32px" },
+        "height": { "from": "auto", "to": "32px" },
+        "filter": { "from": "none", "to": "invert(1)" }
+      },
+      "transition": "all 250ms ease"
+    },
+    "navigation-wordmark-scroll": {
+      "trigger": "scroll",
+      "target": ".navigationlogofont",
+      "properties": {
+        "opacity": { "from": "1", "to": "0" }
+      },
+      "transition": "all 250ms ease"
+    },
+    "dropdown-hover": {
+      "trigger": "hover",
+      "target": ".uui-navbar02_dropdown-list",
+      "properties": {
+        "opacity": { "from": "0", "to": "1" },
+        "visibility": { "from": "hidden", "to": "visible" }
+      },
+      "transition": "opacity 0.2s ease"
+    },
+    "tooltip-hover": {
+      "trigger": "hover",
+      "target": ".gleap-tooltip",
+      "properties": {
+        "opacity": { "from": "0", "to": "1" },
+        "visibility": { "from": "hidden", "to": "visible" }
+      },
+      "transition": "opacity 0.2s, visibility 0.2s"
+    },
+    "feature-tab-hover": {
+      "trigger": "hover",
+      "target": ".feature-grid-tab-link",
+      "properties": {
+        "background": { "from": "transparent", "to": "white.200" }
+      },
+      "transition": "motion.hover",
+      "description": "Tabs in feature grid trigger click on mouseenter for instant preview switching"
+    },
+    "notification-close-hover": {
+      "trigger": "hover",
+      "target": ".gleap-notification-close",
+      "properties": {
+        "visibility": { "from": "hidden", "to": "visible" }
+      },
+      "transition": "animation bbFadeInOpacity 0.7s"
+    },
+    "image-close-hover": {
+      "trigger": "hover",
+      "target": ".gleap-image-view-close",
+      "properties": {
+        "opacity": { "from": "0.8", "to": "1" }
+      },
+      "transition": "implicit"
+    }
+  }
+}

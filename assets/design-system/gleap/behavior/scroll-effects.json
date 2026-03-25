@@ -1,0 +1,16 @@
+{
+  "effects": {
+    "navigation-state-change": {
+      "type": "sticky",
+      "trigger": "scrollY > 0",
+      "target": ".navigation-container",
+      "properties": {
+        "class": { "from": "", "to": "navigation-scrolled" }
+      },
+      "config": {
+        "library": "vanilla-js",
+        "description": "Adds navigation-scrolled class when scroll position > 0, removes when at top. CSS handles the visual transition with 250ms ease."
+      }
+    }
+  }
+}

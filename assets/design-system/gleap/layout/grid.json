@@ -1,0 +1,8 @@
+{
+  "system": "flexbox",
+  "columns": 12,
+  "gutter": "spacing.6",
+  "margin": "spacing.6",
+  "maxWidth": "1200px",
+  "alignment": "center"
+}

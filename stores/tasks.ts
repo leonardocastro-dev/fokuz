@@ -535,7 +535,7 @@ export const useTaskStore = defineStore('tasks', {
       try {
         this.isLoading = true
 
-        const accessibleProjectIds = projectStore.projects.map((p) => p.id)
+        const accessibleProjectIds = projectStore.visibleProjects.map((p) => p.id)
 
         const tasksRef = collection(
           $firestore,

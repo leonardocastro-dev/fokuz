@@ -1,0 +1,35 @@
+{
+  "name": "testimonial-card",
+  "description": "Card displaying customer testimonial with quote, avatar, name, and role",
+  "anatomy": {
+    "slots": ["quote", "avatar", "name", "subtitle"],
+    "required": ["quote", "name"]
+  },
+  "base": {
+    "display": "flex",
+    "flexDirection": "column",
+    "padding": "spacing.6",
+    "borderRadius": "radii.lg",
+    "fontSize": "body",
+    "fontFamily": "system",
+    "lineHeight": "1.6"
+  },
+  "variants": {
+    "base": {
+      "background": "surfaces.card.background",
+      "color": "surfaces.card.text",
+      "border": "1px solid white.200"
+    }
+  },
+  "states": {
+    "hover": {
+      "inferred": true
+    },
+    "disabled": {
+      "opacity": "0.5",
+      "inferred": true
+    }
+  },
+  "sizes": {},
+  "icon": null
+}

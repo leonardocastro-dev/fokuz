@@ -1,0 +1,61 @@
+{
+  "header": {
+    "primitives": ["nav-link", "button"],
+    "roles": {
+      "nav-link": "nav-link:base",
+      "button": "button:base"
+    }
+  },
+  "hero": {
+    "primitives": ["tag", "button"],
+    "roles": {
+      "tag": "tag:base",
+      "button": "button:base, button:pink"
+    }
+  },
+  "logo-bar": {
+    "primitives": [],
+    "roles": {}
+  },
+  "feature-cards": {
+    "primitives": ["tag", "card", "link-button"],
+    "roles": {
+      "tag": "tag:base",
+      "card": "card:highlighted, card:base",
+      "link-button": "link-button:base"
+    }
+  },
+  "category-grid": {
+    "primitives": ["card"],
+    "roles": {
+      "card": "card:base"
+    }
+  },
+  "pricing-comparison": {
+    "primitives": ["tag", "pricing-table"],
+    "roles": {
+      "tag": "tag:base",
+      "pricing-table": "pricing-table:base"
+    }
+  },
+  "breaker": {
+    "primitives": ["button"],
+    "roles": {
+      "button": "button:pink"
+    }
+  },
+  "testimonials": {
+    "primitives": ["tag", "testimonial-card"],
+    "roles": {
+      "tag": "tag:base",
+      "testimonial-card": "testimonial-card:base"
+    }
+  },
+  "footer": {
+    "primitives": ["tag", "button"],
+    "roles": {
+      "tag": "tag:light",
+      "button": "button:pink"
+    }
+  }
+}

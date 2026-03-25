@@ -1,0 +1,49 @@
+{
+  "name": "testimonials",
+  "description": "Section with tag, heading, and horizontal grid of testimonial cards from customers",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "gap": "spacing.8",
+    "maxWidth": "940px",
+    "padding": "spacing.16 spacing.6"
+  },
+  "slots": {
+    "eyebrow": {
+      "accepts": ["tag"],
+      "required": false,
+      "description": "Testimonials tag"
+    },
+    "heading": {
+      "accepts": ["text"],
+      "required": true,
+      "typographyRole": "h2",
+      "description": "Why Teams Switch to Gleap"
+    },
+    "cards": {
+      "accepts": ["testimonial-card"],
+      "required": true,
+      "layout": { "display": "grid", "columns": 3, "gap": "spacing.6" },
+      "description": "Grid of testimonial cards, some hidden on mobile/tablet"
+    }
+  },
+  "background": {
+    "type": "transparent",
+    "value": null
+  },
+  "responsive": {
+    "mobile": {
+      "cards.columns": 1,
+      "hidden-cards": "4th, 5th, 6th cards hidden on mobile"
+    },
+    "tablet": {
+      "cards.columns": 2,
+      "hidden-cards": "5th, 6th cards hidden on tablet"
+    }
+  },
+  "tokensUsed": [
+    "typography.h2", "typography.body",
+    "spacing.6", "spacing.8", "spacing.16"
+  ]
+}

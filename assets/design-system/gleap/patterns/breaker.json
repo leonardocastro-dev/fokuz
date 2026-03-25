@@ -1,0 +1,46 @@
+{
+  "name": "breaker",
+  "description": "Full-width dark banner section with tag, heading, and CTA button for bot promotion",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "textAlign": "center",
+    "gap": "spacing.6",
+    "maxWidth": "1200px",
+    "padding": "spacing.16 spacing.6"
+  },
+  "slots": {
+    "tag": {
+      "accepts": ["text"],
+      "required": false,
+      "description": "Run actions fully automatically"
+    },
+    "heading": {
+      "accepts": ["text"],
+      "required": true,
+      "typographyRole": "h3",
+      "description": "Custom-designed bots to scale your business"
+    },
+    "cta": {
+      "accepts": ["button"],
+      "required": true,
+      "description": "Learn more button (pink variant)"
+    }
+  },
+  "background": {
+    "type": "solid",
+    "value": "black.900"
+  },
+  "responsive": {
+    "mobile": {
+      "padding": "spacing.12 spacing.4"
+    }
+  },
+  "tokensUsed": [
+    "typography.h3",
+    "roles.secondary",
+    "surfaces.card-highlighted",
+    "spacing.4", "spacing.6", "spacing.12", "spacing.16"
+  ]
+}

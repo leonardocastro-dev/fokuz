@@ -1,0 +1,47 @@
+{
+  "name": "footer",
+  "description": "Dark footer with CTA section, logo, social links, trust badges, and multi-column link lists",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "gap": "spacing.16",
+    "maxWidth": "100%",
+    "padding": "spacing.20 spacing.6"
+  },
+  "slots": {
+    "cta-section": {
+      "accepts": ["tag", "text", "button"],
+      "required": true,
+      "description": "Light tag, heading, subtitle, and Get started button",
+      "layout": { "display": "flex", "direction": "column", "alignment": "center", "textAlign": "center", "gap": "spacing.6" }
+    },
+    "logo-section": {
+      "accepts": ["image", "text"],
+      "required": true,
+      "description": "Gleap logo, wordmark, social icons (X, LinkedIn), description text, trust badges (SOC2, G2)"
+    },
+    "link-columns": {
+      "accepts": ["footer-link-list"],
+      "required": true,
+      "layout": { "display": "grid", "columns": 4, "gap": "spacing.8" },
+      "description": "Product, Resources, Legal, Alternative to columns"
+    }
+  },
+  "background": {
+    "type": "solid",
+    "value": "surfaces.footer.background"
+  },
+  "responsive": {
+    "mobile": {
+      "link-columns.columns": 2,
+      "padding": "spacing.12 spacing.4"
+    }
+  },
+  "tokensUsed": [
+    "typography.h2", "typography.body", "typography.label",
+    "surfaces.footer",
+    "roles.secondary",
+    "spacing.4", "spacing.6", "spacing.8", "spacing.12", "spacing.16", "spacing.20"
+  ]
+}

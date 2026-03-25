@@ -1,0 +1,125 @@
+/* ==========================================================================
+   Gleap Design System — CSS Custom Properties
+   Extracted from: Gleap - AI-powered Customer Support OS
+   ========================================================================== */
+
+:root {
+  /* ---- Colors: Black ---- */
+  --color-black-900: #000000;
+  --color-black-800: #1a1a1a;
+  --color-black-700: #333333;
+
+  /* ---- Colors: White ---- */
+  --color-white: #ffffff;
+  --color-white-100: #fafafa;
+  --color-white-200: #f5f5f5;
+  --color-white-300: #f3f3f3;
+
+  /* ---- Colors: Gray ---- */
+  --color-gray-300: #d9d9d9;
+  --color-gray-400: #acacac;
+  --color-gray-500: #878787;
+  --color-gray-600: #6b6b6b;
+  --color-gray-700: #555555;
+
+  /* ---- Colors: Purple ---- */
+  --color-purple-100: #f1ccfe;
+  --color-purple-200: #e2bdef;
+  --color-purple-400: #c77dff;
+  --color-purple-500: #a855f7;
+
+  /* ---- Colors: Pink ---- */
+  --color-pink-400: #ff6b9d;
+  --color-pink-500: #ec4899;
+
+  /* ---- Colors: Red ---- */
+  --color-red-500: #ff0000;
+
+  /* ---- Color Roles ---- */
+  --color-primary: var(--color-black-900);
+  --color-primary-hover: var(--color-black-800);
+  --color-primary-on: var(--color-white);
+  --color-secondary: var(--color-purple-200);
+  --color-secondary-hover: var(--color-purple-400);
+  --color-secondary-on: var(--color-black-900);
+  --color-neutral: var(--color-gray-500);
+
+  /* ---- Surfaces ---- */
+  --surface-page-bg: var(--color-white);
+  --surface-page-text: var(--color-black-900);
+  --surface-card-bg: var(--color-white);
+  --surface-card-border: var(--color-white-200);
+  --surface-card-dark-bg: var(--color-black-900);
+  --surface-card-dark-text: var(--color-white);
+  --surface-footer-bg: var(--color-black-900);
+  --surface-footer-text: var(--color-white);
+
+  /* ---- Typography ---- */
+  --font-family-system: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-size-display: 64px;
+  --font-size-h1: 52px;
+  --font-size-h2: 40px;
+  --font-size-h3: 28px;
+  --font-size-h4: 18px;
+  --font-size-body-lg: 18px;
+  --font-size-body: 16px;
+  --font-size-body-sm: 14px;
+  --font-size-caption: 13px;
+  --font-size-label: 12px;
+  --font-size-overline: 15px;
+
+  /* ---- Spacing ---- */
+  --spacing-0: 0px;
+  --spacing-px: 1px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-1-5: 6px;
+  --spacing-2: 8px;
+  --spacing-2-5: 10px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-14: 56px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0px 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0px 5px 30px rgba(0, 0, 0, 0.16);
+  --shadow-lg: 0px 5px 30px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0px 10px 20px rgba(0, 0, 0, 0.15), 0px 5px 5px rgba(0, 0, 0, 0.05);
+
+  /* ---- Border Radius ---- */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ---- Motion ---- */
+  --duration-fast: 200ms;
+  --duration-normal: 250ms;
+  --duration-slow: 300ms;
+  --duration-dramatic: 400ms;
+  --ease-default: ease;
+  --ease-out: ease-out;
+  --ease-in-out: ease-in-out;
+
+  /* ---- Z-Index ---- */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-navigation: 100;
+  --z-modal: 2147483631;
+  --z-popover: 2147483699;
+  --z-toast: 2147483700;
+}

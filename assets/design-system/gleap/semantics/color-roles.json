@@ -1,0 +1,42 @@
+{
+  "roles": {
+    "primary": {
+      "base": "black.900",
+      "hover": "black.800",
+      "active": "black.700",
+      "subtle": "white.200",
+      "on": "white.50"
+    },
+    "secondary": {
+      "base": "purple.200",
+      "hover": "purple.400",
+      "active": "purple.500",
+      "subtle": "purple.100",
+      "on": "black.900"
+    },
+    "neutral": {
+      "base": "gray.500",
+      "hover": "gray.600",
+      "active": "gray.700",
+      "subtle": "white.300",
+      "on": "white.50"
+    },
+    "error": {
+      "base": "red.500",
+      "hover": "red.500",
+      "active": "red.500",
+      "subtle": "red.500",
+      "on": "white.50"
+    }
+  },
+  "surfaces": {
+    "page": { "background": "white.50", "text": "black.900" },
+    "card": { "background": "white.50", "text": "black.900", "border": "white.200" },
+    "card-highlighted": { "background": "black.900", "text": "white.50", "border": null },
+    "modal": { "background": "white.50", "text": "black.900", "overlay": "rgba(0,0,0,0.5)" },
+    "input": { "background": "white.50", "text": "black.900", "border": "gray.300", "placeholder": "gray.500" },
+    "footer": { "background": "black.900", "text": "white.50", "border": null },
+    "navigation": { "background": "white.50", "text": "black.900", "border": null },
+    "navigation-scrolled": { "background": "black.900", "text": "white.50", "border": null }
+  }
+}

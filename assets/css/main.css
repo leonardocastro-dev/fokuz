@@ -91,6 +91,8 @@
     hsl(280, 20%, 98%) 100%
   );
   --primary-glow: hsl(290, 85%, 60%);
+  --header-scrolled-bg: var(--foreground);
+  --header-scrolled-text: var(--background);
 }
 
 .dark {
@@ -141,6 +143,8 @@
     hsl(280, 18%, 17%) 100%
   );
   --primary-glow: hsl(290, 85%, 60%);
+  --header-scrolled-bg: oklch(0.21 0.006 285.885);
+  --header-scrolled-text: oklch(0.985 0 0);
 }
 
 @layer base {
@@ -414,4 +418,8 @@ body.sheet-transitioning [data-slot='sheet-overlay'] {
 .nav-burguer.open span:nth-child(3) {
   top: 7px;
   transform: rotate(-135deg);
+}
+
+.header-scrolled .nav-burguer span {
+  background: var(--header-scrolled-text);
 }

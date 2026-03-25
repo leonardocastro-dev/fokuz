@@ -1,0 +1,11 @@
+{
+  "roles": {
+    "enter": { "duration": "300ms", "easing": "ease", "usage": "elements appearing, fade-in-up animations" },
+    "exit": { "duration": "200ms", "easing": "ease", "usage": "elements disappearing, tooltips hiding" },
+    "hover": { "duration": "250ms", "easing": "ease", "usage": "navigation scroll state transition, button hover, link hover" },
+    "expand": { "duration": "400ms", "easing": "ease", "usage": "dropdown menus opening, accordion expansion" },
+    "slide": { "duration": "300ms", "easing": "ease-out", "usage": "banner slide-in, mobile menu transitions" },
+    "fade": { "duration": "200ms", "easing": "ease", "usage": "tooltip opacity, dropdown visibility transitions" },
+    "attention": { "duration": "5000ms", "easing": "ease", "usage": "pulse animation on hotspot indicators" }
+  }
+}

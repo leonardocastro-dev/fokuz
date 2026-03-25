@@ -1,0 +1,61 @@
+{
+  "durations": {
+    "fast": "200ms",
+    "normal": "250ms",
+    "slow": "300ms",
+    "dramatic": "400ms"
+  },
+  "easings": {
+    "ease-default": "ease",
+    "ease-out": "ease-out",
+    "ease-in-out": "ease-in-out"
+  },
+  "keyframes": {
+    "gleapFadeInUp": {
+      "steps": {
+        "0%": { "opacity": "0", "transform": "translate3d(0, 100%, 0)" },
+        "100%": { "opacity": "1", "transform": "translate3d(0, 0, 0)" }
+      },
+      "duration": "300ms",
+      "easing": "ease",
+      "iterationCount": 1
+    },
+    "gleapFadeInUpMobile": {
+      "steps": {
+        "0%": { "opacity": "0", "transform": "translate3d(0, 10%, 0)" },
+        "100%": { "opacity": "1", "transform": "translate3d(0, 0, 0)" }
+      },
+      "duration": "300ms",
+      "easing": "ease",
+      "iterationCount": 1
+    },
+    "gleap-pulse": {
+      "steps": {
+        "0%": { "transform": "scale(0)", "opacity": "0.25" },
+        "45%": { "transform": "scale(2.5)", "opacity": "0" },
+        "100%": { "transform": "scale(0)", "opacity": "0" }
+      },
+      "duration": "5s",
+      "easing": "ease",
+      "iterationCount": "infinite"
+    },
+    "gleapSlideIn": {
+      "steps": {
+        "0%": { "top": "calc(-1 * var(--gleap-margin-top))" },
+        "100%": { "top": "10px" }
+      },
+      "duration": "250ms",
+      "easing": "ease-out",
+      "iterationCount": 1
+    },
+    "bbFadeInOpacity": {
+      "steps": {
+        "0%": { "opacity": "0" },
+        "100%": { "opacity": "1" }
+      },
+      "duration": "700ms",
+      "easing": "ease",
+      "iterationCount": 1
+    }
+  }
+}

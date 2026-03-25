@@ -1,0 +1,48 @@
+{
+  "roles": {
+    "display": {
+      "scaleToken": "display",
+      "usage": "hero heading, main page title"
+    },
+    "h1": {
+      "scaleToken": "h1",
+      "usage": "primary page headings"
+    },
+    "h2": {
+      "scaleToken": "h2",
+      "usage": "section headings, footer title"
+    },
+    "h3": {
+      "scaleToken": "h3",
+      "usage": "card titles, breaker titles, category titles"
+    },
+    "h4": {
+      "scaleToken": "h4",
+      "usage": "navigation sub-headers, card subtitles"
+    },
+    "body": {
+      "scaleToken": "body",
+      "usage": "paragraph text, card descriptions"
+    },
+    "body-lg": {
+      "scaleToken": "body-lg",
+      "usage": "hero subtitle, section descriptions"
+    },
+    "body-sm": {
+      "scaleToken": "body-sm",
+      "usage": "table content, smaller paragraph text, pricing details"
+    },
+    "caption": {
+      "scaleToken": "caption",
+      "usage": "tag labels, badge text, small UI text"
+    },
+    "label": {
+      "scaleToken": "label",
+      "usage": "footer link headers, small labels"
+    },
+    "overline": {
+      "scaleToken": "overline",
+      "usage": "navigation links, testimonial titles, button text"
+    }
+  }
+}

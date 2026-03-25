@@ -1,0 +1,130 @@
+{
+  "patterns": {
+    "header": {
+      "slots": ["logo", "navigation", "right-actions"],
+      "accepts": {
+        "logo": ["image"],
+        "navigation": ["nav-link"],
+        "right-actions": ["nav-link", "button:base"]
+      },
+      "constraints": {
+        "logo": { "required": true, "maxItems": 1 },
+        "navigation": { "required": true, "maxItems": null },
+        "right-actions": { "required": true, "maxItems": 2 }
+      },
+      "nesting": []
+    },
+    "hero": {
+      "slots": ["eyebrow", "heading", "subheading", "cta", "trust-line"],
+      "accepts": {
+        "eyebrow": ["tag"],
+        "heading": ["text"],
+        "subheading": ["text"],
+        "cta": ["button:base", "button:pink"],
+        "trust-line": ["text"]
+      },
+      "constraints": {
+        "heading": { "required": true, "maxItems": 1 },
+        "cta": { "required": true, "maxItems": 2 },
+        "trust-line": { "required": false, "maxItems": 1 }
+      },
+      "nesting": []
+    },
+    "logo-bar": {
+      "slots": ["title", "logos"],
+      "accepts": {
+        "title": ["text"],
+        "logos": ["image"]
+      },
+      "constraints": {
+        "title": { "required": true, "maxItems": 1 },
+        "logos": { "required": true, "maxItems": null }
+      },
+      "nesting": []
+    },
+    "feature-cards": {
+      "slots": ["eyebrow", "heading", "cards"],
+      "accepts": {
+        "eyebrow": ["tag"],
+        "heading": ["text"],
+        "cards": ["card:base", "card:highlighted"]
+      },
+      "constraints": {
+        "heading": { "required": true, "maxItems": 1 },
+        "cards": { "required": true, "maxItems": null }
+      },
+      "nesting": []
+    },
+    "category-grid": {
+      "slots": ["dual-headline", "categories"],
+      "accepts": {
+        "dual-headline": ["text"],
+        "categories": ["card"]
+      },
+      "constraints": {
+        "dual-headline": { "required": true, "maxItems": 1 },
+        "categories": { "required": true, "maxItems": 3 }
+      },
+      "nesting": []
+    },
+    "pricing-comparison": {
+      "slots": ["eyebrow", "heading", "subtitle", "table"],
+      "accepts": {
+        "eyebrow": ["tag"],
+        "heading": ["text"],
+        "subtitle": ["text"],
+        "table": ["pricing-table"]
+      },
+      "constraints": {
+        "heading": { "required": true, "maxItems": 1 },
+        "table": { "required": true, "maxItems": 1 }
+      },
+      "nesting": []
+    },
+    "breaker": {
+      "slots": ["tag", "heading", "cta"],
+      "accepts": {
+        "tag": ["text"],
+        "heading": ["text"],
+        "cta": ["button:pink"]
+      },
+      "constraints": {
+        "heading": { "required": true, "maxItems": 1 },
+        "cta": { "required": true, "maxItems": 1 }
+      },
+      "nesting": []
+    },
+    "testimonials": {
+      "slots": ["eyebrow", "heading", "cards"],
+      "accepts": {
+        "eyebrow": ["tag"],
+        "heading": ["text"],
+        "cards": ["testimonial-card"]
+      },
+      "constraints": {
+        "heading": { "required": true, "maxItems": 1 },
+        "cards": { "required": true, "maxItems": null }
+      },
+      "nesting": []
+    },
+    "footer": {
+      "slots": ["cta-section", "logo-section", "link-columns"],
+      "accepts": {
+        "cta-section": ["tag:light", "text", "button:pink"],
+        "logo-section": ["image", "text"],
+        "link-columns": ["text"]
+      },
+      "constraints": {
+        "cta-section": { "required": true, "maxItems": null },
+        "link-columns": { "required": true, "maxItems": 4 }
+      },
+      "nesting": []
+    }
+  },
+  "pages": {
+    "landing": {
+      "sections": ["header", "hero", "logo-bar", "feature-cards", "category-grid", "pricing-comparison", "breaker", "testimonials", "footer"],
+      "notes": "Header is fixed/sticky with scroll-triggered dark mode. All sections stack vertically with consistent section spacing. Feature tab grid and features section sit between pricing and testimonials."
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "pricing-table",
+  "description": "Comparison table showing pricing features between Gleap and competitors",
+  "anatomy": {
+    "slots": ["header-row", "feature-rows"],
+    "required": ["header-row", "feature-rows"]
+  },
+  "base": {
+    "display": "flex",
+    "flexDirection": "column",
+    "borderRadius": "radii.lg",
+    "fontSize": "body-sm",
+    "fontFamily": "system",
+    "overflow": "hidden",
+    "width": "100%"
+  },
+  "variants": {
+    "base": {
+      "background": "surfaces.card.background",
+      "color": "surfaces.card.text",
+      "border": "none"
+    }
+  },
+  "states": {},
+  "sizes": {},
+  "icon": null
+}

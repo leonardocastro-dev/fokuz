@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Gleap Design System — Theme
+   Imports all design system stylesheets in correct order
+   ========================================================================== */
+
+@import 'variables.css';
+@import 'base.css';
+@import 'components.css';
+
+/* ==========================================================================
+   Light Theme (Default)
+   ========================================================================== */
+
+[data-theme="light"],
+:root {
+  --theme-bg: var(--surface-page-bg);
+  --theme-text: var(--surface-page-text);
+  --theme-card-bg: var(--surface-card-bg);
+  --theme-card-border: var(--surface-card-border);
+  --theme-muted-text: var(--color-gray-600);
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+/* Containers */
+.container-lg {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+.container-md {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+.container-sm {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+}
+
+/* Section Spacing */
+.section {
+  padding: var(--spacing-16) 0;
+}
+
+/* Text Alignment */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+/* Display Typography */
+.heading-display {
+  font-size: var(--font-size-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.heading-h2 {
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.heading-h3 {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.text-body-lg {
+  font-size: var(--font-size-body-lg);
+  line-height: 1.6;
+  color: var(--theme-muted-text);
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+}
+
+.text-caption {
+  font-size: var(--font-size-caption);
+  font-weight: 500;
+}
+
+/* Dark Surface */
+.surface-dark {
+  background-color: var(--color-black-900);
+  color: var(--color-white);
+}
+
+.surface-dark .card__body,
+.surface-dark p {
+  color: var(--color-gray-400);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 991px) {
+  .heading-display {
+    font-size: var(--font-size-h1);
+  }
+}
+
+@media (max-width: 767px) {
+  .heading-display {
+    font-size: var(--font-size-h2);
+  }
+
+  .heading-h2 {
+    font-size: var(--font-size-h3);
+  }
+
+  .container-lg,
+  .container-md,
+  .container-sm {
+    padding: 0 var(--spacing-4);
+  }
+
+  .section {
+    padding: var(--spacing-12) 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .heading-display {
+    font-size: var(--font-size-h3);
+  }
+}

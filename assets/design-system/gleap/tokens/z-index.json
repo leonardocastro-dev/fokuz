@@ -1,0 +1,11 @@
+{
+  "layers": {
+    "base": 0,
+    "dropdown": 10,
+    "sticky": 20,
+    "navigation": 100,
+    "modal": 2147483631,
+    "popover": 2147483699,
+    "toast": 2147483700
+  }
+}

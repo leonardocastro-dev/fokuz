@@ -1,0 +1,8 @@
+{
+  "roles": {
+    "flat": { "shadowToken": "none", "usage": "inline elements, flat surfaces, default cards" },
+    "raised": { "shadowToken": "sm", "usage": "subtle card elevation on hover" },
+    "floating": { "shadowToken": "md", "usage": "navigation dropdowns, notification containers, frame overlays" },
+    "overlay": { "shadowToken": "lg", "usage": "modal dialogs, notification cards, image overlays" }
+  }
+}

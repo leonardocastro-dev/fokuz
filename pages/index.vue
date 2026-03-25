@@ -23,9 +23,12 @@ useScrollReveal()
       <ProductMockup />
       <Features />
       <HowItWorks />
-      <Permissions />
-      <Benefits />
-      <CTA />
+      <!-- relative z-10 overlaps the sticky timeline; -mt pulls content up so it slides over -->
+      <div class="relative lg:z-10 lg:-mt-[100vh]">
+        <Permissions />
+        <Benefits />
+        <CTA />
+      </div>
     </main>
     <Footer />
   </div>

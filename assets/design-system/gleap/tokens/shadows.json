@@ -1,0 +1,52 @@
+{
+  "scale": {
+    "sm": {
+      "value": "0px 1px 3px rgba(0, 0, 0, 0.08)",
+      "offsetX": "0px",
+      "offsetY": "1px",
+      "blur": "3px",
+      "spread": "0px",
+      "color": "rgba(0, 0, 0, 0.08)"
+    },
+    "md": {
+      "value": "0px 5px 30px rgba(0, 0, 0, 0.16)",
+      "offsetX": "0px",
+      "offsetY": "5px",
+      "blur": "30px",
+      "spread": "0px",
+      "color": "rgba(0, 0, 0, 0.16)"
+    },
+    "lg": {
+      "value": "0px 5px 30px rgba(0, 0, 0, 0.2)",
+      "offsetX": "0px",
+      "offsetY": "5px",
+      "blur": "30px",
+      "spread": "0px",
+      "color": "rgba(0, 0, 0, 0.2)"
+    },
+    "xl": {
+      "value": "0px 10px 20px rgba(0, 0, 0, 0.15), 0px 5px 5px rgba(0, 0, 0, 0.05)",
+      "offsetX": "0px",
+      "offsetY": "10px",
+      "blur": "20px",
+      "spread": "0px",
+      "color": "rgba(0, 0, 0, 0.15)"
+    },
+    "highlight": {
+      "value": "0px 0px 0px 4px red",
+      "offsetX": "0px",
+      "offsetY": "0px",
+      "blur": "0px",
+      "spread": "4px",
+      "color": "#FF0000"
+    },
+    "none": {
+      "value": "none",
+      "offsetX": "0px",
+      "offsetY": "0px",
+      "blur": "0px",
+      "spread": "0px",
+      "color": "transparent"
+    }
+  }
+}

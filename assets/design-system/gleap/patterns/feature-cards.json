@@ -1,0 +1,45 @@
+{
+  "name": "feature-cards",
+  "description": "Section with tag, heading, and two large feature cards (one highlighted dark, one light) side by side",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "gap": "spacing.8",
+    "maxWidth": "940px",
+    "padding": "spacing.16 spacing.6"
+  },
+  "slots": {
+    "eyebrow": {
+      "accepts": ["tag"],
+      "required": false,
+      "description": "One platform tag"
+    },
+    "heading": {
+      "accepts": ["text"],
+      "required": true,
+      "typographyRole": "h2",
+      "description": "Everything You Need to Scale Support and Product Insight"
+    },
+    "cards": {
+      "accepts": ["card"],
+      "required": true,
+      "layout": { "display": "grid", "columns": 2, "gap": "spacing.6" },
+      "description": "Two feature cards - highlighted (dark) and base (light)"
+    }
+  },
+  "background": {
+    "type": "transparent",
+    "value": null
+  },
+  "responsive": {
+    "mobile": {
+      "cards.columns": 1
+    }
+  },
+  "tokensUsed": [
+    "typography.h2", "typography.h3", "typography.body",
+    "roles.primary", "roles.primary.on",
+    "spacing.6", "spacing.8", "spacing.16"
+  ]
+}

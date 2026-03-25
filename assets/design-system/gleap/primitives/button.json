@@ -1,0 +1,64 @@
+{
+  "name": "button",
+  "description": "Primary interactive button used for CTAs, navigation actions, and form submissions",
+  "anatomy": {
+    "slots": ["label"],
+    "required": ["label"]
+  },
+  "base": {
+    "display": "inline-block",
+    "padding": "spacing.3 spacing.6",
+    "borderRadius": "radii.md",
+    "fontSize": "overline",
+    "fontWeight": 500,
+    "fontFamily": "system",
+    "lineHeight": "1.5",
+    "cursor": "pointer",
+    "transition": "motion.hover",
+    "textDecoration": "none",
+    "textAlign": "center"
+  },
+  "variants": {
+    "base": {
+      "background": "roles.primary.base",
+      "color": "roles.primary.on",
+      "border": "none"
+    },
+    "pink": {
+      "background": "roles.secondary.base",
+      "color": "roles.primary.base",
+      "border": "none"
+    }
+  },
+  "states": {
+    "hover:base": {
+      "opacity": "0.9",
+      "transform": "translateY(-1px)",
+      "inferred": false
+    },
+    "hover:pink": {
+      "opacity": "0.9",
+      "transform": "translateY(-1px)",
+      "inferred": false
+    },
+    "focus": {
+      "outline": "2px solid roles.primary.base",
+      "outlineOffset": "2px",
+      "inferred": true
+    },
+    "disabled": {
+      "opacity": "0.5",
+      "cursor": "not-allowed",
+      "pointerEvents": "none",
+      "inferred": true
+    }
+  },
+  "sizes": {
+    "md": {
+      "padding": "spacing.3 spacing.6",
+      "fontSize": "overline",
+      "height": "auto"
+    }
+  },
+  "icon": null
+}

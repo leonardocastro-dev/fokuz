@@ -1,0 +1,40 @@
+{
+  "name": "logo-bar",
+  "description": "Social proof section showing trusted company logos with a testimonial title",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "textAlign": "center",
+    "gap": "spacing.6",
+    "maxWidth": "720px",
+    "padding": "spacing.12 spacing.6"
+  },
+  "slots": {
+    "title": {
+      "accepts": ["text"],
+      "required": true,
+      "typographyRole": "overline",
+      "description": "Trusted by 4500+ high-growth global companies."
+    },
+    "logos": {
+      "accepts": ["image"],
+      "required": true,
+      "layout": { "display": "flex", "gap": "spacing.8", "align": "center", "justify": "center", "wrap": "wrap" },
+      "description": "Microsoft, Squarespace, Papa Johns, UNICEF logos"
+    }
+  },
+  "background": {
+    "type": "transparent",
+    "value": null
+  },
+  "responsive": {
+    "mobile": {
+      "logos.gap": "spacing.4"
+    }
+  },
+  "tokensUsed": [
+    "typography.overline",
+    "spacing.4", "spacing.6", "spacing.8", "spacing.12"
+  ]
+}

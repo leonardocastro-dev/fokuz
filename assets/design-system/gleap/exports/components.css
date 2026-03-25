@@ -1,0 +1,278 @@
+/* ==========================================================================
+   Gleap Design System — Component Styles
+   Primitive components using CSS custom properties
+   ========================================================================== */
+
+/* ---- Button ---- */
+.btn {
+  display: inline-block;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-system);
+  font-size: var(--font-size-overline);
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.btn--base {
+  background-color: var(--color-primary);
+  color: var(--color-primary-on);
+}
+
+.btn--base:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn--pink {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-on);
+}
+
+.btn--pink:hover {
+  background-color: var(--color-secondary-hover);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---- Tag / Badge ---- */
+.tag {
+  display: inline-block;
+  padding: var(--spacing-1-5) var(--spacing-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-system);
+  font-size: var(--font-size-caption);
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.tag--base {
+  background-color: var(--color-white-200);
+  color: var(--color-black-900);
+  border: 1px solid var(--color-gray-300);
+}
+
+.tag--light {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tag--navigation {
+  background-color: var(--color-black-900);
+  color: var(--color-white);
+  border: none;
+}
+
+/* ---- Card ---- */
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-8);
+  border-radius: var(--radius-xl);
+  font-family: var(--font-family-system);
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.card--base {
+  background-color: var(--surface-card-bg);
+  color: var(--surface-page-text);
+  border: 1px solid var(--surface-card-border);
+}
+
+.card--highlighted {
+  background-color: var(--surface-card-dark-bg);
+  color: var(--surface-card-dark-text);
+  border: none;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.card__title {
+  font-size: var(--font-size-overline);
+  font-weight: 400;
+  margin-bottom: var(--spacing-2);
+}
+
+.card__main-title {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  margin-bottom: var(--spacing-3);
+}
+
+.card__body {
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  color: var(--color-gray-600);
+}
+
+.card--highlighted .card__body {
+  color: var(--color-gray-400);
+}
+
+/* ---- Nav Link ---- */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-family: var(--font-family-system);
+  font-size: var(--font-size-overline);
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+  color: var(--color-black-900);
+  cursor: pointer;
+  transition: color var(--duration-normal) var(--ease-default);
+}
+
+.nav-link:hover {
+  opacity: 0.7;
+}
+
+.nav-link--scrolled {
+  color: var(--color-white);
+}
+
+/* ---- Link Button ---- */
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-system);
+  font-size: var(--font-size-overline);
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  color: var(--color-black-900);
+  cursor: pointer;
+  transition: gap var(--duration-normal) var(--ease-default);
+}
+
+.link-btn:hover {
+  gap: var(--spacing-3);
+}
+
+.link-btn__icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---- Testimonial Card ---- */
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-6);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-card-bg);
+  border: 1px solid var(--color-white-200);
+}
+
+.testimonial-card__quote {
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  color: var(--surface-page-text);
+  margin-bottom: var(--spacing-6);
+}
+
+.testimonial-card__avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.testimonial-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.testimonial-card__name {
+  font-size: var(--font-size-body-sm);
+  font-weight: 600;
+}
+
+.testimonial-card__role {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-gray-500);
+}
+
+/* ---- Pricing Table ---- */
+.pricing-table {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.pricing-table__header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  font-weight: 600;
+  font-size: var(--font-size-body-sm);
+}
+
+.pricing-table__row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  border-bottom: 1px solid var(--color-white-200);
+}
+
+.pricing-table__cell {
+  padding: var(--spacing-3) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-body-sm);
+}
+
+.pricing-table__cell--feature {
+  justify-content: flex-start;
+}
+
+.pricing-table__cell--dark {
+  background-color: var(--color-black-900);
+  color: var(--color-white);
+}
+
+/* ---- Tab Link ---- */
+.tab-link {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-system);
+  font-size: var(--font-size-body-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+  color: var(--color-black-900);
+  cursor: pointer;
+  transition: background-color var(--duration-normal) var(--ease-default);
+  border: none;
+  background: transparent;
+}
+
+.tab-link:hover {
+  background-color: var(--color-white-200);
+}
+
+.tab-link--active {
+  background-color: var(--color-black-900);
+  color: var(--color-white);
+  font-weight: 500;
+}

@@ -1,0 +1,49 @@
+{
+  "name": "pricing-comparison",
+  "description": "Pricing comparison table showing Gleap vs Intercom with features, prices, and included/not-included icons",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "gap": "spacing.8",
+    "maxWidth": "940px",
+    "padding": "spacing.16 spacing.6"
+  },
+  "slots": {
+    "eyebrow": {
+      "accepts": ["tag"],
+      "required": false,
+      "description": "Built for builders tag"
+    },
+    "heading": {
+      "accepts": ["text"],
+      "required": true,
+      "typographyRole": "h2",
+      "description": "Pay less, get more with Gleap."
+    },
+    "subtitle": {
+      "accepts": ["text"],
+      "required": false,
+      "typographyRole": "body"
+    },
+    "table": {
+      "accepts": ["pricing-table"],
+      "required": true,
+      "description": "Comparison table with header row and feature rows"
+    }
+  },
+  "background": {
+    "type": "transparent",
+    "value": null
+  },
+  "responsive": {
+    "mobile": {
+      "table": "horizontal scroll on small screens"
+    }
+  },
+  "tokensUsed": [
+    "typography.h2", "typography.body", "typography.body-sm",
+    "roles.primary",
+    "spacing.6", "spacing.8", "spacing.16"
+  ]
+}

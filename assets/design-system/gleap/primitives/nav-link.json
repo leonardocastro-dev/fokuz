@@ -1,0 +1,58 @@
+{
+  "name": "nav-link",
+  "description": "Navigation link used in header navigation bar",
+  "anatomy": {
+    "slots": ["icon", "label"],
+    "required": ["label"]
+  },
+  "base": {
+    "display": "inline-flex",
+    "alignItems": "center",
+    "gap": "spacing.1",
+    "fontSize": "overline",
+    "fontWeight": 400,
+    "fontFamily": "system",
+    "lineHeight": "1.5",
+    "cursor": "pointer",
+    "transition": "motion.hover",
+    "textDecoration": "none"
+  },
+  "variants": {
+    "base": {
+      "background": "transparent",
+      "color": "black.900",
+      "border": "none"
+    },
+    "dropdown": {
+      "background": "transparent",
+      "color": "black.900",
+      "border": "none"
+    },
+    "scrolled": {
+      "background": "transparent",
+      "color": "white.50",
+      "border": "none"
+    }
+  },
+  "states": {
+    "hover": {
+      "opacity": "0.7",
+      "inferred": false
+    },
+    "active": {
+      "fontWeight": 600,
+      "inferred": true
+    },
+    "disabled": {
+      "opacity": "0.5",
+      "cursor": "not-allowed",
+      "inferred": true
+    }
+  },
+  "sizes": {},
+  "icon": {
+    "semantic": "chevron-down",
+    "position": "right",
+    "size": "20px"
+  }
+}

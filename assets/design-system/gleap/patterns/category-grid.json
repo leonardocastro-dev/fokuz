@@ -1,0 +1,40 @@
+{
+  "name": "category-grid",
+  "description": "Three-column grid showing product categories (Support, Onboard, Build) with colored image headers and descriptions",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "flex-start",
+    "gap": "spacing.8",
+    "maxWidth": "1200px",
+    "padding": "spacing.16 spacing.6"
+  },
+  "slots": {
+    "dual-headline": {
+      "accepts": ["text"],
+      "required": true,
+      "description": "Left-aligned heading + right paragraph description",
+      "layout": { "display": "grid", "columns": 2, "gap": "spacing.8" }
+    },
+    "categories": {
+      "accepts": ["category-item"],
+      "required": true,
+      "layout": { "display": "grid", "columns": 3, "gap": "spacing.6" },
+      "description": "Three category cards: Support (purple), Onboard (blue), Build (gray)"
+    }
+  },
+  "background": {
+    "type": "transparent",
+    "value": null
+  },
+  "responsive": {
+    "mobile": {
+      "dual-headline.columns": 1,
+      "categories.columns": 1
+    }
+  },
+  "tokensUsed": [
+    "typography.h2", "typography.body",
+    "spacing.6", "spacing.8", "spacing.16"
+  ]
+}

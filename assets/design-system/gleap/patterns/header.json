@@ -1,0 +1,47 @@
+{
+  "name": "header",
+  "description": "Top navigation bar with logo, dropdown menus, links, login, and CTA button. Transitions to dark background on scroll.",
+  "layout": {
+    "display": "flex",
+    "direction": "row",
+    "alignment": "center",
+    "gap": "spacing.0",
+    "maxWidth": "100%",
+    "padding": "spacing.5 spacing.6",
+    "justifyContent": "space-between"
+  },
+  "slots": {
+    "logo": {
+      "accepts": ["image"],
+      "required": true,
+      "description": "Gleap logo icon + wordmark, wordmark fades on scroll"
+    },
+    "navigation": {
+      "accepts": ["nav-link", "dropdown"],
+      "required": true,
+      "description": "Product dropdown, Resources dropdown, Pricing link"
+    },
+    "right-actions": {
+      "accepts": ["nav-link", "button"],
+      "required": true,
+      "description": "Login link + Sign up button"
+    }
+  },
+  "background": {
+    "type": "solid",
+    "value": "surfaces.navigation.background",
+    "scrolled": "surfaces.navigation-scrolled.background"
+  },
+  "responsive": {
+    "mobile": {
+      "navigation": "hidden, replaced by hamburger menu",
+      "right-actions": "hidden behind menu"
+    }
+  },
+  "tokensUsed": [
+    "roles.primary", "roles.primary.on",
+    "typography.overline",
+    "motion.hover",
+    "spacing.5", "spacing.6"
+  ]
+}

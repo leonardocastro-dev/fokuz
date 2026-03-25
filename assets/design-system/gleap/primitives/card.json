@@ -1,0 +1,43 @@
+{
+  "name": "card",
+  "description": "Content container used for feature descriptions and information blocks",
+  "anatomy": {
+    "slots": ["title", "subtitle", "main-title", "body", "link", "image"],
+    "required": ["main-title", "body"]
+  },
+  "base": {
+    "display": "flex",
+    "flexDirection": "column",
+    "padding": "spacing.8",
+    "borderRadius": "radii.xl",
+    "fontSize": "body",
+    "fontFamily": "system",
+    "overflow": "hidden",
+    "transition": "motion.hover"
+  },
+  "variants": {
+    "base": {
+      "background": "surfaces.card.background",
+      "color": "surfaces.card.text",
+      "border": "1px solid surfaces.card.border"
+    },
+    "highlighted": {
+      "background": "surfaces.card-highlighted.background",
+      "color": "surfaces.card-highlighted.text",
+      "border": "none"
+    }
+  },
+  "states": {
+    "hover": {
+      "boxShadow": "shadows.sm",
+      "transform": "translateY(-2px)",
+      "inferred": true
+    },
+    "disabled": {
+      "opacity": "0.5",
+      "inferred": true
+    }
+  },
+  "sizes": {},
+  "icon": null
+}

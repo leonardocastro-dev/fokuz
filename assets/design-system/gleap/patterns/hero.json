@@ -1,0 +1,60 @@
+{
+  "name": "hero",
+  "description": "Primary landing section with tag eyebrow, large heading, subtitle, dual CTA buttons, and trust subtitle line",
+  "layout": {
+    "display": "flex",
+    "direction": "column",
+    "alignment": "center",
+    "textAlign": "center",
+    "gap": "spacing.4",
+    "maxWidth": "940px",
+    "padding": "spacing.24 spacing.6 spacing.12"
+  },
+  "slots": {
+    "eyebrow": {
+      "accepts": ["tag"],
+      "required": false,
+      "typographyRole": "caption",
+      "description": "Product Intelligence Platform tag"
+    },
+    "heading": {
+      "accepts": ["text"],
+      "required": true,
+      "typographyRole": "display",
+      "description": "Turn Customer Support into Product Intelligence"
+    },
+    "subheading": {
+      "accepts": ["text"],
+      "required": false,
+      "typographyRole": "body-lg",
+      "description": "Description of value proposition"
+    },
+    "cta": {
+      "accepts": ["button", "button-group"],
+      "required": true,
+      "layout": { "display": "flex", "gap": "spacing.3", "justify": "center" },
+      "description": "Book a demo (dark) + Start free trial (pink) buttons"
+    },
+    "trust-line": {
+      "accepts": ["text"],
+      "required": false,
+      "typographyRole": "caption",
+      "description": "SaaS · Set up in minutes · #1 AI agent for support"
+    }
+  },
+  "background": {
+    "type": "solid",
+    "value": "surfaces.page.background"
+  },
+  "responsive": {
+    "mobile": {
+      "padding": "spacing.16 spacing.4 spacing.8",
+      "heading.fontSize": "h2"
+    }
+  },
+  "tokensUsed": [
+    "roles.primary", "roles.secondary",
+    "typography.display", "typography.body-lg", "typography.caption",
+    "spacing.3", "spacing.4", "spacing.6", "spacing.12", "spacing.24"
+  ]
+}
